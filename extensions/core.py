@@ -77,6 +77,13 @@ class Core:
         await ctx.send("Logging out...")
         await self.bot.logout()
 
+    @commands.command(aliases=["reboot"])
+    @permissions.owner()
+    async def restart(self, ctx):
+        """Restarts the bot... Duh."""
+        await ctx.send("Restarting...")
+        quit()
+
 
 def setup(bot):
     bot.add_cog(Core(bot))
