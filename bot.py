@@ -15,8 +15,6 @@ redis_host = config["redis"]["host"]
 redis_port = config["redis"]["port"]
 redis_db = config["redis"]["db"]
 
-# henlo
-
 try:
     redis_conn = redis.StrictRedis(host=redis_host, port=redis_port, db=redis_db)
 except:
