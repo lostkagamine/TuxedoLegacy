@@ -4,7 +4,7 @@ import importlib
 import inspect
 from utils.dataIO import dataIO
 from utils import permissions
-
+import time
 
 class Core:
     def __init__(self, bot):
@@ -32,15 +32,18 @@ class Core:
     @permissions.owner()
     async def load(self, ctx, name: str):
         """Loads an extension."""
-        extension_name = 'extensions.{0}'.format(name)
-        if extension_name not in list(self.bot.extensions):
-            plugin = importlib.import_module(extension_name)
-            importlib.reload(plugin)
-            self.bot.load_extension(plugin.__name__)
-            self.settings['extensions'].append(extension_name)
-            await ctx.send('Extension loaded.')
-        else:
-            await ctx.send('Extension already loaded.')
+        try:
+            extension_name = 'extensions.{0}'.format(name)
+            if extension_name not in list(self.bot.extensions):
+                plugin = importlib.import_module(extension_name)
+                importlib.reload(plugin)
+                self.bot.load_extension(plugin.__name__)
+                self.settings['extensions'].append(extension_name)
+                await ctx.send('Extension loaded.')
+            else:
+                await ctx.send('Extension already loaded.')
+        except Exception as e:
+            await ctx.send(":x: An error occurred.\n\n```\n{}: {}```".format(type(e).__name__, e))
 
     @commands.command(aliases=['ule'])
     @permissions.owner()
@@ -59,16 +62,19 @@ class Core:
     @commands.command(aliases=['rle', 'reloady'])
     @permissions.owner()
     async def reload(self, ctx, name: str):
-        """Reloads an extension."""
-        extension_name = 'extensions.{0}'.format(name)
-        if extension_name in list(self.bot.extensions):
-            plugin = importlib.import_module(extension_name)
-            importlib.reload(plugin)
-            self.bot.unload_extension(plugin.__name__)
-            self.bot.load_extension(plugin.__name__)
-            await ctx.send('Extension reloaded.')
-        else:
-            await ctx.send('Extension not loaded.')
+        try:
+            """Reloads an extension."""
+            extension_name = 'extensions.{0}'.format(name)
+            if extension_name in list(self.bot.extensions):
+                plugin = importlib.import_module(extension_name)
+                importlib.reload(plugin)
+                self.bot.unload_extension(plugin.__name__)
+                self.bot.load_extension(plugin.__name__)
+                await ctx.send('Extension reloaded.')
+            else:
+                await ctx.send('Extension not loaded.')
+        except Exception as e:
+            await ctx.send(":x: An error occurred.\n\n```\n{}: {}```".format(type(e).__name__, e))
 
     @commands.command(aliases=['kys'])
     @permissions.owner()
@@ -83,6 +89,14 @@ class Core:
         """Restarts the bot... Duh."""
         await ctx.send("Restarting...")
         quit()
+
+    @commands.command(description="Pong.")
+    async def ping(self, ctx):
+        before = time.monotonic()
+        pong = await ctx.send("...")
+        after = time.monotonic()
+        ping = (after - before) * 1000
+        await pong.edit(content="Pong to you. {}ms".format(int(ping)))
 
 
 def setup(bot):
