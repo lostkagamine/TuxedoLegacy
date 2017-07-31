@@ -4,17 +4,15 @@ import time
 from discord.ext import commands
 from utils import permissions
 
-class Repl:
+class Admin:
     def __init__(self, bot):
         self.bot = bot
         self._eval = {}
 
-    @commands.command(aliases=["e", "ev"])
+    @commands.command()
     @permissions.owner()
     async def eval(self, ctx, *, code: str):
-        """Evaluates Python code
-        - code: The Python code to run
-        """
+        """Evaluates Python code"""
         if self._eval.get('env') is None:
             self._eval['env'] = {}
         if self._eval.get('count') is None:
@@ -81,4 +79,4 @@ class Repl:
             await ctx.send("Output was too big to be printed.")
 
 def setup(bot):
-    bot.add_cog(Repl(bot))
+    bot.add_cog(Admin(bot))

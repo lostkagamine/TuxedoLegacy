@@ -1,9 +1,8 @@
+import traceback
+import json
 from discord.ext import commands
 from discord.ext.commands import errors as commands_errors
 from discord import utils as dutils
-import traceback
-import json
-import redis
 
 with open("config.json") as f:
     config = json.load(f)
@@ -11,30 +10,15 @@ with open("config.json") as f:
 token = config.get('BOT_TOKEN')
 prefix = config.get('BOT_PREFIX')
 
-redis_host = config["redis"]["host"]
-redis_port = config["redis"]["port"]
-redis_db = config["redis"]["db"]
-
-try:
-    redis_conn = redis.StrictRedis(host=redis_host, port=redis_port, db=redis_db)
-except:
-    print('Failed to connect to Redis.')
-    exit(2)
-
-
 class Bot(commands.Bot):
-    def __init__(self, command_prefix, redis, **options):
+    def __init__(self, command_prefix, **options):
         super().__init__(command_prefix, **options)
-        self.send_command_help = send_cmd_help
-
+        self.cmd_help = cmd_help
 
     async def on_ready(self):
         app_info = await self.application_info()
         self.invite_url = dutils.oauth_url(app_info.id)
-        print('Ready.')
-        print(self.invite_url)
-        print(self.user.name)
-
+        print(f'Logged in as {self.user.name}\nBot invite link: {self.invite_url}')
         self.load_extension('extensions.core')
 
     async def on_message(self, message):
@@ -43,7 +27,7 @@ class Bot(commands.Bot):
         await self.process_commands(message)
 
 
-async def send_cmd_help(ctx):
+async def cmd_help(ctx):
     if ctx.invoked_subcommand:
         _help = await ctx.bot.formatter.format_help_for(ctx,
                                                         ctx.invoked_subcommand)
@@ -52,29 +36,25 @@ async def send_cmd_help(ctx):
     for page in _help:
         await ctx.send(page)
 
-help_attrs = dict(hidden=True, aliases=["man"])
-
-bot = Bot(prefix, redis_conn, help_attrs=help_attrs)
+bot = Bot(prefix)
 
 @bot.listen("on_command_error")
-async def on_command_error(context, exception):
+async def on_command_error(ctx, exception):
     if isinstance(exception, commands_errors.MissingRequiredArgument):
-        await bot.send_command_help(context)
-    elif isinstance(exception, commands_errors.CommandOnCooldown):
-        await context.send("This command is on cooldown. Wait `{}` seconds then try again.".format(round(exception.retry_after, 2)))
+        await cmd_help(ctx)
     elif isinstance(exception, commands_errors.CommandInvokeError):
         exception = exception.original
         _traceback = traceback.format_tb(exception.__traceback__)
         _traceback = ''.join(_traceback)
         error = ('`{0}` in command `{1}`: ```py\n'
-                'Traceback (most recent call last):\n{2}{0}: {3}\n```')\
-            .format(type(exception).__name__,
-                    context.command.qualified_name,
-                    _traceback, exception)
-        await context.send(error)
-    elif isinstance(exception, commands_errors.CommandNotFound):
-        pass
-
-
+                 'Traceback (most recent call last):\n{2}{0}: {3}\n```')\
+                 .format(type(exception).__name__,
+                 ctx.command.qualified_name,
+                 _traceback, exception)
+        await ctx.send(error)
+    elif isinstance(exception, commands_errors.CommandOnCooldown):
+        await ctx.send('You can use this command in {0:.0f} seconds.'.format(exception.retry_after))
+    else:
+        ctx.send(exception)
 
 bot.run(token)
