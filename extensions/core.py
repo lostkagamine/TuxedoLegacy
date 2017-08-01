@@ -21,7 +21,7 @@ class Core:
                 except:
                     pass
 
-    @commands.command()
+    @commands.command(aliases=["le"])
     @permissions.owner()
     async def load(self, ctx, name: str):
         """ Load an extension into the bot """
@@ -37,7 +37,7 @@ class Core:
         else:
             await m.edit(content='Extension already loaded.')
 
-    @commands.command()
+    @commands.command(aliases=["ule", "ul"])
     @permissions.owner()
     async def unload(self, ctx, name: str):
         """ Unload an extension from the bot """
@@ -50,7 +50,7 @@ class Core:
         else:
             await m.edit(content='Extension not found or not loaded.')
 
-    @commands.command()
+    @commands.command(aliases=["rle", "reloady", "rl"])
     @permissions.owner()
     async def reload(self, ctx, name: str):
         """ Reload an extension into the bot """

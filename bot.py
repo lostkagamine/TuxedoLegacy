@@ -53,7 +53,7 @@ async def on_command_error(ctx, exception):
                  _traceback, exception)
         await ctx.send(error)
     elif isinstance(exception, commands_errors.CommandOnCooldown):
-        await ctx.send('You can use this command in {0:.0f} seconds.'.format(exception.retry_after))
+        await ctx.send('This command is on cooldown. You can use this command in `{0:.2f}` seconds.'.format(exception.retry_after))
     else:
         ctx.send(exception)
 

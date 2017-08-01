@@ -104,3 +104,5 @@ config.json
 dump.rdb
 pm2.json
 
+*.webm
+*.png

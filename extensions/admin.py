@@ -9,7 +9,7 @@ class Admin:
         self.bot = bot
         self._eval = {}
 
-    @commands.command()
+    @commands.command(aliases=["ev", "e"])
     @permissions.owner()
     async def eval(self, ctx, *, code: str):
         """Evaluates Python code"""
