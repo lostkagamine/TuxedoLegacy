@@ -4,3 +4,4 @@ aiohttp
 pillow
 wand
 py-cpuinfo
+pynacl

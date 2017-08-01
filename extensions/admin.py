@@ -37,7 +37,6 @@ class Admin:
         # noinspection PyBroadException
         try:
             exec(_code, self._eval['env'])
-
             func = self._eval['env']['func']
             output = await func(self)
 
