@@ -5,3 +5,4 @@ pillow
 wand
 py-cpuinfo
 pynacl
+psutil
