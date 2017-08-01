@@ -1,6 +1,6 @@
 import discord
 import os
-from utils import permissions
+from ../utils import permissions
 from discord.ext import commands
 
 class Core:
@@ -67,11 +67,20 @@ class Core:
         else:
             await m.edit(content='Extension isn\'t loaded.')
 
-    @commands.command()
+    @commands.command(aliases=["restart"])
     @permissions.owner()
-    async def shutdown(self, ctx):
-        """ Ends the current bot session """
+    async def reboot(self, ctx):
+        """ Ends the bot process """
+        await ctx.send("Rebooting...")
         quit()
+
+    @commands.command(aliases=["logout", "shutdown"])
+    @permissions.owner()
+    async def logoff(self, ctx):
+        """ Logs the bot off Discord """
+        await ctx.send("Shutting down...")
+        await bot.logout()
+
 
 
 def setup(bot):

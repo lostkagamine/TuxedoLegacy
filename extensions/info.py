@@ -1,8 +1,13 @@
 import math
+import os
+import cpuinfo
 import discord
 from discord.ext import commands
 import psutil
-import os
+
+
+def propcheck(prop, d):
+    return d[prop] if d[prop] else "None"
 
 class Info:
     def __init__(self, bot):
@@ -38,10 +43,12 @@ class Info:
         total_ram = self.humanbytes(mem[0])
         available_ram = self.humanbytes(mem[1])
         usage = self.humanbytes(currproc.memory_info().rss)
+        cpu_info = cpuinfo.get_cpu_info()
         e = discord.Embed(title="Statistics")
         e.add_field(name="CPU Usage", value=f"**{math.floor(percent)}**%")
         e.add_field(name="RAM Usage", value=f"Total: **{total_ram}**\nAvailable: **{available_ram}**\nUsed by bot: **{usage}**")
         e.add_field(name="Guilds", value=f"{len(self.bot.guilds)}")
+        e.add_field(name="CPU Information", value=f"Vendor: **{propcheck("vendor_id", cpu_info)}**\nBrand: **{propcheck("brand", cpu_info)}** @ **{propcheck("hz_actual", cpu_info)}** (Advertised: {propcheck("hz_advertised", cpu_info)})")
         await ctx.send(embed=e)
 
 def setup(bot):

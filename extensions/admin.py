@@ -2,7 +2,7 @@ import discord
 import textwrap
 import time
 from discord.ext import commands
-from utils import permissions
+from ../utils import permissions
 
 class Admin:
     def __init__(self, bot):
