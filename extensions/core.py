@@ -1,81 +1,98 @@
 import discord
-from discord.ext import commands
-import importlib
-import inspect
-from utils.dataIO import dataIO
+import os
 from utils import permissions
-
+from discord.ext import commands
 
 class Core:
     def __init__(self, bot):
         self.bot = bot
-        self.settings = dataIO.load_json('settings')
-        self.post_task = self.bot.loop.create_task(self.post())
+        self.settings = {
+            'extensions': []
+        }
+        @self.bot.check
+        async def no_dms(ctx):
+            return ctx.guild is not None
+        self.init_extensions()
 
-    def __unload(self):
-        self.post_task.cancel()
+    def init_extensions(self):
+        for ext in os.listdir('extensions'):
+            if ext.endswith('.py') and not ext.startswith('core'):
+                try:
+                    self.bot.load_extension(f'extensions.{ext[:-3]}')
+                    self.settings['extensions'].append(f'extensions.{ext[:-3]}')
+                except:
+                    pass
 
-    async def post(self):
-        if 'extensions' not in self.settings:
-            self.settings['extensions'] = []
-        else:
-            for extension in self.settings['extensions']:
-                if extension not in list(self.bot.extensions):
-                    try:
-                        self.bot.load_extension(extension)
-                    except:
-                        self.settings['extensions'].remove(extension)
-                        print("An extension failed to load.")
-
-
-    @commands.command(aliases=['le'])
+    @commands.command(aliases=["le"])
     @permissions.owner()
     async def load(self, ctx, name: str):
-        """Loads an extension."""
+        """ Load an extension into the bot """
+        m = await ctx.send(f'Loading {name}')
         extension_name = 'extensions.{0}'.format(name)
-        if extension_name not in list(self.bot.extensions):
-            plugin = importlib.import_module(extension_name)
-            importlib.reload(plugin)
-            self.bot.load_extension(plugin.__name__)
-            self.settings['extensions'].append(extension_name)
-            await ctx.send('Extension loaded.')
+        if extension_name not in self.settings['extensions']:
+            try:
+                self.bot.load_extension(extension_name)
+                self.settings['extensions'].append(extension_name)
+                await m.edit(content='Extension loaded.')
+            except Exception as e:
+                await m.edit(content=f'Error while loading {name}\n`{e}`')
         else:
-            await ctx.send('Extension already loaded.')
+            await m.edit(content='Extension already loaded.')
 
-    @commands.command(aliases=['ule'])
+    @commands.command(aliases=["ule", "ul"])
     @permissions.owner()
     async def unload(self, ctx, name: str):
-        """Unloads an extension."""
+        """ Unload an extension from the bot """
+        m = await ctx.send(f'Unloading {name}')
         extension_name = 'extensions.{0}'.format(name)
-        if extension_name in list(self.bot.extensions):
-            plugin = importlib.import_module(extension_name)
-            importlib.reload(plugin)
-            self.bot.unload_extension(plugin.__name__)
+        if extension_name in self.settings['extensions']:
+            self.bot.unload_extension(extension_name)
             self.settings['extensions'].remove(extension_name)
-            await ctx.send('Extension unloaded.')
+            await m.edit(content='Extension unloaded.')
         else:
-            await ctx.send('Extension not found or not loaded.')
+            await m.edit(content='Extension not found or not loaded.')
 
-    @commands.command(aliases=['rle', 'reloady'])
+    @commands.command(aliases=["rle", "reloady", "rl"])
     @permissions.owner()
     async def reload(self, ctx, name: str):
-        """Reloads an extension."""
+        """ Reload an extension into the bot """
+        m = await ctx.send(f'Reloading {name}')
         extension_name = 'extensions.{0}'.format(name)
-        if extension_name in list(self.bot.extensions):
-            plugin = importlib.import_module(extension_name)
-            importlib.reload(plugin)
-            self.bot.unload_extension(plugin.__name__)
-            self.bot.load_extension(plugin.__name__)
-            await ctx.send('Extension reloaded.')
+        if extension_name in self.settings['extensions']:
+            self.bot.unload_extension(extension_name)
+            try:
+                self.bot.load_extension(extension_name)
+                await m.edit(content='Extension reloaded.')
+            except Exception as e:
+                self.settings['extensions'].remove(extension_name)
+                await m.edit(content=f'Failed to reload extension\n{e}')
         else:
-            await ctx.send('Extension not loaded.')
+            await m.edit(content='Extension isn\'t loaded.')
 
-    @commands.command(aliases=['kys'])
+    @commands.command(aliases=["restart"])
     @permissions.owner()
-    async def shutdown(self, ctx):
-        """Shuts down the bot.... Duh."""
-        await ctx.send("Logging out...")
+    async def reboot(self, ctx):
+        """ Ends the bot process """
+        await ctx.send("Rebooting...")
+        quit()
+
+    @commands.command(aliases=["logout", "shutdown"])
+    @permissions.owner()
+    async def logoff(self, ctx):
+        """ Logs the bot off Discord """
+        await ctx.send("Shutting down...")
         await self.bot.logout()
+
+    @commands.command()
+    async def ping(self, ctx):
+        before = time.monotonic()
+        pong = await ctx.send("...")
+        after = time.monotonic()
+        ping = (after - before) * 1000
+        await pong.edit(content="`PING discordapp.com {}ms`".format(int(ping)))
+
+
+
 
 
 def setup(bot):

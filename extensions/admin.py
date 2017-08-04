@@ -3,18 +3,25 @@ import textwrap
 import time
 from discord.ext import commands
 from utils import permissions
+import aiohttp
 
-class Repl:
+class Admin:
     def __init__(self, bot):
         self.bot = bot
         self._eval = {}
 
-    @commands.command(aliases=["e", "ev"])
+    @commands.command(name="setavy")
+    @permissions.owner()
+    async def set_avy(self, ctx, *, avy : str):
+        async with aiohttp.ClientSession() as sesh:
+            async with sesh.get(avy) as r:
+                await self.bot.user.edit(avatar=await r.read())
+                await ctx.send(":ok_hand:")
+
+    @commands.command(aliases=["ev", "e"])
     @permissions.owner()
     async def eval(self, ctx, *, code: str):
-        """Evaluates Python code
-        - code: The Python code to run
-        """
+        """Evaluates Python code"""
         if self._eval.get('env') is None:
             self._eval['env'] = {}
         if self._eval.get('count') is None:
@@ -39,7 +46,6 @@ class Repl:
         # noinspection PyBroadException
         try:
             exec(_code, self._eval['env'])
-
             func = self._eval['env']['func']
             output = await func(self)
 
@@ -81,4 +87,4 @@ class Repl:
             await ctx.send("Output was too big to be printed.")
 
 def setup(bot):
-    bot.add_cog(Repl(bot))
+    bot.add_cog(Admin(bot))
