@@ -9,7 +9,9 @@ class Core:
         self.settings = {
             'extensions': []
         }
-
+        @self.bot.check
+        async def no_dms(ctx):
+            return ctx.guild is not None
         self.init_extensions()
 
     def init_extensions(self):
@@ -80,6 +82,8 @@ class Core:
         """ Logs the bot off Discord """
         await ctx.send("Shutting down...")
         await bot.logout()
+
+
 
 
 
