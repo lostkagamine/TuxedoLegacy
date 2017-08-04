@@ -81,7 +81,15 @@ class Core:
     async def logoff(self, ctx):
         """ Logs the bot off Discord """
         await ctx.send("Shutting down...")
-        await bot.logoff()
+        await self.bot.logout()
+
+    @commands.command()
+    async def ping(self, ctx):
+        before = time.monotonic()
+        pong = await ctx.send("...")
+        after = time.monotonic()
+        ping = (after - before) * 1000
+        await pong.edit(content="`PING discordapp.com {}ms`".format(int(ping)))
 
 
 
