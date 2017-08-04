@@ -62,7 +62,7 @@ class DBots:
             if not a["description"] == "":
                 embed.add_field(name="Description", value=a["description"])
             embed.set_thumbnail(url=id_arg.avatar_url)
-            embed.set_footer(text="Tuxedo Beta Discord Bot Lookup | Generated at {}".format(datetime.utcnow()))
+            embed.set_footer(text="Tuxedo Discord Bot Lookup | Generated at {}".format(datetime.utcnow()))
 
             await ctx.send(embed=embed)
 
