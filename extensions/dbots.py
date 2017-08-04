@@ -32,7 +32,7 @@ class DBots:
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(aliases=["botinfo"])
+    @commands.command(aliases=["botinfo", "getBot"])
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def getbot(self, ctx, *, id_arg : discord.Member):
 
