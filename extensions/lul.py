@@ -20,6 +20,7 @@ class Lul:
                     await ctx.send(embed=discord.Embed(title="Random Cat").set_image(url=url).set_footer(text="Powered by random.cat"))
     
     @commands.command()
+    @commands.cooldown(10, 1, commands.BucketType.user)
     async def animalfact(self, ctx, _type : str):
         with ctx.channel.typing():
             sesh = aiohttp.ClientSession()

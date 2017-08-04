@@ -13,7 +13,7 @@ class Generators:
         self.bot = bot
 
     @commands.command()
-    @commands.cooldown(1, 10, commands.BucketType.user)
+    @commands.cooldown(1, 30, commands.BucketType.user)
     async def magik(self, ctx, target, *args):
         """ Add some magik to your boring-ass images """
         try:
@@ -56,7 +56,7 @@ class Generators:
             await m.edit(content="Unable to generate image. Provide a mention or valid URL.")
 
     @commands.command()
-    @commands.cooldown(1, 10, commands.BucketType.user)
+    @commands.cooldown(1, 25, commands.BucketType.user)
     async def invert(self, ctx, target):
         """ Ever wanted to see the stuff of nightmares? """
         try:

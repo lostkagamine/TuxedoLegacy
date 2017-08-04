@@ -81,7 +81,7 @@ class Core:
     async def logoff(self, ctx):
         """ Logs the bot off Discord """
         await ctx.send("Shutting down...")
-        await bot.logout()
+        await bot.logoff()
 
 
 
