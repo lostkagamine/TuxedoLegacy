@@ -32,9 +32,9 @@ class DBots:
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.command(aliases=["botinfo"])
     @commands.cooldown(1, 5, commands.BucketType.user)
-    async def getBot(self, ctx, *, id_arg : discord.Member):
+    async def getbot(self, ctx, *, id_arg : discord.Member):
 
         with ctx.channel.typing():
             if not id_arg or not ctx.guild.get_member(id_arg.id):
