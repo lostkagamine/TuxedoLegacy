@@ -3,11 +3,20 @@ import textwrap
 import time
 from discord.ext import commands
 from utils import permissions
+import aiohttp
 
 class Admin:
     def __init__(self, bot):
         self.bot = bot
         self._eval = {}
+
+    @commands.command(name="setavy")
+    @permissions.owner()
+    async def set_avy(self, ctx, *, avy : str):
+        async with aiohttp.ClientSession() as sesh:
+            async with sesh.get(avy) as r:
+                await self.bot.user.edit(avatar=await r.read())
+                await ctx.send(":ok_hand:")
 
     @commands.command(aliases=["ev", "e"])
     @permissions.owner()

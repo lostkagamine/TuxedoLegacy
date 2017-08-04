@@ -55,7 +55,8 @@ class DBots:
             if a["website"]:
                 embed.add_field(name="Website", value="[Bot Website]({})".format(a["website"]))
             embed.add_field(name="Prefix", value="`{}`".format(a["prefix"]))
-            embed.add_field(name="Owner", value="**{}**#{} ({})".format(owner.name, owner.discriminator, owner.id))
+            if owner:
+                embed.add_field(name="Owner", value="**{}**#{} ({})".format(owner.name, owner.discriminator, owner.id))
             if a["invite_url"]:
                 embed.add_field(name="Invite", value="[Bot Invite]({})".format(a["invite_url"]))
             if not a["description"] == "":

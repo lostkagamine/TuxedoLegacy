@@ -10,6 +10,9 @@ with open("config.json") as f:
 token = config.get('BOT_TOKEN')
 prefix = config.get('BOT_PREFIX')
 
+async def getPrefix(bot, msg):
+    return commands.when_mentioned_or(*prefix)(bot, msg)
+
 class Bot(commands.Bot):
     def __init__(self, command_prefix, **options):
         super().__init__(command_prefix, **options)
@@ -36,7 +39,7 @@ async def cmd_help(ctx):
     for page in _help:
         await ctx.send(page)
 
-bot = Bot(prefix)
+bot = Bot(getPrefix)
 
 @bot.listen("on_command_error")
 async def on_command_error(ctx, exception):

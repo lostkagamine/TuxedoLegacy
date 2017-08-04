@@ -27,8 +27,9 @@ class Lul:
             async with sesh.get("http://fact.birb.pw/api/v1/endpoints") as r:
                 if r.status == 200:
                     data = await r.text()
-                    types = ast.literal_eval(data)
+                    types = ast.literal_eval(data) # safe eval, woot
             if _type not in types:
+                sesh.close()
                 return await ctx.send(":x: Invalid type")
             async with sesh.get("http://fact.birb.pw/api/v1/{}".format(_type)) as r:
                 if r.status == 200:
