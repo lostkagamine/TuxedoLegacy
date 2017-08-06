@@ -2,7 +2,7 @@ import discord
 from discord import utils
 from discord.ext import commands
 
-bannerole = [343465828282269696, 343477848540971010]
+bannerole = [343465828282269696, 343477848540971010, 343801230621147149]
 
 class ServerSpecific:
 
@@ -11,8 +11,9 @@ class ServerSpecific:
         @bot.listen("on_member_remove")
         async def on_member_remove(member):
             roles = [r.id for r in member.roles]
-            if self.checkShare(roles, bannerole):
-                member.ban(reason="(Automatic ban) Left while muted", delete_message_days=7)
+            audit = await member.guild.audit_logs(limit=1).flatten()
+            if self.checkShare(roles, bannerole) and audit[0].action != discord.AuditLogAction.kick:
+                await member.ban(reason="(Automatic ban) Left while muted", delete_message_days=7)
 
     def checkShare(self, a, b):
         return len(set(a).intersection(b)) > 0 # thank you ghosty

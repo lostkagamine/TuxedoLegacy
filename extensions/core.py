@@ -104,7 +104,7 @@ class Core:
                 await ctx.send("You've tried to add a duplicate prefix...")
                 return
             self.bot.prefix.append(args[1])
-            await ctx.send("Added prefix " + args[1])
+            await ctx.send("Added prefix `" + args[1] + "`")
         elif args[0] == "remove":
             if args[1] == None:
                 await ctx.send("Specify a prefix to remove.")
@@ -113,8 +113,8 @@ class Core:
                 await ctx.send("You've tried to remove a non-existent prefix...")
                 return
             self.bot.prefix.remove(args[1])
-            await ctx.send("Removed prefix " + args[1])
-        elif args[0] == "list":
+            await ctx.send("Removed prefix `" + args[1] + "`")
+        elif args[0] == "list": # Tuxedo Exclusive Feature™
             prefixes = "\n".join(self.bot.prefix)
             await ctx.send(f"```\n{prefixes}```")
 
