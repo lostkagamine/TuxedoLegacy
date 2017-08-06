@@ -84,7 +84,14 @@ class Admin:
             else:
                 await ctx.send(message)
         except discord.HTTPException:
-            await ctx.send("Output was too big to be printed.")
+            with aiohttp.ClientSession() as sesh:
+                async with sesh.post("https://hastebin.com/documents/", data=output, headers={"Content-Type": "text/plain"}) as r:
+                    r = await r.json()
+                    embed = discord.Embed(
+                        description="[View output - click](https://hastebin.com/{})".format(r["key"])
+                    )
+                    await ctx.send(embed=embed)
+
 
 def setup(bot):
     bot.add_cog(Admin(bot))
