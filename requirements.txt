@@ -1,8 +1,7 @@
-youtube_dl
 https://github.com/rapptz/discord.py/archive/rewrite.zip
 aiohttp
 pillow
 wand
 py-cpuinfo
-pynacl
 psutil
+rethinkdb

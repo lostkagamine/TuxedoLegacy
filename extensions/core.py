@@ -36,7 +36,7 @@ class Core:
                 self.settings['extensions'].append(extension_name)
                 await m.edit(content='Extension loaded.')
             except Exception as e:
-                await m.edit(content=f'Error while loading {name}\n`{e}`')
+                await m.edit(content=f'Error while loading {name}\n`{type(e).__name__}: {e}`')
         else:
             await m.edit(content='Extension already loaded.')
 
@@ -66,7 +66,7 @@ class Core:
                 await m.edit(content='Extension reloaded.')
             except Exception as e:
                 self.settings['extensions'].remove(extension_name)
-                await m.edit(content=f'Failed to reload extension\n{e}')
+                await m.edit(content=f'Failed to reload extension\n`{type(e).__name__}: {e}`')
         else:
             await m.edit(content='Extension isn\'t loaded.')
 

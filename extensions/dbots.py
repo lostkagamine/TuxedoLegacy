@@ -4,15 +4,12 @@ import discord
 from discord.ext import commands
 from datetime import datetime
 
-with open("config.json") as f:
-    config = json.load(f)
-
 class HTTPException(Exception):
     # lul
     errtype = "HTTP"
 
-async def get_stats(botid):
-    token = config["DBOTS_TOKEN"]
+async def get_stats(bot, botid):
+    token = bot.config["DBOTS_TOKEN"]
     headers = {"Authorization": token}
     async with aiohttp.ClientSession() as cs:
         async with cs.get("http://bots.discord.pw/api/bots/{}".format(str(botid)), headers=headers) as r:
@@ -44,7 +41,7 @@ class DBots:
             if not id_arg.bot:
                 return await ctx.send("This member isn't a bot.")
             
-            a = await get_stats(id_arg.id)
+            a = await get_stats(self.bot, id_arg.id)
             embed = discord.Embed(
                 title="Bot information for {}".format(a["name"]),
                 color=0x00FF00

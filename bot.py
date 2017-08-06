@@ -4,24 +4,22 @@ from discord.ext import commands
 from discord.ext.commands import errors as commands_errors
 from discord import utils as dutils
 
-with open("config.json") as f:
-    config = json.load(f)
 
-token = config.get('BOT_TOKEN')
 
 
 
 
 class Bot(commands.Bot):
 
-    prefix = config.get('BOT_PREFIX')
-
-    async def getPrefix(self, bot, msg):
-        return commands.when_mentioned_or(*self.prefix)(bot, msg)
-
     def __init__(self, **options):
         super().__init__(self.getPrefix, **options)
         self.cmd_help = cmd_help
+        with open("config.json") as f:
+            self.config = json.load(f)
+            self.prefix = self.config.get('BOT_PREFIX')
+
+    async def getPrefix(self, bot, msg):
+        return commands.when_mentioned_or(*self.prefix)(bot, msg)
 
     async def on_ready(self):
         app_info = await self.application_info()
@@ -65,4 +63,4 @@ async def on_command_error(ctx, exception):
     else:
         ctx.send(exception)
 
-bot.run(token)
+bot.run(bot.config["BOT_TOKEN"])

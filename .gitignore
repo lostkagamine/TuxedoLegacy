@@ -106,3 +106,5 @@ pm2.json
 
 *.webm
 *.png
+
+rethinkdb_data/
