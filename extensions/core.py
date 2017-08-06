@@ -92,6 +92,33 @@ class Core:
         ping = (after - before) * 1000
         await pong.edit(content="`PING discordapp.com {}ms`".format(int(ping)))
 
+    @commands.command(description="Manage those prefixes.")
+    @permissions.owner()
+    async def prefix(self, ctx, *args): # ported from rybot
+        if args == None: return
+        if args[0] == "add":
+            if args[1] == None:
+                await ctx.send("Specify a prefix to add.")
+                return
+            if args[1] in self.bot.prefix:
+                await ctx.send("You've tried to add a duplicate prefix...")
+                return
+            self.bot.prefix.append(args[1])
+            await ctx.send("Added prefix " + args[1])
+        elif args[0] == "remove":
+            if args[1] == None:
+                await ctx.send("Specify a prefix to remove.")
+                return
+            if not args[1] in self.bot.prefix:
+                await ctx.send("You've tried to remove a non-existent prefix...")
+                return
+            self.bot.prefix.remove(args[1])
+            await ctx.send("Removed prefix " + args[1])
+        elif args[0] == "list":
+            prefixes = "\n".join(self.bot.prefix)
+            await ctx.send(f"```\n{prefixes}```")
+
+
 
 
 

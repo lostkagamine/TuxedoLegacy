@@ -8,9 +8,14 @@ class ServerSpecific:
 
     def __init__(self, bot):
         self.bot = bot
+        @bot.listen("on_member_remove")
+        async def on_member_remove(member):
+            roles = [r.id for r in member.roles]
+            if self.checkShare(roles, bannerole):
+                member.ban(reason="(Automatic ban) Left while muted", delete_message_days=7)
 
     def checkShare(self, a, b):
-        return any(x in a for x in b) # copied from stack ofc
+        return len(set(a).intersection(b)) > 0 # thank you ghosty
 
     def findShared(self, a, b):
         for x in a:
