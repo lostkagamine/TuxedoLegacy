@@ -27,12 +27,12 @@ class ServerSpecific:
 
     @commands.command()
     async def mute(self, ctx, target : discord.Member):
-        perms = ctx.author.permissions_in(ctx.channel)
-        if not perms.manage_roles or not perms.ban_members:
-            return await ctx.send(":x: Not enough permissions.")
         if not self.checkShare([i.id for i in ctx.guild.roles], bannerole):
             await ctx.send(":x: This isn't the right guild.")
             return
+        perms = ctx.author.permissions_in(ctx.channel)
+        if not perms.manage_roles or not perms.ban_members:
+            return await ctx.send(":x: Not enough permissions.")
         
         mootid = self.findShared([i.id for i in ctx.guild.roles], bannerole)
         # print(mootid)
