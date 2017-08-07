@@ -50,5 +50,14 @@ class Info:
         e.add_field(name="Guilds", value=f"{len(self.bot.guilds)}")
         await ctx.send(embed=e)
 
+    @commands.command(aliases=["support", "guild"])
+    async def server(self, ctx):
+        text = "**Support Server**\n\nIf you're encountering a problem with Tuxedo, or just wanna drop by, use this Discord link to join the official Tuxedo server.\n\nLink => https://discord.gg/KEcme4H"
+        try:
+            await ctx.author.send(text)
+            await ctx.send(":mailbox_with_mail: Check your DMs.")
+        except discord.Forbidden:
+            await ctx.send(text)
+
 def setup(bot):
     bot.add_cog(Info(bot))

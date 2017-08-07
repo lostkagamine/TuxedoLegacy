@@ -118,7 +118,10 @@ class Core:
         else:
             await ctx.send('Method needs to be `add`, `remove` or `list`')
 
-
+    @commands.command()
+    @permissions.owner()
+    async def error(self, ctx):
+        3/0
 
 
 
