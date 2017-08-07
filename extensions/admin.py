@@ -41,6 +41,8 @@ class Admin:
 
     @commands.command(description="Purge messages in the channel.", aliases=["prune"])
     async def purge(self, ctx, amount : int=50, *flags):
+        if not ctx.author.permissions_in(ctx.channel).manage_messages:
+            return await ctx.send(":x: Not enough permissions.")
         bots = False
         if "--bots" in flags:
             bots = True
