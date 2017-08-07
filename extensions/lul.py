@@ -11,6 +11,17 @@ class Lul:
     def __init__(self, bot):
         self.bot = bot
     
+
+    def gensuffix(self, number):
+        if number == 1:
+            return "st"
+        elif number == 2:
+            return "nd"
+        elif number == 3:
+            return "rd"
+        else:
+            return "th"
+
     @commands.command()
     async def cat(self, ctx):
         with ctx.channel.typing():
@@ -55,8 +66,11 @@ class Lul:
         correctlist = ["first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eigth", "ninth", "tenth"]
         finished = []
         correct = []
-        for i in numbers:
-            finished.append(i + random.choice(suffix))
+        correctsuffixes = []
+        for i in range(len(numbers)):
+            correctsuffixes.append(self.gensuffix(i + 1))
+        for i, v in enumerate(numbers):
+            finished.append(v + random.choice(suffix))
 
         for ind, val in enumerate(finished):
             if correctlist[ind] == val:
@@ -68,7 +82,7 @@ class Lul:
             correctstr = f"{joinedcorrect} ({len(correct)}, {math.floor(len(correct) / len(correctlist) * 100)}%)"
 
         finishedstr = ", ".join(finished)
-        if len(correctstr) == len(correctlist):
+        if finished == correctlist:
             correctstr = "All of them! ^.^"
         await ctx.send(f"```\nOutput: {finishedstr}\nCorrect: {correctstr}```")
 
