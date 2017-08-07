@@ -12,7 +12,7 @@ class Admin:
         self.bot = bot
         self._eval = {}
 
-    def deletformat(self, number):
+    def cleanformat(self, number):
         string = ""
         if number == 1:
             string = "deleted 1 message"
@@ -22,6 +22,16 @@ class Admin:
             string = "deleted {} messages".format(number)
         return "Bot cleanup successful, {} (Method A)".format(string)
 
+    def pruneformat(self, number):
+        string = ""
+        if number == 1:
+            string = "Deleted 1 message"
+        if number == 0:
+            string = "Deleted no messages"
+        else:
+            string = "Deleted {} messages".format(number)
+        return string
+
     @commands.command(description="Clean up the bot's messages.")
     async def clean(self, ctx, amount : int=50):
         """Clean up the bot's messages."""
@@ -30,7 +40,7 @@ class Admin:
 
         if ctx.channel.permissions_for(ctx.guild.me).manage_messages:
             delet = await ctx.channel.purge(limit=amount+1, check=checc, bulk=True)
-            eee = await ctx.send(self.deletformat(len(delet)))
+            eee = await ctx.send(self.cleanformat(len(delet)))
             await asyncio.sleep(3)
             return await eee.delete()
         else:
@@ -58,7 +68,7 @@ class Admin:
         if not bots:
             await ctx.message.delete()
         delet = await ctx.channel.purge(limit=amount, check=check, bulk=True) # why is it bugged  
-        eee = await ctx.send(self.deletformat(len(delet)))
+        eee = await ctx.send(self.pruneformat(len(delet)))
         await asyncio.sleep(3)
         return await eee.delete()
 
