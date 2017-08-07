@@ -1,5 +1,6 @@
 import traceback
 import json
+import discord
 from discord.ext import commands
 from discord.ext.commands import errors as commands_errors
 from discord import utils as dutils
@@ -17,6 +18,7 @@ class Bot(commands.Bot):
         with open("config.json") as f:
             self.config = json.load(f)
             self.prefix = self.config.get('BOT_PREFIX')
+        self.remove_command("help")
 
     async def getPrefix(self, bot, msg):
         return commands.when_mentioned_or(*self.prefix)(bot, msg)
@@ -62,5 +64,15 @@ async def on_command_error(ctx, exception):
         await ctx.send('This command is on cooldown. You can use this command in `{0:.2f}` seconds.'.format(exception.retry_after))
     else:
         ctx.send(exception)
+
+@bot.command()
+async def help(ctx):
+    helptext = await ctx.bot.formatter.format_help_for(ctx, ctx.bot)
+    helptext = helptext[0]
+    try:
+        await ctx.author.send(helptext)
+        await ctx.send(":mailbox_with_mail: Check your DMs.")
+    except discord.Forbidden:
+        await ctx.send(helptext)
 
 bot.run(bot.config["BOT_TOKEN"])
