@@ -97,6 +97,7 @@ class Core:
     @permissions.owner()
     async def prefix(self, ctx, method: str, *, prefix: str=None): # ported from rybot
         if method == "add":
+            prefix = prefix.strip("\"")
             if prefix == None:
                 return await ctx.send("Specify a prefix to add.")
             if prefix in self.bot.prefix:
@@ -104,6 +105,7 @@ class Core:
             self.bot.prefix.append(prefix)
             await ctx.send("Added prefix `" + prefix + "`")
         elif method == "remove":
+            prefix = prefix.strip("\"")
             if prefix == None:
                 return await ctx.send("Specify a prefix to remove.")
             if not prefix in self.bot.prefix:
