@@ -94,29 +94,26 @@ class Core:
 
     @commands.command(description="Manage those prefixes.")
     @permissions.owner()
-    async def prefix(self, ctx, *args): # ported from rybot
-        if args == None: return
-        if args[0] == "add":
-            if args[1] == None:
-                await ctx.send("Specify a prefix to add.")
-                return
-            if args[1] in self.bot.prefix:
-                await ctx.send("You've tried to add a duplicate prefix...")
-                return
-            self.bot.prefix.append(args[1])
-            await ctx.send("Added prefix `" + args[1] + "`")
-        elif args[0] == "remove":
-            if args[1] == None:
-                await ctx.send("Specify a prefix to remove.")
-                return
-            if not args[1] in self.bot.prefix:
-                await ctx.send("You've tried to remove a non-existent prefix...")
-                return
-            self.bot.prefix.remove(args[1])
-            await ctx.send("Removed prefix `" + args[1] + "`")
-        elif args[0] == "list": # Tuxedo Exclusive Feature™
+    async def prefix(self, ctx, method: str, prefix: str=None): # ported from rybot
+        if method == "add":
+            if prefix == None:
+                return await ctx.send("Specify a prefix to add.")
+            if prefix in self.bot.prefix:
+                return await ctx.send("Duplicate prefixes are not allowed!")
+            self.bot.prefix.append(prefix)
+            await ctx.send("Added prefix `" + prefix + "`")
+        elif method == "remove":
+            if prefix == None:
+                return await ctx.send("Specify a prefix to remove.")
+            if not prefix in self.bot.prefix:
+                return await ctx.send("The specified prefix is not in use.")
+            self.bot.prefix.remove(prefix)
+            await ctx.send("Removed prefix `" + prefix + "`")
+        elif method == "list": # Tuxedo Exclusive Feature™
             prefixes = "\n".join(self.bot.prefix)
             await ctx.send(f"```\n{prefixes}```")
+        else:
+            await ctx.send('Method needs to be `add`, `remove` or `list`)
 
 
 
