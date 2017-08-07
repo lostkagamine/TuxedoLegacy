@@ -4,6 +4,7 @@ import asyncio
 import aiohttp
 import json
 import ast
+import math
 import random
 
 class Lul:
@@ -45,6 +46,31 @@ class Lul:
                 else:
                     await ctx.send(":x: An HTTP error has occurred.")
             sesh.close()
+
+    @commands.command(description="Number suffixes are fun.")
+    async def numbermix(self, ctx):
+        """ Number suffixes are fun. """
+        numbers = ["fir", "seco", "thi", "four", "fif", "six", "seven", "eig", "nin", "ten"]
+        suffix = ["st", "nd", "rd", "th"]
+        correctlist = ["first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eigth", "ninth", "tenth"]
+        finished = []
+        correct = []
+        for i in numbers:
+            finished.append(i + random.choice(suffix))
+
+        for ind, val in enumerate(finished):
+            if correctlist[ind] == val:
+                correct.append(val)
+
+        correctstr = "none"
+        joinedcorrect = ", ".join(correct)
+        if correct != []:
+            correctstr = f"{joinedcorrect} ({len(correct)}, {math.floor(len(correct) / len(correctlist) * 100)}%)"
+
+        finishedstr = ", ".join(finished)
+        if len(correctstr) == len(correctlist):
+            correctstr = "All of them! ^.^"
+        await ctx.send(f"```\nOutput: {finishedstr}\nCorrect: {correctstr}```")
 
 def setup(bot):
     bot.add_cog(Lul(bot))

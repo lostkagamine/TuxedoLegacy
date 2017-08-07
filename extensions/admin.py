@@ -5,11 +5,49 @@ from discord.ext import commands
 from utils import permissions
 from utils import randomness
 import aiohttp
+import asyncio
 
 class Admin:
     def __init__(self, bot):
         self.bot = bot
         self._eval = {}
+
+    @commands.command(description="Clean up the bot's messages.")
+    async def clean(self, ctx, amount : int=50):
+        """Clean up the bot's messages."""
+        def checc(msg):
+            return msg.author == self.bot.user
+
+        if ctx.channel.permissions_for(ctx.guild.me).manage_messages:
+            delet = await ctx.channel.purge(limit=amount+1, check=checc, bulk=True)
+            eee = await ctx.send("Deleted {} messages".format(len(delet)))
+            await asyncio.sleep(3)
+            return await eee.delete()
+        else:
+            async for i in ctx.channel.history(limit=amount): # bugg-o
+                if i.author == self.bot.user:
+                    await i.delete()
+            
+            uwu = await ctx.send("Deleted {} messages".format(amount))
+            await asyncio.sleep(3)
+            return await uwu.delete()
+
+    @commands.command(description="Purge messages in the channel.", aliases=["prune"])
+    async def purge(self, ctx, amount : int=50, *flags):
+        bots = False
+        if "--bots" in flags:
+            bots = True
+        
+        def check(msg):
+            if bots:
+                return msg.author.bot
+            return True
+
+        await ctx.message.delete()
+        delet = await ctx.channel.purge(limit=amount, check=check, bulk=True) # why is it bugged  
+        eee = await ctx.send("Deleted {} messages".format(len(delet)))
+        await asyncio.sleep(3)
+        return await eee.delete()
 
     @commands.command(name="setavy")
     @permissions.owner()
