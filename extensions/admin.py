@@ -13,11 +13,14 @@ class Admin:
         self._eval = {}
 
     def deletformat(self, number):
+        string = ""
         if number == 1:
-            return "Deleted 1 message"
+            string = "deleted 1 message"
         if number == 0:
-            return "Deleted no messages"
-        return "Deleted {} messages".format(number)
+            string = "deleted no messages"
+        else:
+            string = "deleted {} messages".format(number)
+        return "Bot cleanup successful, {} (Method A)".format(string)
 
     @commands.command(description="Clean up the bot's messages.")
     async def clean(self, ctx, amount : int=50):
@@ -35,7 +38,7 @@ class Admin:
                 if i.author == self.bot.user:
                     await i.delete()
             
-            uwu = await ctx.send(self.deletformat(amount))
+            uwu = await ctx.send("Bot cleanup successful (Method B)")
             await asyncio.sleep(3)
             return await uwu.delete()
 
