@@ -12,6 +12,13 @@ class Admin:
         self.bot = bot
         self._eval = {}
 
+    def deletformat(self, number):
+        if number == 1:
+            return "Deleted 1 message"
+        if number == 0:
+            return "Deleted no messages"
+        return "Deleted {} messages".format(number)
+
     @commands.command(description="Clean up the bot's messages.")
     async def clean(self, ctx, amount : int=50):
         """Clean up the bot's messages."""
@@ -20,7 +27,7 @@ class Admin:
 
         if ctx.channel.permissions_for(ctx.guild.me).manage_messages:
             delet = await ctx.channel.purge(limit=amount+1, check=checc, bulk=True)
-            eee = await ctx.send("Deleted {} messages".format(len(delet)))
+            eee = await ctx.send(self.deletformat(len(delet)))
             await asyncio.sleep(3)
             return await eee.delete()
         else:
@@ -28,7 +35,7 @@ class Admin:
                 if i.author == self.bot.user:
                     await i.delete()
             
-            uwu = await ctx.send("Deleted {} messages".format(amount))
+            uwu = await ctx.send(self.deletformat(amount))
             await asyncio.sleep(3)
             return await uwu.delete()
 
@@ -43,9 +50,10 @@ class Admin:
                 return msg.author.bot
             return True
 
-        await ctx.message.delete()
+        if not bots:
+            await ctx.message.delete()
         delet = await ctx.channel.purge(limit=amount, check=check, bulk=True) # why is it bugged  
-        eee = await ctx.send("Deleted {} messages".format(len(delet)))
+        eee = await ctx.send(self.deletformat(len(delet)))
         await asyncio.sleep(3)
         return await eee.delete()
 
