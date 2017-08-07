@@ -3,6 +3,7 @@ import os
 from utils import permissions
 from discord.ext import commands
 import time
+import asyncio
 
 class Core:
     def __init__(self, bot):
@@ -114,6 +115,25 @@ class Core:
             await ctx.send(f"```\n{prefixes}```")
         else:
             await ctx.send('Method needs to be `add`, `remove` or `list`')
+
+    @commands.command(description="Clean up the bot's messages.")
+    async def clean(self, ctx, amount : int=50):
+        def checc(msg):
+            return msg.author == self.bot.user
+
+        if ctx.channel.permissions_for(ctx.guild.me).manage_messages:
+            delet = await ctx.channel.purge(limit=amount+1, check=checc, bulk=False)
+            eee = await ctx.send("Deleted {} messages".format(len(delet)))
+            await asyncio.sleep(3)
+            return await eee.delete()
+        else:
+            async for i in ctx.channel.history(limit=amount): # bugg-o
+                if i.author == self.bot.user:
+                    await i.delete()
+            
+            uwu = await ctx.send("Deleted {} messages".format(amount))
+            await asyncio.sleep(3)
+            return await uwu.delete()
 
 
 

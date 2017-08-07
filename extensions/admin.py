@@ -3,6 +3,7 @@ import textwrap
 import time
 from discord.ext import commands
 from utils import permissions
+from utils import randomness
 import aiohttp
 
 class Admin:
@@ -26,6 +27,16 @@ class Admin:
             self._eval['env'] = {}
         if self._eval.get('count') is None:
             self._eval['count'] = 0
+
+        codebyspace = code.split(" ")
+        print(codebyspace)
+        silent = False
+        if codebyspace[0] == "--silent" or codebyspace[0] == "-s": 
+            silent = True
+            print("silent mmLol")
+            codebyspace = codebyspace[1:]
+            code = " ".join(codebyspace)
+
 
         self._eval['env'].update({
             'self': self.bot,
@@ -82,15 +93,18 @@ class Admin:
             if ctx.author.id == self.bot.user.id:
                 await ctx.message.edit(content=message)
             else:
-                await ctx.send(message)
+                if not silent:
+                    await ctx.send(message)
         except discord.HTTPException:
-            with aiohttp.ClientSession() as sesh:
-                async with sesh.post("https://hastebin.com/documents/", data=output, headers={"Content-Type": "text/plain"}) as r:
-                    r = await r.json()
-                    embed = discord.Embed(
-                        description="[View output - click](https://hastebin.com/{})".format(r["key"])
-                    )
-                    await ctx.send(embed=embed)
+            if not silent:
+                with aiohttp.ClientSession() as sesh:
+                    async with sesh.post("https://hastebin.com/documents/", data=output, headers={"Content-Type": "text/plain"}) as r:
+                        r = await r.json()
+                        embed = discord.Embed(
+                            description="[View output - click](https://hastebin.com/raw/{})".format(r["key"]),
+                            color=randomness.random_colour()
+                        )
+                        await ctx.send(embed=embed)
 
 
 def setup(bot):
