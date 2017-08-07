@@ -113,7 +113,7 @@ class Core:
             prefixes = "\n".join(self.bot.prefix)
             await ctx.send(f"```\n{prefixes}```")
         else:
-            await ctx.send('Method needs to be `add`, `remove` or `list`)
+            await ctx.send('Method needs to be `add`, `remove` or `list`')
 
 
 
