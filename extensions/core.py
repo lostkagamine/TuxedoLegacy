@@ -94,7 +94,7 @@ class Core:
 
     @commands.command(description="Manage those prefixes.")
     @permissions.owner()
-    async def prefix(self, ctx, method: str, prefix: str=None): # ported from rybot
+    async def prefix(self, ctx, method: str, *, prefix: str=None): # ported from rybot
         if method == "add":
             if prefix == None:
                 return await ctx.send("Specify a prefix to add.")
