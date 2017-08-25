@@ -6,6 +6,7 @@ import json
 import ast
 import math
 import random
+from utils import randomness
 
 class Lul:
     def __init__(self, bot):
@@ -41,9 +42,10 @@ class Lul:
                 if r.status == 200:
                     data = await r.text()
                     types = ast.literal_eval(data) # safe eval, woot
+                    joinedtypes = ", ".join(types)
             if _type not in types:
                 sesh.close()
-                return await ctx.send(":x: Invalid type")
+                return await ctx.send(f":x: Invalid type. Available types are: {joinedtypes}")
             async with sesh.get("http://fact.birb.pw/api/v1/{}".format(_type)) as r:
                 if r.status == 200:
                     data = await r.text()
@@ -51,7 +53,7 @@ class Lul:
                     fact = json_resp["string"]
 
                     await ctx.send(embed=discord.Embed(title="{} fact".format(_type.title()), 
-                    color=random.randint(0x000000, 0xFFFFFF), 
+                    color=randomness.random_colour(), 
                     description=fact)
                     .set_footer(text="Powered by fact.birb.pw"))
                 else:
