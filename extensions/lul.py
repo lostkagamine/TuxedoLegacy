@@ -86,5 +86,13 @@ class Lul:
             correctstr = "All of them! ^.^"
         await ctx.send(f"```\nOutput: {finishedstr}\nCorrect: {correctstr}```")
 
+    @commands.command(description="Nouns.")
+    async def botgen(self, ctx):
+        """Get your new bot name."""
+        with open("nouns.txt") as lol:
+            nouns = lol.read().split('\n')
+        
+        await ctx.send(f'Your new bot name is `Discord {random.choice(nouns).title()}`')
+
 def setup(bot):
     bot.add_cog(Lul(bot))
