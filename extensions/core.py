@@ -2,6 +2,7 @@ import discord
 import os
 from utils import permissions
 from discord.ext import commands
+import time
 
 class Core:
     def __init__(self, bot):
