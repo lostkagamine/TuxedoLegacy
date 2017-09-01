@@ -26,7 +26,7 @@ class Moderation:
         await ctx.send(':ok_hand:')
 
     @commands.command()
-    async def ban(self, ctx, member : discord.Member, *, reason : str):
+    async def ban(self, ctx, member : discord.Member, *, reason : str = None):
         """Bans a member. You can specify a reason."""
         if ctx.author == member:
             return await ctx.send('Don\'t ban yourself, please.')
@@ -38,7 +38,7 @@ class Moderation:
         await ctx.send(':ok_hand:')
 
     @commands.command()
-    async def kick(self, ctx, member : discord.Member, *, reason : str):
+    async def kick(self, ctx, member : discord.Member, *, reason : str = None):
         """Kicks a member. You can specify a reason."""
         if ctx.author == member:
             return await ctx.send('Don\'t kick yourself, please.')
