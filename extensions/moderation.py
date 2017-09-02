@@ -50,7 +50,7 @@ class Moderation:
         await ctx.send(':ok_hand:')
 
     @commands.command()
-    async def dehoist(self, ctx, member : discord.Member, *, flags : str):
+    async def dehoist(self, ctx, member : discord.Member, *, flags : str = None):
         if not ctx.author.permissions_in(ctx.channel).manage_nicknames:
             return await ctx.send(':no_entry_sign: Not enough permissions. You need Manage Nicknames.')
         if not ctx.me.permissions_in(ctx.channel).manage_nicknames:
