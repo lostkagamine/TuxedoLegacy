@@ -39,6 +39,7 @@ class Moderation:
 
     @commands.command()
     async def kick(self, ctx, member : discord.Member, *, reason : str = None):
+    async def kick(self, ctx, member : discord.Member, *, reason : str):
         """Kicks a member. You can specify a reason."""
         if ctx.author == member:
             return await ctx.send('Don\'t kick yourself, please.')
@@ -48,6 +49,7 @@ class Moderation:
             return await ctx.send(':no_entry_sign: Grant the bot Kick Members before doing this.')
         await ctx.guild.kick(member, reason=f'[{str(ctx.author)}] {reason}' if reason else f'Kick by {str(ctx.author)}')
         await ctx.send(':ok_hand:')
+
 
     @commands.command()
     async def dehoist(self, ctx, member : discord.Member, *, flags : str = None):
@@ -69,6 +71,7 @@ class Moderation:
             await ctx.send('I couldn\'t dehoist this member. Either they weren\'t hoisting or this character isn\'t supported yet.')
 
             
+
 
         
 
