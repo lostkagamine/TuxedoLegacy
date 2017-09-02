@@ -2,14 +2,14 @@
 # are ok with this file
 # which is a big plus
 
-# this memecode is (c) ry00001 2017
 """
-Switches - by ry00001
+SwitchPy - by ry00001
 All the switch parsing you'll ever need.
+(c) ry00001 2017
 """
 
 
-def parse_switches(thing):
+def parse(thing):
     """The main function."""
     split = thing.split(' ')
     switches = {}

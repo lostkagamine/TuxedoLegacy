@@ -12,66 +12,6 @@ class Admin:
         self.bot = bot
         self._eval = {}
 
-    def cleanformat(self, number):
-        string = ""
-        if number == 1:
-            string = "deleted 1 message"
-        if number == 0:
-            string = "deleted no messages"
-        else:
-            string = "deleted {} messages".format(number)
-        return "Bot cleanup successful, {} (Method A)".format(string)
-
-    def pruneformat(self, number):
-        string = ""
-        if number == 1:
-            string = "Deleted 1 message"
-        if number == 0:
-            string = "Deleted no messages"
-        else:
-            string = "Deleted {} messages".format(number)
-        return string
-
-    @commands.command(description="Clean up the bot's messages.")
-    async def clean(self, ctx, amount : int=50):
-        """Clean up the bot's messages."""
-        def checc(msg):
-            return msg.author == self.bot.user
-
-        if ctx.channel.permissions_for(ctx.guild.me).manage_messages:
-            delet = await ctx.channel.purge(limit=amount+1, check=checc, bulk=True)
-            eee = await ctx.send(self.cleanformat(len(delet)))
-            await asyncio.sleep(3)
-            return await eee.delete()
-        else:
-            async for i in ctx.channel.history(limit=amount): # bugg-o
-                if i.author == self.bot.user:
-                    await i.delete()
-            
-            uwu = await ctx.send("Bot cleanup successful (Method B)")
-            await asyncio.sleep(3)
-            return await uwu.delete()
-
-    @commands.command(description="Purge messages in the channel.", aliases=["prune"])
-    async def purge(self, ctx, amount : int=50, *flags):
-        if not ctx.author.permissions_in(ctx.channel).manage_messages:
-            return await ctx.send(":x: Not enough permissions.")
-        bots = False
-        if "--bots" in flags:
-            bots = True
-        
-        def check(msg):
-            if bots:
-                return msg.author.bot
-            return True
-
-        if not bots:
-            await ctx.message.delete()
-        delet = await ctx.channel.purge(limit=amount, check=check, bulk=True) # why is it bugged  
-        eee = await ctx.send(self.pruneformat(len(delet)))
-        await asyncio.sleep(3)
-        return await eee.delete()
-
     @commands.command(name="setavy")
     @permissions.owner()
     async def set_avy(self, ctx, *, avy : str):
