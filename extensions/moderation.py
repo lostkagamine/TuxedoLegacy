@@ -1,11 +1,10 @@
 # MODERATION FOR TUXEDO
 # (c) ry000001 2017
 # This code will *only* work on Tuxedo Discord bot.
-# This code is highly private and confidential. Do not leak.
+# This code is free and open source software. Feel free to leak.
 import discord
 from discord.ext import commands
 from discord import utils as dutils
-
 chars = '!#/()=%&'
 
 class Moderation:
