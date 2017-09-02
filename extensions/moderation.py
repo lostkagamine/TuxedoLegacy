@@ -26,7 +26,7 @@ class Moderation:
         await ctx.send(':ok_hand:')
 
     @commands.command()
-    async def ban(self, ctx, member : discord.Member, *, reason : str):
+    async def ban(self, ctx, member : discord.Member, *, reason : str = None):
         """Bans a member. You can specify a reason."""
         if ctx.author == member:
             return await ctx.send('Don\'t ban yourself, please.')
@@ -38,6 +38,7 @@ class Moderation:
         await ctx.send(':ok_hand:')
 
     @commands.command()
+    async def kick(self, ctx, member : discord.Member, *, reason : str = None):
     async def kick(self, ctx, member : discord.Member, *, reason : str):
         """Kicks a member. You can specify a reason."""
         if ctx.author == member:
@@ -48,7 +49,29 @@ class Moderation:
             return await ctx.send(':no_entry_sign: Grant the bot Kick Members before doing this.')
         await ctx.guild.kick(member, reason=f'[{str(ctx.author)}] {reason}' if reason else f'Kick by {str(ctx.author)}')
         await ctx.send(':ok_hand:')
-    
+
+
+    @commands.command()
+    async def dehoist(self, ctx, member : discord.Member, *, flags : str = None):
+        if not ctx.author.permissions_in(ctx.channel).manage_nicknames:
+            return await ctx.send(':no_entry_sign: Not enough permissions. You need Manage Nicknames.')
+        if not ctx.me.permissions_in(ctx.channel).manage_nicknames:
+            return await ctx.send(':no_entry_sign: Grant the bot Manage Nicknames before doing this.')
+        if ctx.author == member:
+            return await ctx.send('Nope, can\'t do this.')
+        name = member.nick if member.nick else member.name
+        if name.startswith(tuple(chars)):
+            try:
+                await member.edit(nick=f'z {name}') # z is temporary
+            except discord.Forbidden:
+                await ctx.send('Oops. I can\'t dehoist this member because my privilege is too low. Move my role higher.')
+            else:
+                await ctx.send(':ok_hand:')
+        else:
+            await ctx.send('I couldn\'t dehoist this member. Either they weren\'t hoisting or this character isn\'t supported yet.')
+
+            
+
 
         
 

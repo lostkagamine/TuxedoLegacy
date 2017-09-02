@@ -1,22 +1,27 @@
 import traceback
 import json
+import discord
 from discord.ext import commands
 from discord.ext.commands import errors as commands_errors
 from discord import utils as dutils
 
-with open("config.json") as f:
-    config = json.load(f)
 
-token = config.get('BOT_TOKEN')
-prefix = config.get('BOT_PREFIX')
 
-async def getPrefix(bot, msg):
-    return commands.when_mentioned_or(*prefix)(bot, msg)
+
+
 
 class Bot(commands.Bot):
-    def __init__(self, command_prefix, **options):
-        super().__init__(command_prefix, **options)
+
+    def __init__(self, **options):
+        super().__init__(self.getPrefix, **options)
         self.cmd_help = cmd_help
+        with open("config.json") as f:
+            self.config = json.load(f)
+            self.prefix = self.config.get('BOT_PREFIX')
+        self.remove_command("help")
+
+    async def getPrefix(self, bot, msg):
+        return commands.when_mentioned_or(*self.prefix)(bot, msg)
 
     async def on_ready(self):
         app_info = await self.application_info()
@@ -39,7 +44,7 @@ async def cmd_help(ctx):
     for page in _help:
         await ctx.send(page)
 
-bot = Bot(getPrefix)
+bot = Bot()
 
 @bot.listen("on_command_error")
 async def on_command_error(ctx, exception):
@@ -49,15 +54,31 @@ async def on_command_error(ctx, exception):
         exception = exception.original
         _traceback = traceback.format_tb(exception.__traceback__)
         _traceback = ''.join(_traceback)
-        error = ('`{0}` in command `{1}`: ```py\n'
-                 'Traceback (most recent call last):\n{2}{0}: {3}\n```')\
-                 .format(type(exception).__name__,
-                 ctx.command.qualified_name,
-                 _traceback, exception)
-        await ctx.send(error)
+        # error = ('**An error has occurred.**\n\n`{0}` in command `{1}`: ```py\n'
+        #          'Traceback (most recent call last):\n{2}{0}: {3}\n```\n\nThis is (probably) a bug. You may want to join https://discord.gg/KEcme4H to report the issue and hopefully get it fixed.')\
+        #          .format(type(exception).__name__,
+        #          ctx.command.qualified_name,
+        #          _traceback, exception)
+        error = discord.Embed(
+            title="An error has occurred.",
+            color=0xFF0000,
+            description="This is (probably) a bug. You may want to join https://discord.gg/KEcme4H to report it and get it fixed."
+        )
+        error.add_field(name="`{}` in command `{}`".format(type(exception).__name__, ctx.command.qualified_name), value="```py\nTraceback (most recent call last):\n{}{}: {}```".format(_traceback, type(exception).__name__, exception))
+        await ctx.send(embed=error)
     elif isinstance(exception, commands_errors.CommandOnCooldown):
         await ctx.send('This command is on cooldown. You can use this command in `{0:.2f}` seconds.'.format(exception.retry_after))
     else:
         ctx.send(exception)
 
-bot.run(token)
+@bot.command()
+async def help(ctx):
+    helptext = await ctx.bot.formatter.format_help_for(ctx, ctx.bot)
+    helptext = helptext[0]
+    try:
+        await ctx.author.send(helptext)
+        await ctx.send(":mailbox_with_mail: Check your DMs.")
+    except discord.Forbidden:
+        await ctx.send(helptext)
+
+bot.run(bot.config["BOT_TOKEN"])

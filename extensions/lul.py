@@ -4,12 +4,25 @@ import asyncio
 import aiohttp
 import json
 import ast
+import math
 import random
+from utils import randomness
 
 class Lul:
     def __init__(self, bot):
         self.bot = bot
     
+
+    def gensuffix(self, number):
+        if number == 1:
+            return "st"
+        elif number == 2:
+            return "nd"
+        elif number == 3:
+            return "rd"
+        else:
+            return "th"
+
     @commands.command()
     async def cat(self, ctx):
         with ctx.channel.typing():
@@ -29,9 +42,10 @@ class Lul:
                 if r.status == 200:
                     data = await r.text()
                     types = ast.literal_eval(data) # safe eval, woot
+                    joinedtypes = ", ".join(types)
             if _type not in types:
                 sesh.close()
-                return await ctx.send(":x: Invalid type")
+                return await ctx.send(f":x: Invalid type. Available types are: {joinedtypes}")
             async with sesh.get("http://fact.birb.pw/api/v1/{}".format(_type)) as r:
                 if r.status == 200:
                     data = await r.text()
@@ -39,12 +53,48 @@ class Lul:
                     fact = json_resp["string"]
 
                     await ctx.send(embed=discord.Embed(title="{} fact".format(_type.title()), 
-                    color=random.randint(0x000000, 0xFFFFFF), 
+                    color=randomness.random_colour(), 
                     description=fact)
                     .set_footer(text="Powered by fact.birb.pw"))
                 else:
                     await ctx.send(":x: An HTTP error has occurred.")
             sesh.close()
+
+    @commands.command(description="Number suffixes are fun.")
+    async def numbermix(self, ctx):
+        """ Number suffixes are fun. """
+        numbers = ["fir", "seco", "thi", "four", "fif", "six", "seven", "eig", "nin", "ten"]
+        suffix = ["st", "nd", "rd", "th"]
+        correctlist = ["first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eigth", "ninth", "tenth"]
+        finished = []
+        correct = []
+        correctsuffixes = []
+        for i in range(len(numbers)):
+            correctsuffixes.append(self.gensuffix(i + 1))
+        for i, v in enumerate(numbers):
+            finished.append(v + random.choice(suffix))
+
+        for ind, val in enumerate(finished):
+            if correctlist[ind] == val:
+                correct.append(val)
+
+        correctstr = "none"
+        joinedcorrect = ", ".join(correct)
+        if correct != []:
+            correctstr = f"{joinedcorrect} ({len(correct)}, {math.floor(len(correct) / len(correctlist) * 100)}%)"
+
+        finishedstr = ", ".join(finished)
+        if finished == correctlist:
+            correctstr = "All of them! ^.^"
+        await ctx.send(f"```\nOutput: {finishedstr}\nCorrect: {correctstr}```")
+
+    @commands.command(description="Nouns.")
+    async def botgen(self, ctx):
+        """Get your new bot name."""
+        with open("nouns.txt") as lol:
+            nouns = lol.read().split('\n')
+        
+        await ctx.send(f'Your new bot name is `Discord {random.choice(nouns).title()}`')
 
 def setup(bot):
     bot.add_cog(Lul(bot))

@@ -3,6 +3,7 @@ import os
 from utils import permissions
 from discord.ext import commands
 import time
+import asyncio
 
 class Core:
     def __init__(self, bot):
@@ -36,7 +37,7 @@ class Core:
                 self.settings['extensions'].append(extension_name)
                 await m.edit(content='Extension loaded.')
             except Exception as e:
-                await m.edit(content=f'Error while loading {name}\n`{e}`')
+                await m.edit(content=f'Error while loading {name}\n`{type(e).__name__}: {e}`')
         else:
             await m.edit(content='Extension already loaded.')
 
@@ -66,7 +67,7 @@ class Core:
                 await m.edit(content='Extension reloaded.')
             except Exception as e:
                 self.settings['extensions'].remove(extension_name)
-                await m.edit(content=f'Failed to reload extension\n{e}')
+                await m.edit(content=f'Failed to reload extension\n`{type(e).__name__}: {e}`')
         else:
             await m.edit(content='Extension isn\'t loaded.')
 
@@ -91,6 +92,37 @@ class Core:
         after = time.monotonic()
         ping = (after - before) * 1000
         await pong.edit(content="`PING discordapp.com {}ms`".format(int(ping)))
+
+    @commands.command(description="Manage those prefixes.")
+    @permissions.owner()
+    async def prefix(self, ctx, method: str, *, prefix: str=None): # ported from rybot
+        if method == "add":
+            prefix = prefix.strip("\"")
+            if prefix == None:
+                return await ctx.send("Specify a prefix to add.")
+            if prefix in self.bot.prefix:
+                return await ctx.send("Duplicate prefixes are not allowed!")
+            self.bot.prefix.append(prefix)
+            await ctx.send("Added prefix `" + prefix + "`")
+        elif method == "remove":
+            prefix = prefix.strip("\"")
+            if prefix == None:
+                return await ctx.send("Specify a prefix to remove.")
+            if not prefix in self.bot.prefix:
+                return await ctx.send("The specified prefix is not in use.")
+            self.bot.prefix.remove(prefix)
+            await ctx.send("Removed prefix `" + prefix + "`")
+        elif method == "list": # Tuxedo Exclusive Feature™
+            prefixes = "\n".join(self.bot.prefix)
+            await ctx.send(f"```\n{prefixes}```")
+        else:
+            await ctx.send('Method needs to be `add`, `remove` or `list`')
+
+    @commands.command()
+    @permissions.owner()
+    async def error(self, ctx):
+        3/0
+
 
 
 

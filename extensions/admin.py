@@ -3,12 +3,74 @@ import textwrap
 import time
 from discord.ext import commands
 from utils import permissions
+from utils import randomness
 import aiohttp
+import asyncio
 
 class Admin:
     def __init__(self, bot):
         self.bot = bot
         self._eval = {}
+
+    def cleanformat(self, number):
+        string = ""
+        if number == 1:
+            string = "deleted 1 message"
+        if number == 0:
+            string = "deleted no messages"
+        else:
+            string = "deleted {} messages".format(number)
+        return "Bot cleanup successful, {} (Method A)".format(string)
+
+    def pruneformat(self, number):
+        string = ""
+        if number == 1:
+            string = "Deleted 1 message"
+        if number == 0:
+            string = "Deleted no messages"
+        else:
+            string = "Deleted {} messages".format(number)
+        return string
+
+    @commands.command(description="Clean up the bot's messages.")
+    async def clean(self, ctx, amount : int=50):
+        """Clean up the bot's messages."""
+        def checc(msg):
+            return msg.author == self.bot.user
+
+        if ctx.channel.permissions_for(ctx.guild.me).manage_messages:
+            delet = await ctx.channel.purge(limit=amount+1, check=checc, bulk=True)
+            eee = await ctx.send(self.cleanformat(len(delet)))
+            await asyncio.sleep(3)
+            return await eee.delete()
+        else:
+            async for i in ctx.channel.history(limit=amount): # bugg-o
+                if i.author == self.bot.user:
+                    await i.delete()
+            
+            uwu = await ctx.send("Bot cleanup successful (Method B)")
+            await asyncio.sleep(3)
+            return await uwu.delete()
+
+    @commands.command(description="Purge messages in the channel.", aliases=["prune"])
+    async def purge(self, ctx, amount : int=50, *flags):
+        if not ctx.author.permissions_in(ctx.channel).manage_messages:
+            return await ctx.send(":x: Not enough permissions.")
+        bots = False
+        if "--bots" in flags:
+            bots = True
+        
+        def check(msg):
+            if bots:
+                return msg.author.bot
+            return True
+
+        if not bots:
+            await ctx.message.delete()
+        delet = await ctx.channel.purge(limit=amount, check=check, bulk=True) # why is it bugged  
+        eee = await ctx.send(self.pruneformat(len(delet)))
+        await asyncio.sleep(3)
+        return await eee.delete()
 
     @commands.command(name="setavy")
     @permissions.owner()
@@ -26,6 +88,16 @@ class Admin:
             self._eval['env'] = {}
         if self._eval.get('count') is None:
             self._eval['count'] = 0
+
+        codebyspace = code.split(" ")
+        print(codebyspace)
+        silent = False
+        if codebyspace[0] == "--silent" or codebyspace[0] == "-s": 
+            silent = True
+            print("silent mmLol")
+            codebyspace = codebyspace[1:]
+            code = " ".join(codebyspace)
+
 
         self._eval['env'].update({
             'self': self.bot,
@@ -82,9 +154,19 @@ class Admin:
             if ctx.author.id == self.bot.user.id:
                 await ctx.message.edit(content=message)
             else:
-                await ctx.send(message)
+                if not silent:
+                    await ctx.send(message)
         except discord.HTTPException:
-            await ctx.send("Output was too big to be printed.")
+            if not silent:
+                with aiohttp.ClientSession() as sesh:
+                    async with sesh.post("https://hastebin.com/documents/", data=output, headers={"Content-Type": "text/plain"}) as r:
+                        r = await r.json()
+                        embed = discord.Embed(
+                            description="[View output - click](https://hastebin.com/raw/{})".format(r["key"]),
+                            color=randomness.random_colour()
+                        )
+                        await ctx.send(embed=embed)
+
 
 def setup(bot):
     bot.add_cog(Admin(bot))

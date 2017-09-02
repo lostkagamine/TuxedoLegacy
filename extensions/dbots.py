@@ -4,15 +4,12 @@ import discord
 from discord.ext import commands
 from datetime import datetime
 
-with open("config.json") as f:
-    config = json.load(f)
-
 class HTTPException(Exception):
     # lul
     errtype = "HTTP"
 
-async def get_stats(botid):
-    token = config["DBOTS_TOKEN"]
+async def get_stats(bot, botid):
+    token = bot.config["DBOTS_TOKEN"]
     headers = {"Authorization": token}
     async with aiohttp.ClientSession() as cs:
         async with cs.get("http://bots.discord.pw/api/bots/{}".format(str(botid)), headers=headers) as r:
@@ -44,19 +41,26 @@ class DBots:
             if not id_arg.bot:
                 return await ctx.send("This member isn't a bot.")
             
-            a = await get_stats(id_arg.id)
+            a = await get_stats(self.bot, id_arg.id)
             embed = discord.Embed(
                 title="Bot information for {}".format(a["name"]),
                 color=0x00FF00
             )
+            owner_ids = a["owner_ids"]
             embed.add_field(name="Library", value=a["library"])
             embed.add_field(name="User ID", value=a["user_id"])
-            owner = ctx.guild.get_member(int(a["owner_ids"][0]))
+            owner_info = []
+            for ind, i in enumerate(owner_ids):
+                tmpvar = ctx.guild.get_member(int(i))
+                try:
+                    print(f"**{tmpvar.name}**#{tmpvar.discriminator} ({tmpvar.id}) | {str(ind)}")
+                except:
+                    pass
             if a["website"]:
                 embed.add_field(name="Website", value="[Bot Website]({})".format(a["website"]))
             embed.add_field(name="Prefix", value="`{}`".format(a["prefix"]))
-            if owner:
-                embed.add_field(name="Owner", value="**{}**#{} ({})".format(owner.name, owner.discriminator, owner.id))
+            if owner_info[0]:
+                embed.add_field(name="Owner", value=", ".join(owner_info))
             if a["invite_url"]:
                 embed.add_field(name="Invite", value="[Bot Invite]({})".format(a["invite_url"]))
             if not a["description"] == "":
