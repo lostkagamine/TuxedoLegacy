@@ -138,23 +138,27 @@ class Moderation:
         await asyncio.sleep(3)
         return await eee.delete()
 
-    @commands.command(description="Ping an online moderator.", aliases=['pingmod', 'pingmods'])
-    @commands.cooldown(1, 60.00, commands.BucketType.guild)
-    async def alert(self, ctx, *, reason : str = None):
+    @commands.command(description="Ping an online moderator.", aliases=['pingmod', 'pingmods', 'pongmod', 'pongmods'])
+    async def alert(self, ctx, *, reason : str = '(No reason specified)'):
         mods = [
                 a for a in ctx.guild.members if 
-                a.permissions_in(ctx.channel).ban_members and 
+                (a.permissions_in(ctx.channel).ban_members or a.permissions_in(ctx.channel).kick_members) and 
                 a.status == discord.Status.online and 
                 not a.bot
                ]
-        print(mods)
         mod = random.choice(mods)
         if ctx.author.permissions_in(ctx.channel).ban_members: mod = ctx.author
         if mods == []: return await ctx.send('No available online mods.')
-        text = f'Moderator Autoping: <@{mod.id}> (by {str(ctx.author)})'
-        if reason is not None:
-            text = text + f'\n\n**{reason}**'
+        text = f'Moderator Autoping:\n\n**{reason}**\n\n<@{mod.id}> (by **{str(ctx.author)}**)'
         await ctx.send(text)
+
+    @commands.command(description="Ban a user, even when not in the server.", aliases=['shadowban'])
+    async def hackban(self, ctx, user : int, *, reason : str = None):
+        if not ctx.author.permissions_in(ctx.channel).ban_members:
+            return await ctx.send(':no_entry_sign: Not enough permissions. You need Ban Members.')
+        if not ctx.me.permissions_in(ctx.channel).ban_members:
+            return await ctx.send(':no_entry_sign: Grant the bot Ban Members before doing this.')
+        await ctx.guild.ban(user, reason=f'[{str(ctx.author)}] {reason}' if reason else f'Ban by {str(ctx.author)}', delete_message_days=7)
 
 
         

@@ -115,8 +115,11 @@ class Core:
         elif method == "list": # Tuxedo Exclusive Feature™
             prefixes = "\n".join(self.bot.prefix)
             await ctx.send(f"```\n{prefixes}```")
+        elif method == 'reset':
+            self.bot.prefix = self.bot.config.get('BOT_PREFIX')
+            await ctx.send('Bot prefixes reset.')
         else:
-            await ctx.send('Method needs to be `add`, `remove` or `list`')
+            await ctx.send('Method needs to be `add`, `remove`, `list` or `reset`')
 
     @commands.command()
     @permissions.owner()
