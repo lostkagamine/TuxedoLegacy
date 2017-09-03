@@ -53,13 +53,14 @@ class DBots:
             for ind, i in enumerate(owner_ids):
                 tmpvar = ctx.guild.get_member(int(i))
                 try:
-                    print(f"**{tmpvar.name}**#{tmpvar.discriminator} ({tmpvar.id}) | {str(ind)}")
+                    owner_info[ind] = f'**{i.name}**#{i.discriminator} ({i.id})'
                 except:
                     pass
+            print(owner_info)
             if a["website"]:
                 embed.add_field(name="Website", value="[Bot Website]({})".format(a["website"]))
             embed.add_field(name="Prefix", value="`{}`".format(a["prefix"]))
-            if owner_info[0]:
+            if len(owner_info) > 1:
                 embed.add_field(name="Owner", value=", ".join(owner_info))
             if a["invite_url"]:
                 embed.add_field(name="Invite", value="[Bot Invite]({})".format(a["invite_url"]))

@@ -35,6 +35,8 @@ class Moderation:
             return await ctx.send(':no_entry_sign: Not enough permissions. You need Ban Members.')
         if not ctx.me.permissions_in(ctx.channel).ban_members:
             return await ctx.send(':no_entry_sign: Grant the bot Ban Members before doing this.')
+        if ctx.author.top_role <= member.top_role:
+            return await ctx.send(':no_entry_sign: You can\'t ban someone with a higher role than you!')
         await ctx.guild.ban(member, reason=f'[{str(ctx.author)}] {reason}' if reason else f'Ban by {str(ctx.author)}', delete_message_days=7)
         await ctx.send(':ok_hand:')
 
@@ -47,6 +49,8 @@ class Moderation:
             return await ctx.send(':no_entry_sign: Not enough permissions. You need Kick Members.')
         if not ctx.me.permissions_in(ctx.channel).kick_members:
             return await ctx.send(':no_entry_sign: Grant the bot Kick Members before doing this.')
+        if ctx.author.top_role <= member.top_role:
+            return await ctx.send(':no_entry_sign: You can\'t kick someone with a higher role than you!')
         await ctx.guild.kick(member, reason=f'[{str(ctx.author)}] {reason}' if reason else f'Kick by {str(ctx.author)}')
         await ctx.send(':ok_hand:')
 
