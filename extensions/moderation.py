@@ -141,11 +141,19 @@ class Moderation:
     @commands.command(description="Ping an online moderator.", aliases=['pingmod', 'pingmods'])
     @commands.cooldown(1, 60.00, commands.BucketType.guild)
     async def alert(self, ctx, *, reason : str = None):
-        mods = [a for a in ctx.guild.members if a.permissions_in(ctx.channel).ban_members and a.status == discord.Status.online]
+        mods = [
+                a for a in ctx.guild.members if 
+                a.permissions_in(ctx.channel).ban_members and 
+                a.status == discord.Status.online and 
+                not a.bot
+               ]
+        print(mods)
+        mod = random.choice(mods)
+        if ctx.author.permissions_in(ctx.channel).ban_members: mod = ctx.author
         if mods == []: return await ctx.send('No available online mods.')
-        text = f'Moderator Autoping: <@{random.choice(mods).id}> (by {str(ctx.author)})'
+        text = f'Moderator Autoping: <@{mod.id}> (by {str(ctx.author)})'
         if reason is not None:
-            text = text + f'\n**{reason}**'
+            text = text + f'\n\n**{reason}**'
         await ctx.send(text)
 
 
