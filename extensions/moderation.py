@@ -7,6 +7,7 @@ from discord.ext import commands
 from discord import utils as dutils
 from utils import switches
 import asyncio
+import random
 chars = '!#/()=%&'
 
 class Moderation:
@@ -37,6 +38,8 @@ class Moderation:
             return await ctx.send(':no_entry_sign: Grant the bot Ban Members before doing this.')
         if ctx.author.top_role <= member.top_role:
             return await ctx.send(':no_entry_sign: You can\'t ban someone with a higher role than you!')
+        if ctx.me.top_role <= member.top_role:
+            return await ctx.send(':no_entry_sign: I can\'t ban someone with a higher role than me!')
         await ctx.guild.ban(member, reason=f'[{str(ctx.author)}] {reason}' if reason else f'Ban by {str(ctx.author)}', delete_message_days=7)
         await ctx.send(':ok_hand:')
 
@@ -51,6 +54,8 @@ class Moderation:
             return await ctx.send(':no_entry_sign: Grant the bot Kick Members before doing this.')
         if ctx.author.top_role <= member.top_role:
             return await ctx.send(':no_entry_sign: You can\'t kick someone with a higher role than you!')
+        if ctx.me.top_role <= member.top_role:
+            return await ctx.send(':no_entry_sign: I can\'t kick someone with a higher role than me!')
         await ctx.guild.kick(member, reason=f'[{str(ctx.author)}] {reason}' if reason else f'Kick by {str(ctx.author)}')
         await ctx.send(':ok_hand:')
 
@@ -133,6 +138,15 @@ class Moderation:
         await asyncio.sleep(3)
         return await eee.delete()
 
+    @commands.command(description="Ping an online moderator.", aliases=['pingmod', 'pingmods'])
+    @commands.cooldown(1, 60.00, commands.BucketType.guild)
+    async def alert(self, ctx, *, reason : str = None):
+        mods = [a for a in ctx.guild.members if a.permissions_in(ctx.channel).ban_members and a.status == discord.Status.online]
+        if mods == []: return await ctx.send('No available online mods.')
+        text = f'Moderator Autoping: <@{random.choice(mods).id}> (by {str(ctx.author)})'
+        if reason is not None:
+            text = text + f'\n**{reason}**'
+        await ctx.send(text)
 
 
         
