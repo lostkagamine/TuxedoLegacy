@@ -10,6 +10,8 @@ import asyncio
 import random
 chars = '!#/()=%&'
 
+alert_disabled = [110373943822540800]
+
 class Moderation:
     def __init__(self, bot):
         self.bot = bot
@@ -140,10 +142,12 @@ class Moderation:
 
     @commands.command(description="Ping an online moderator.", aliases=['pingmod', 'pingmods', 'pongmod', 'pongmods'])
     async def alert(self, ctx, *, reason : str = '(No reason specified)'):
+        'Ping an online moderator.'
+        if ctx.guild.id in alert_disabled: return await ctx.send(':x: This command is disabled here.')
         mods = [
                 a for a in ctx.guild.members if 
                 (a.permissions_in(ctx.channel).ban_members or a.permissions_in(ctx.channel).kick_members) and 
-                a.status == discord.Status.online and 
+                a.status == discord.Status.online and
                 not a.bot
                ]
         mod = random.choice(mods)
@@ -154,6 +158,7 @@ class Moderation:
 
     @commands.command(description="Ban a user, even when not in the server.", aliases=['shadowban'])
     async def hackban(self, ctx, user : int, *, reason : str = None):
+        'Ban someone, even when not in the server.'
         if not ctx.author.permissions_in(ctx.channel).ban_members:
             return await ctx.send(':no_entry_sign: Not enough permissions. You need Ban Members.')
         if not ctx.me.permissions_in(ctx.channel).ban_members:
