@@ -140,22 +140,6 @@ class Moderation:
         await asyncio.sleep(3)
         return await eee.delete()
 
-    @commands.command(description="Ping an online moderator.", aliases=['pingmod', 'pingmods', 'pongmod', 'pongmods'])
-    async def alert(self, ctx, *, reason : str = '(No reason specified)'):
-        'Ping an online moderator.'
-        if ctx.guild.id in alert_disabled: return await ctx.send(':x: This command is disabled here.')
-        mods = [
-                a for a in ctx.guild.members if 
-                (a.permissions_in(ctx.channel).ban_members or a.permissions_in(ctx.channel).kick_members) and 
-                a.status == discord.Status.online and
-                not a.bot
-               ]
-        mod = random.choice(mods)
-        if ctx.author.permissions_in(ctx.channel).ban_members: mod = ctx.author
-        if mods == []: return await ctx.send('No available online mods.')
-        text = f'Moderator Autoping:\n\n**{reason}**\n\n<@{mod.id}> (by **{str(ctx.author)}**)'
-        await ctx.send(text)
-
     @commands.command(description="Ban a user, even when not in the server.", aliases=['shadowban'])
     async def hackban(self, ctx, user : int, *, reason : str = None):
         'Ban someone, even when not in the server.'
