@@ -71,7 +71,7 @@ class Core:
         else:
             await m.edit(content='Extension isn\'t loaded.')
 
-    @commands.command(aliases=["restart"])
+    @commands.command(aliases=["restart", 'die'])
     @permissions.owner()
     async def reboot(self, ctx):
         """ Ends the bot process """

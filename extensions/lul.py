@@ -6,13 +6,20 @@ import json
 import ast
 import math
 import random
+import re
 from utils import randomness
 
 class Lul:
     def __init__(self, bot):
         self.bot = bot
-    
 
+    def check_int(self, number):
+        try:
+            int(number)
+            return True
+        except:
+            return False
+    
     def gensuffix(self, number):
         if number == 1:
             return "st"
@@ -98,10 +105,32 @@ class Lul:
 
     @commands.command(description='Set the bot\'s nick to something.')
     async def bnick(self, ctx, *, nick : str):
+        'Set the bot\'s nick to something.'
         if not ctx.me.permissions_in(ctx.channel).change_nickname: return await ctx.send(':x: Give me Change Nickname before doing this.')
         if len(nick) > 32: return await ctx.send(':x: Give me a shorter nickname. (Limit: 32 characters)')
         await ctx.me.edit(nick=nick)
         await ctx.send(':ok_hand:')
+
+    @commands.command(description='Roll a dice in DnD notation. (<sides>d<number of dice>)', aliases=['dice'])
+    async def roll(self, ctx, dice : str):
+        'Roll a dice in DnD notation. (<sides>d<number of dice>)'
+        try:
+            rl, lm = map(int, dice.split('d'))
+        except Exception:
+            return await ctx.send(':x: Invalid notation! Format must be in `<rolls>d<limit>`!')
+        if rl > 200: return await ctx.send(':x: A maximum of 200 dice is allowed.')
+        if rl < 1: return await ctx.send(':x: A minimum of 1 die is allowed.')
+        if lm > 200: return await ctx.send(':x: A maximum of 200 faces is allowed.')
+        if lm < 1: return await ctx.send(':x: A minimum of 1 face is allowed.')
+        roll = [random.randint(0, lm) for _ in range(rl)]
+        res = ', '.join([str(i) for i in roll])
+        total = 0
+        for i in roll: total = total + i
+        await ctx.send(f'`{res} (Total: {total})`')
+        
+    
+        
+
 
 def setup(bot):
     bot.add_cog(Lul(bot))
