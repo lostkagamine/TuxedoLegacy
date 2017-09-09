@@ -121,7 +121,7 @@ class Lul:
         if rl < 1: return await ctx.send(':x: A minimum of 1 die is allowed.')
         if lm > 200: return await ctx.send(':x: A maximum of 200 faces is allowed.')
         if lm < 1: return await ctx.send(':x: A minimum of 1 face is allowed.')
-        roll = [random.randint(0, lm) for _ in range(rl)]
+        roll = [random.randint(1, lm) for _ in range(rl)]
         res = ', '.join([str(i) for i in roll])
         total = 0
         for i in roll: total = total + i
