@@ -104,11 +104,9 @@ class Moderation:
     @commands.command(description="Clean up the bot's messages.")
     async def clean(self, ctx, amount : int=50):
         """Clean up the bot's messages."""
-        def checc(msg):
-            return msg.author == self.bot.user
 
         if ctx.channel.permissions_for(ctx.guild.me).manage_messages:
-            delet = await ctx.channel.purge(limit=amount+1, check=checc, bulk=True)
+            delet = await ctx.channel.purge(limit=amount+1, check=lambda a: a.author == self.bot.user, bulk=True)
             eee = await ctx.send(self.cleanformat(len(delet)))
             await asyncio.sleep(3)
             return await eee.delete()
