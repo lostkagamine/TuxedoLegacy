@@ -13,13 +13,11 @@ class Lul:
     def __init__(self, bot):
         self.bot = bot
 
-    def check_int(self, number):
-        try:
-            int(number)
-            return True
-        except:
-            return False
-    
+    def dndint(self, no):
+        if no == '':
+            return 1
+        return int(no)
+
     def gensuffix(self, number):
         if number == 1:
             return "st"
@@ -114,10 +112,11 @@ class Lul:
     @commands.command(description='Roll a dice in DnD notation. (<sides>d<number of dice>)', aliases=['dice'])
     async def roll(self, ctx, dice : str):
         'Roll a dice in DnD notation. (<sides>d<number of dice>)'
-        try:
-            rl, lm = map(int, dice.split('d'))
-        except Exception:
+        pat = re.match(r'(\d*)d(\d+)', dice)
+        if pat == None:
             return await ctx.send(':x: Invalid notation! Format must be in `<rolls>d<limit>`!')
+        rl = self.dndint(pat[1])
+        lm = int(pat[2])
         if rl > 200: return await ctx.send(':x: A maximum of 200 dice is allowed.')
         if rl < 1: return await ctx.send(':x: A minimum of 1 die is allowed.')
         if lm > 200: return await ctx.send(':x: A maximum of 200 faces is allowed.')
