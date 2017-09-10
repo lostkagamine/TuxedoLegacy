@@ -29,7 +29,7 @@ class DBots:
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(aliases=["botinfo", "getBot"])
+    @commands.command(aliases=["botinfo", "getBot", 'dbots'])
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def getbot(self, ctx, *, id_arg : discord.Member):
 
@@ -53,7 +53,7 @@ class DBots:
             for ind, i in enumerate(owner_ids):
                 tmpvar = ctx.guild.get_member(int(i))
                 try:
-                    owner_info[ind] = f'**{i.name}**#{i.discriminator} ({i.id})'
+                    owner_info[ind] = f'**{tmpvar.name}**#{tmpvar.discriminator} ({tmpvar.id})'
                 except:
                     pass
             print(owner_info)

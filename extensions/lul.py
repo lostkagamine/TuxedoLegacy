@@ -36,6 +36,15 @@ class Lul:
                     r = await r.read()
                     url = json.JSONDecoder().decode(r.decode("utf-8"))["file"]
                     await ctx.send(embed=discord.Embed(title="Random Cat").set_image(url=url).set_footer(text="Powered by random.cat"))
+
+    @commands.command()
+    async def dog(self, ctx):
+        with ctx.channel.typing():
+            with aiohttp.ClientSession() as session:
+                async with session.get("http://random.dog/woof.json") as r:
+                    r = await r.read()
+                    url = json.JSONDecoder().decode(r.decode("utf-8"))["url"]
+                    await ctx.send(embed=discord.Embed(title="Random Dog").set_image(url=url).set_footer(text="Powered by random.dog"))
     
     @commands.command()
     @commands.cooldown(10, 1, commands.BucketType.user)

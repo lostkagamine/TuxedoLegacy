@@ -4,6 +4,7 @@ from utils import permissions
 from discord.ext import commands
 import time
 import asyncio
+import sys
 
 class Core:
     def __init__(self, bot):
@@ -76,7 +77,7 @@ class Core:
     async def reboot(self, ctx):
         """ Ends the bot process """
         await ctx.send("Rebooting...")
-        quit()
+        sys.exit(0)
 
     @commands.command(aliases=["logout", "shutdown"])
     @permissions.owner()
