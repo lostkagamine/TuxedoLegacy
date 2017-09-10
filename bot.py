@@ -32,6 +32,7 @@ class Bot(commands.Bot):
     async def on_message(self, message):
         if message.author.bot:
             return
+        if message.author.id in self.config.get('BLOCKED'): return
         await self.process_commands(message)
 
 
