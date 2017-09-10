@@ -128,7 +128,7 @@ class Lul:
         await ctx.send(f'`{res} (Total: {total})`')
         
     
-        
+# reeeeEEE you make a comment
 
 
 def setup(bot):

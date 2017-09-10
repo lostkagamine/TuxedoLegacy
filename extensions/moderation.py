@@ -139,13 +139,14 @@ class Moderation:
         return await eee.delete()
 
     @commands.command(description="Ban a user, even when not in the server.", aliases=['shadowban'])
-    async def hackban(self, ctx, user : int, *, reason : str = None):
+    async def hackban(self, ctx, user : str, *, reason : str = None):
         'Ban someone, even when not in the server.'
         if not ctx.author.permissions_in(ctx.channel).ban_members:
             return await ctx.send(':no_entry_sign: Not enough permissions. You need Ban Members.')
         if not ctx.me.permissions_in(ctx.channel).ban_members:
             return await ctx.send(':no_entry_sign: Grant the bot Ban Members before doing this.')
-        await ctx.guild.ban(user, reason=f'[{str(ctx.author)}] {reason}' if reason else f'Ban by {str(ctx.author)}', delete_message_days=7)
+        await ctx.bot.http.ban(int(user), ctx.guild.id, 7, reason=f'[{str(ctx.author)}] {reason}' if reason else f'Hackban by {str(ctx.author)}')
+        await ctx.send(':ok_hand:')
 
 
         
