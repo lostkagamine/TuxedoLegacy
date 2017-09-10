@@ -10,8 +10,6 @@ import asyncio
 import random
 chars = '!#/()=%&'
 
-alert_disabled = [110373943822540800]
-
 class Moderation:
     def __init__(self, bot):
         self.bot = bot

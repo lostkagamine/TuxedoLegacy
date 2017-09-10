@@ -5,7 +5,7 @@ from discord.ext import commands
 from discord.ext.commands import errors as commands_errors
 from discord import utils as dutils
 import random
-
+import asyncio
 
 
 
@@ -28,12 +28,26 @@ class Bot(commands.Bot):
         self.invite_url = dutils.oauth_url(app_info.id)
         print(f'Logged in as {self.user.name}\nBot invite link: {self.invite_url}')
         self.load_extension('extensions.core')
+        self.current_status = random.choice(self.prefix)
+        await self.do_change_loop()
 
     async def on_message(self, message):
         if message.author.bot:
             return
         if message.author.id in self.config.get('BLOCKED'): return
         await self.process_commands(message)
+
+    async def change_game(self):
+        next_status = random.choice([i for i in self.prefix if i != self.current_status])
+        await self.change_presence(game=discord.Game(name=f'{next_status}help', type=0))
+        self.current_status = next_status
+
+    async def do_change_loop(self):
+        print('Starting status change loop')
+        while True:
+            print('Changing game...')
+            self.change_game()
+            await asyncio.sleep(900) # TEMP
 
 
 async def cmd_help(ctx):
@@ -47,9 +61,6 @@ async def cmd_help(ctx):
 
 bot = Bot()
 
-@bot.listen('on_ready')
-async def on_ready():
-    await bot.change_presence(game=discord.Game(name=f'{random.choice(bot.prefix)}help', type=0))
 
 @bot.listen("on_command_error")
 async def on_command_error(ctx, exception):
