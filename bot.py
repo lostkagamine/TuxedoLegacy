@@ -4,7 +4,7 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import errors as commands_errors
 from discord import utils as dutils
-
+import random
 
 
 
@@ -46,6 +46,10 @@ async def cmd_help(ctx):
         await ctx.send(page)
 
 bot = Bot()
+
+@bot.listen('on_ready')
+async def on_ready():
+    await bot.change_presence(game=discord.Game(name=f'{random.choice(bot.prefix)}help', type=0))
 
 @bot.listen("on_command_error")
 async def on_command_error(ctx, exception):
