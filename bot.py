@@ -6,9 +6,7 @@ from discord.ext.commands import errors as commands_errors
 from discord import utils as dutils
 import random
 import asyncio
-
-
-
+import raven
 
 class Bot(commands.Bot):
 
@@ -19,6 +17,7 @@ class Bot(commands.Bot):
             self.config = json.load(f)
             self.prefix = self.config.get('BOT_PREFIX')
         self.remove_command("help")
+        self.init_raven()
 
     async def getPrefix(self, bot, msg):
         return commands.when_mentioned_or(*self.prefix)(bot, msg)
@@ -34,6 +33,11 @@ class Bot(commands.Bot):
             return
         if message.author.id in self.config.get('BLOCKED'): return
         await self.process_commands(message)
+
+    def init_raven(self):
+        print('Now initialising Sentry...')
+        self.sentry = raven.Client(self.config['SENTRY'])
+        print('Sentry initialised.')
 
 
 async def cmd_help(ctx):
