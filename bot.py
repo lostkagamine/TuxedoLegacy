@@ -7,17 +7,22 @@ from discord import utils as dutils
 import random
 import asyncio
 import raven
+import rethinkdb as r
+import sys
 
 class Bot(commands.Bot):
 
     def __init__(self, **options):
         super().__init__(self.getPrefix, **options)
+        print('Performing pre-run tasks...')
         self.cmd_help = cmd_help
         with open("config.json") as f:
             self.config = json.load(f)
             self.prefix = self.config.get('BOT_PREFIX')
         self.remove_command("help")
         self.init_raven()
+        self.init_rethinkdb()
+        print('Pre-run tasks complete.')
 
     async def getPrefix(self, bot, msg):
         return commands.when_mentioned_or(*self.prefix)(bot, msg)
@@ -38,6 +43,16 @@ class Bot(commands.Bot):
         print('Now initialising Sentry...')
         self.sentry = raven.Client(self.config['SENTRY'])
         print('Sentry initialised.')
+
+    def init_rethinkdb(self):
+        print('Now initialising RethinkDB...')
+        dbc = self.config['RETHINKDB']
+        try:
+            self.conn = r.connect(host=dbc['HOST'], port=dbc['PORT'], db=dbc['DB'], user=dbc['USERNAME'], password=dbc['PASSWORD'])
+        except Exception as e:
+            print('RethinkDB init error!\n{}: {}'.format(type(e).__name__, e))
+            sys.exit(1)
+        print('RethinkDB initialisation successful.')
 
 
 async def cmd_help(ctx):
