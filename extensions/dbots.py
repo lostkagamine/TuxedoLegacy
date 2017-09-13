@@ -21,6 +21,8 @@ async def get_stats(bot, botid):
             except KeyError:
                 pass
             if err:
+                if r["error"] == "Bot user ID not found":
+                    return False
                 raise HTTPException(r["error"])
             return r
 
@@ -37,11 +39,13 @@ class DBots:
             if not id_arg or not ctx.guild.get_member(id_arg.id):
                 return await ctx.send("This member doesn't exist.")
 
-            print(id_arg.id)
+            # print(id_arg.id)
             if not id_arg.bot:
                 return await ctx.send("This member isn't a bot.")
             
-            a = await get_stats(self.bot, id_arg.id)
+            a = await get_stats(ctx.bot, id_arg.id)
+            if a == False:
+                return await ctx.send("This bot is not on bots.discord.pw.")
             embed = discord.Embed(
                 title="Bot information for {}".format(a["name"]),
                 color=0x00FF00
