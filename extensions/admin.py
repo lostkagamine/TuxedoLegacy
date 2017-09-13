@@ -111,6 +111,7 @@ class Admin:
     @commands.command(aliases=['sys', 's', 'run'], description="Run system commands.")
     @permissions.owner()
     async def system(self, ctx, *, command : str):
+        'Run system commands.'
         process = subprocess.Popen(command.split(' '), stdout=subprocess.PIPE)
         result = process.communicate()
         embed = discord.Embed(
