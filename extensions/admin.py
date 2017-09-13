@@ -6,6 +6,7 @@ from utils import permissions
 from utils import randomness
 import aiohttp
 import asyncio
+import subprocess
 
 class Admin:
     def __init__(self, bot):
@@ -106,6 +107,22 @@ class Admin:
                             color=randomness.random_colour()
                         )
                         await ctx.send(embed=embed)
+
+    @commands.command(aliases=['sys', 's', 'run'], description="Run system commands.")
+    @permissions.owner()
+    async def system(self, ctx, *, command : str):
+        process = subprocess.Popen(command.split(' '), stdout=subprocess.PIPE)
+        result = process.communicate()
+        embed = discord.Embed(
+            title="Command output",
+            color=randomness.random_colour()
+        )
+        if result[0] is not None: stdout = result[0].decode('utf-8')
+        if result[1] is not None: stderr = result[1].decode('utf-8')
+        embed.add_field(name="stdout", value=f'```{stdout}```' if 'stdout' in locals() else 'No output.', inline=False)
+        embed.add_field(name="stderr", value=f'```{stderr}```' if 'stderr' in locals() else 'No output.', inline=False)
+        await ctx.send(embed=embed)
+
 
 
 def setup(bot):
