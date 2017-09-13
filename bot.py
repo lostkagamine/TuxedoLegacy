@@ -60,17 +60,14 @@ async def on_command_error(ctx, exception):
         exception = exception.original
         _traceback = traceback.format_tb(exception.__traceback__)
         _traceback = ''.join(_traceback)
-        # error = ('**An error has occurred.**\n\n`{0}` in command `{1}`: ```py\n'
-        #          'Traceback (most recent call last):\n{2}{0}: {3}\n```\n\nThis is (probably) a bug. You may want to join https://discord.gg/KEcme4H to report the issue and hopefully get it fixed.')\
-        #          .format(type(exception).__name__,
-        #          ctx.command.qualified_name,
-        #          _traceback, exception)
         error = discord.Embed(
             title="An error has occurred.",
             color=0xFF0000,
-            description="This is (probably) a bug. You may want to join https://discord.gg/KEcme4H to report it and get it fixed."
+            description="This is (probably) a bug. This has been automatically reported, but you may wanna give ry00001#3487 a poke."
         )
+        sentry_string = "{} in command {}\nTraceback (most recent call last):\n{}{}: {}".format(type(exception).__name__, ctx.command.qualified_name, _traceback, type(exception).__name__, exception)
         error.add_field(name="`{}` in command `{}`".format(type(exception).__name__, ctx.command.qualified_name), value="```py\nTraceback (most recent call last):\n{}{}: {}```".format(_traceback, type(exception).__name__, exception))
+        ctx.bot.sentry.captureMessage(sentry_string)
         await ctx.send(embed=error)
     elif isinstance(exception, commands_errors.CommandOnCooldown):
         await ctx.send('This command is on cooldown. You can use this command in `{0:.2f}` seconds.'.format(exception.retry_after))

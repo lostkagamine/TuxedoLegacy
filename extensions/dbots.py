@@ -50,18 +50,17 @@ class DBots:
             embed.add_field(name="Library", value=a["library"])
             embed.add_field(name="User ID", value=a["user_id"])
             owner_info = []
-            for ind, i in enumerate(owner_ids):
+            for i in owner_ids:
                 tmpvar = ctx.guild.get_member(int(i))
                 try:
-                    owner_info[ind] = f'**{tmpvar.name}**#{tmpvar.discriminator} ({tmpvar.id})'
+                    owner_info.append(f'**{tmpvar.name}**#{tmpvar.discriminator} ({tmpvar.id})')
                 except:
                     pass
-            print(owner_info)
             if a["website"]:
                 embed.add_field(name="Website", value="[Bot Website]({})".format(a["website"]))
             embed.add_field(name="Prefix", value="`{}`".format(a["prefix"]))
-            if len(owner_info) > 1:
-                embed.add_field(name="Owner", value=", ".join(owner_info))
+            if len(owner_info) >= 1:
+                embed.add_field(name="Owner" if len(owner_info) == 1 else "Owners", value="\n".join(owner_info))
             if a["invite_url"]:
                 embed.add_field(name="Invite", value="[Bot Invite]({})".format(a["invite_url"]))
             if not a["description"] == "":
