@@ -6,12 +6,17 @@ import json
 import ast
 import math
 import random
+import re
 from utils import randomness
 
 class Lul:
     def __init__(self, bot):
         self.bot = bot
-    
+
+    def dndint(self, no):
+        if no == '':
+            return 1
+        return int(no)
 
     def gensuffix(self, number):
         if number == 1:
@@ -31,6 +36,15 @@ class Lul:
                     r = await r.read()
                     url = json.JSONDecoder().decode(r.decode("utf-8"))["file"]
                     await ctx.send(embed=discord.Embed(title="Random Cat").set_image(url=url).set_footer(text="Powered by random.cat"))
+
+    @commands.command()
+    async def dog(self, ctx):
+        with ctx.channel.typing():
+            with aiohttp.ClientSession() as session:
+                async with session.get("http://random.dog/woof.json") as r:
+                    r = await r.read()
+                    url = json.JSONDecoder().decode(r.decode("utf-8"))["url"]
+                    await ctx.send(embed=discord.Embed(title="Random Dog").set_image(url=url).set_footer(text="Powered by random.dog"))
     
     @commands.command()
     @commands.cooldown(10, 1, commands.BucketType.user)
@@ -95,6 +109,36 @@ class Lul:
             nouns = lol.read().split('\n')
         
         await ctx.send(f'Your new bot name is `Discord {random.choice(nouns).title()}`')
+
+    @commands.command(description='Set the bot\'s nick to something.')
+    async def bnick(self, ctx, *, nick : str):
+        'Set the bot\'s nick to something.'
+        if not ctx.me.permissions_in(ctx.channel).change_nickname: return await ctx.send(':x: Give me Change Nickname before doing this.')
+        if len(nick) > 32: return await ctx.send(':x: Give me a shorter nickname. (Limit: 32 characters)')
+        await ctx.me.edit(nick=nick)
+        await ctx.send(':ok_hand:')
+
+    @commands.command(description='Roll a dice in DnD notation. (<sides>d<number of dice>)', aliases=['dice'])
+    async def roll(self, ctx, dice : str):
+        'Roll a dice in DnD notation. (<sides>d<number of dice>)'
+        pat = re.match(r'(\d*)d(\d+)', dice)
+        if pat == None:
+            return await ctx.send(':x: Invalid notation! Format must be in `<rolls>d<limit>`!')
+        rl = self.dndint(pat[1])
+        lm = int(pat[2])
+        if rl > 200: return await ctx.send(':x: A maximum of 200 dice is allowed.')
+        if rl < 1: return await ctx.send(':x: A minimum of 1 die is allowed.')
+        if lm > 200: return await ctx.send(':x: A maximum of 200 faces is allowed.')
+        if lm < 3: return await ctx.send(':x: A minimum of 3 face is allowed.')
+        roll = [random.randint(1, lm) for _ in range(rl)]
+        res = ', '.join([str(i) for i in roll])
+        total = 0
+        for i in roll: total = total + i
+        await ctx.send(f'`{res} (Total: {total})`')
+        
+    
+# reeeeEEE you make a comment
+
 
 def setup(bot):
     bot.add_cog(Lul(bot))

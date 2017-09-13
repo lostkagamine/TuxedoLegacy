@@ -5,3 +5,4 @@ wand
 py-cpuinfo
 psutil
 rethinkdb
+raven

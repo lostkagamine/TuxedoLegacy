@@ -4,6 +4,7 @@ from utils import permissions
 from discord.ext import commands
 import time
 import asyncio
+import sys
 
 class Core:
     def __init__(self, bot):
@@ -71,12 +72,12 @@ class Core:
         else:
             await m.edit(content='Extension isn\'t loaded.')
 
-    @commands.command(aliases=["restart"])
+    @commands.command(aliases=["restart", 'die'])
     @permissions.owner()
     async def reboot(self, ctx):
         """ Ends the bot process """
         await ctx.send("Rebooting...")
-        quit()
+        sys.exit(0)
 
     @commands.command(aliases=["logout", "shutdown"])
     @permissions.owner()
@@ -115,8 +116,11 @@ class Core:
         elif method == "list": # Tuxedo Exclusive Feature™
             prefixes = "\n".join(self.bot.prefix)
             await ctx.send(f"```\n{prefixes}```")
+        elif method == 'reset':
+            self.bot.prefix = self.bot.config.get('BOT_PREFIX')
+            await ctx.send('Bot prefixes reset.')
         else:
-            await ctx.send('Method needs to be `add`, `remove` or `list`')
+            await ctx.send('Method needs to be `add`, `remove`, `list` or `reset`')
 
     @commands.command()
     @permissions.owner()

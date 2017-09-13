@@ -4,11 +4,9 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import errors as commands_errors
 from discord import utils as dutils
-
-
-
-
-
+import random
+import asyncio
+import raven
 
 class Bot(commands.Bot):
 
@@ -19,6 +17,7 @@ class Bot(commands.Bot):
             self.config = json.load(f)
             self.prefix = self.config.get('BOT_PREFIX')
         self.remove_command("help")
+        self.init_raven()
 
     async def getPrefix(self, bot, msg):
         return commands.when_mentioned_or(*self.prefix)(bot, msg)
@@ -32,7 +31,13 @@ class Bot(commands.Bot):
     async def on_message(self, message):
         if message.author.bot:
             return
+        if message.author.id in self.config.get('BLOCKED'): return
         await self.process_commands(message)
+
+    def init_raven(self):
+        print('Now initialising Sentry...')
+        self.sentry = raven.Client(self.config['SENTRY'])
+        print('Sentry initialised.')
 
 
 async def cmd_help(ctx):
@@ -46,6 +51,7 @@ async def cmd_help(ctx):
 
 bot = Bot()
 
+
 @bot.listen("on_command_error")
 async def on_command_error(ctx, exception):
     if isinstance(exception, commands_errors.MissingRequiredArgument):
@@ -54,17 +60,14 @@ async def on_command_error(ctx, exception):
         exception = exception.original
         _traceback = traceback.format_tb(exception.__traceback__)
         _traceback = ''.join(_traceback)
-        # error = ('**An error has occurred.**\n\n`{0}` in command `{1}`: ```py\n'
-        #          'Traceback (most recent call last):\n{2}{0}: {3}\n```\n\nThis is (probably) a bug. You may want to join https://discord.gg/KEcme4H to report the issue and hopefully get it fixed.')\
-        #          .format(type(exception).__name__,
-        #          ctx.command.qualified_name,
-        #          _traceback, exception)
         error = discord.Embed(
             title="An error has occurred.",
             color=0xFF0000,
-            description="This is (probably) a bug. You may want to join https://discord.gg/KEcme4H to report it and get it fixed."
+            description="This is (probably) a bug. This has been automatically reported, but you may wanna give ry00001#3487 a poke."
         )
+        sentry_string = "{} in command {}\nTraceback (most recent call last):\n{}{}: {}".format(type(exception).__name__, ctx.command.qualified_name, _traceback, type(exception).__name__, exception)
         error.add_field(name="`{}` in command `{}`".format(type(exception).__name__, ctx.command.qualified_name), value="```py\nTraceback (most recent call last):\n{}{}: {}```".format(_traceback, type(exception).__name__, exception))
+        ctx.bot.sentry.captureMessage(sentry_string)
         await ctx.send(embed=error)
     elif isinstance(exception, commands_errors.CommandOnCooldown):
         await ctx.send('This command is on cooldown. You can use this command in `{0:.2f}` seconds.'.format(exception.retry_after))

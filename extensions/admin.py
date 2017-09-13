@@ -6,71 +6,12 @@ from utils import permissions
 from utils import randomness
 import aiohttp
 import asyncio
+import subprocess
 
 class Admin:
     def __init__(self, bot):
         self.bot = bot
         self._eval = {}
-
-    def cleanformat(self, number):
-        string = ""
-        if number == 1:
-            string = "deleted 1 message"
-        if number == 0:
-            string = "deleted no messages"
-        else:
-            string = "deleted {} messages".format(number)
-        return "Bot cleanup successful, {} (Method A)".format(string)
-
-    def pruneformat(self, number):
-        string = ""
-        if number == 1:
-            string = "Deleted 1 message"
-        if number == 0:
-            string = "Deleted no messages"
-        else:
-            string = "Deleted {} messages".format(number)
-        return string
-
-    @commands.command(description="Clean up the bot's messages.")
-    async def clean(self, ctx, amount : int=50):
-        """Clean up the bot's messages."""
-        def checc(msg):
-            return msg.author == self.bot.user
-
-        if ctx.channel.permissions_for(ctx.guild.me).manage_messages:
-            delet = await ctx.channel.purge(limit=amount+1, check=checc, bulk=True)
-            eee = await ctx.send(self.cleanformat(len(delet)))
-            await asyncio.sleep(3)
-            return await eee.delete()
-        else:
-            async for i in ctx.channel.history(limit=amount): # bugg-o
-                if i.author == self.bot.user:
-                    await i.delete()
-            
-            uwu = await ctx.send("Bot cleanup successful (Method B)")
-            await asyncio.sleep(3)
-            return await uwu.delete()
-
-    @commands.command(description="Purge messages in the channel.", aliases=["prune"])
-    async def purge(self, ctx, amount : int=50, *flags):
-        if not ctx.author.permissions_in(ctx.channel).manage_messages:
-            return await ctx.send(":x: Not enough permissions.")
-        bots = False
-        if "--bots" in flags:
-            bots = True
-        
-        def check(msg):
-            if bots:
-                return msg.author.bot
-            return True
-
-        if not bots:
-            await ctx.message.delete()
-        delet = await ctx.channel.purge(limit=amount, check=check, bulk=True) # why is it bugged  
-        eee = await ctx.send(self.pruneformat(len(delet)))
-        await asyncio.sleep(3)
-        return await eee.delete()
 
     @commands.command(name="setavy")
     @permissions.owner()
@@ -166,6 +107,23 @@ class Admin:
                             color=randomness.random_colour()
                         )
                         await ctx.send(embed=embed)
+
+    @commands.command(aliases=['sys', 's', 'run'], description="Run system commands.")
+    @permissions.owner()
+    async def system(self, ctx, *, command : str):
+        'Run system commands.'
+        process = subprocess.Popen(command.split(' '), stdout=subprocess.PIPE)
+        result = process.communicate()
+        embed = discord.Embed(
+            title="Command output",
+            color=randomness.random_colour()
+        )
+        if result[0] is not None: stdout = result[0].decode('utf-8')
+        if result[1] is not None: stderr = result[1].decode('utf-8')
+        embed.add_field(name="stdout", value=f'```{stdout}```' if 'stdout' in locals() else 'No output.', inline=False)
+        embed.add_field(name="stderr", value=f'```{stderr}```' if 'stderr' in locals() else 'No output.', inline=False)
+        await ctx.send(embed=embed)
+
 
 
 def setup(bot):
