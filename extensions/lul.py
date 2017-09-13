@@ -33,8 +33,8 @@ class Lul:
         with ctx.channel.typing():
             with aiohttp.ClientSession() as session:
                 async with session.get("http://random.cat/meow") as r:
-                    r = await r.read()
-                    url = json.JSONDecoder().decode(r.decode("utf-8"))["file"]
+                    r = await r.json()
+                    url = r["file"]
                     await ctx.send(embed=discord.Embed(title="Random Cat").set_image(url=url).set_footer(text="Powered by random.cat"))
 
     @commands.command()
@@ -42,8 +42,8 @@ class Lul:
         with ctx.channel.typing():
             with aiohttp.ClientSession() as session:
                 async with session.get("http://random.dog/woof.json") as r:
-                    r = await r.read()
-                    url = json.JSONDecoder().decode(r.decode("utf-8"))["url"]
+                    r = await r.json()
+                    url = r["url"]
                     await ctx.send(embed=discord.Embed(title="Random Dog").set_image(url=url).set_footer(text="Powered by random.dog"))
     
     @commands.command()
