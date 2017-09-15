@@ -15,19 +15,6 @@ class Moderation:
         self.bot = bot
 
     @commands.command()
-    async def mute(self, ctx, member : discord.Member):
-        """Mutes or unmutes a member"""
-        if ctx.author == member:
-            return await ctx.send('Why are you trying to mute yourself...?')
-        if not ctx.author.permissions_in(ctx.channel).manage_roles:
-            return await ctx.send(':no_entry_sign: Not enough permissions. You need Manage Roles.')
-        if not ctx.me.permissions_in(ctx.channel).manage_roles:
-            return await ctx.send(':no_entry_sign: Grant the bot Manage Roles before doing this.')
-        for i in ctx.guild.text_channels:
-            await i.set_permissions(member, send_messages=not member.permissions_in(i).send_messages)
-        await ctx.send(':ok_hand:')
-
-    @commands.command()
     async def ban(self, ctx, member : discord.Member, *, reason : str = None):
         """Bans a member. You can specify a reason."""
         if ctx.author == member:
@@ -137,13 +124,13 @@ class Moderation:
         return await eee.delete()
 
     @commands.command(description="Ban a user, even when not in the server.", aliases=['shadowban'])
-    async def hackban(self, ctx, user : str, *, reason : str = None):
+    async def hackban(self, ctx, user : int, *, reason : str = None):
         'Ban someone, even when not in the server.'
         if not ctx.author.permissions_in(ctx.channel).ban_members:
             return await ctx.send(':no_entry_sign: Not enough permissions. You need Ban Members.')
         if not ctx.me.permissions_in(ctx.channel).ban_members:
             return await ctx.send(':no_entry_sign: Grant the bot Ban Members before doing this.')
-        await ctx.bot.http.ban(int(user), ctx.guild.id, 7, reason=f'[{str(ctx.author)}] {reason}' if reason else f'Hackban by {str(ctx.author)}')
+        await ctx.bot.http.ban(user, ctx.guild.id, 7, reason=f'[{str(ctx.author)}] {reason}' if reason else f'Hackban by {str(ctx.author)}')
         await ctx.send(':ok_hand:')
 
 
