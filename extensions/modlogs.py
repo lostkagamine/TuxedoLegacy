@@ -174,7 +174,8 @@ class ModLogs:
             lambda a: a['guild'] == str(ctx.guild.id)).run(self.conn)) != [])()
         if not exists:
             return await ctx.send(':x: This guild has no modlog entries.')
-
+        if not self.check_perm(ctx):
+            return await ctx.send(':no_entry_sign: Invalid permissions.')
         data = r.table('modlog').filter(
             lambda a: a['guild'] == str(ctx.guild.id)).run(self.conn)
         data = data.next()
