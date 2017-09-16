@@ -123,7 +123,7 @@ class ModLogs:
         if len(args) <= 0:
             return await ctx.send(':x: Please specify a value to set.')
         if not self.check_perm(ctx):
-            return await ctx.send(':no_entry_sign: Not enough permissions.')
+            return await ctx.send(':no_entry_sign: Invalid permissions.')
         thing_to_set = args[0]
         if thing_to_set not in settings.keys():
             return await ctx.send(f':x: Invalid value. Possible values are: `{settings_str}`')
