@@ -4,11 +4,13 @@ from discord.ext import commands
 import asyncio
 from utils import permissions
 
-settings = {'modlog_channel': 'channel'}
+settings = {'modlog_channel': 'channel', 'enable_automod': 'bool'}
 
-templates = {'ban': '**User Ban** | Case {id}\n\n**Target:** {user}\n**Moderator:** {mod}\n**Reason:** {rsn}',
-             'kick': '**User Kick** | Case {id}\n\n**Target:** {user}\n**Moderator:** {mod}\n**Reason:** {rsn}',
-             'unban': '**User Unban** | Case {id}\n\n**Target:** {user}\n**Moderator:** {mod}\n**Reason:** {rsn}'}
+templates = {'ban': '**User Ban** | Case {id}\n**Target:** {user}\n**Moderator:** {mod}\n**Reason:** {rsn}',
+             'kick': '**User Kick** | Case {id}\n**Target:** {user}\n**Moderator:** {mod}\n**Reason:** {rsn}',
+             'unban': '**User Unban** | Case {id}\n**Target:** {user}\n**Moderator:** {mod}\n**Reason:** {rsn}'}
+
+categories = {'ban': discord.AuditLogAction.ban, 'kick': discord.AuditLogAction.kick, 'unban': discord.AuditLogAction.unban}
 
 
 class ModLogs:
@@ -66,8 +68,9 @@ class ModLogs:
 
     async def do_modlog(self, _type, g, u):
         ch = self.modlog_ch(g)
+        if ch == None: return
         try:
-            async for audit in g.audit_logs(limit=1):
+            async for audit in g.audit_logs(limit=1, action=categories[_type]):
                 msg = await ch.send(self.process_template(_type, f'{str(u)} ({u.id})',
                                                           f'{str(audit.user)} ({audit.user.id})', audit.reason if audit.reason else 'Unknown'))
                 cid = await self.log_entry(_type, g, f'{str(u)} ({u.id})', f'{str(audit.user)} ({audit.user.id})', audit.reason if audit.reason else 'Unknown', str(msg.id))
@@ -79,6 +82,7 @@ class ModLogs:
 
     async def do_modlog_raw(self, _type, g, u, reason, mod):
         ch = self.modlog_ch(g)
+        if ch == None: return
         msg = await ch.send(self.process_template(_type, f'{str(u)} ({u.id})',
                                                   f'{str(mod)} ({mod.id})', reason if reason else 'Unknown'))
         cid = await self.log_entry(_type, g, f'{str(u)} ({u.id})', f'{str(mod)} ({mod.id})', reason if reason else 'Unknown', str(msg.id))
@@ -109,13 +113,19 @@ class ModLogs:
         async def on_member_unban(g, u):
             await self.do_modlog('unban', g, u)
 
-    def check_type(self, ctx, thing):
+    def check_type(self, ctx, thing, value):
         if thing == "channel":
             return hasattr(ctx.message, 'channel_mentions')
+        elif thing == 'bool': # Ignore the memecode
+            return value.lower() in ['true', 'false']
 
-    def do_type(self, ctx, _type):
+    def do_type(self, ctx, _type, value):
         if _type == "channel":
             return str(ctx.message.channel_mentions[0].id)
+        elif _type == 'bool':
+            if value.lower() in ['true', 'false']:
+                return value.lower() == 'true'
+            
 
     @commands.command(name='set', aliases=['settings', 'setup', 'setting'])
     async def _set(self, ctx, *args):
@@ -127,10 +137,10 @@ class ModLogs:
         thing_to_set = args[0]
         if thing_to_set not in settings.keys():
             return await ctx.send(f':x: Invalid value. Possible values are: `{settings_str}`')
-        if not self.check_type(ctx, settings[thing_to_set]):
+        if not self.check_type(ctx, settings[thing_to_set], ' '.join(args[1:len(args)])):
             return await ctx.send(':x: This property is of type `{}`.'.format(settings[thing_to_set]))
         data = {'guild': str(ctx.guild.id)}
-        data[thing_to_set] = self.do_type(ctx, settings[thing_to_set])
+        data[thing_to_set] = self.do_type(ctx, settings[thing_to_set], ' '.join(args[1:len(args)]))
         exists = (lambda: list(r.table('settings').filter(
             lambda a: a['guild'] == str(ctx.guild.id)).run(self.conn)) != [])()
         if exists:
@@ -180,18 +190,19 @@ class ModLogs:
             lambda a: a['guild'] == str(ctx.guild.id)).run(self.conn)
         data = data.next()
         # print(data)
-        if len(data['entries']) < caseid-1 or len(data['entries']) > caseid: return await ctx.send(':x: List index out of range.')
+        if len(data['entries']) < caseid or len(data['entries']) > caseid: return await ctx.send(':x: List index out of range. (Invalid Case ID)')
         entry = data['entries'][caseid-1]
         entry['mod'] = f'{str(ctx.author)} ({ctx.author.id})'
         entry['reason'] = reason
         msgid = int(entry['msgid'])
         channel = self.modlog_ch(ctx.guild)
+        if channel == None: return
         chid = channel.id
         msgs = []
         async for i in channel.history(limit=500):
             msgs.append(i)
         msg = discord.utils.find(lambda a: a.id == int(entry['msgid']), msgs)
-        if msg is None: return await ctx.send(':x: No modlog entry found.')
+        if msg == None: return await ctx.send(':x: No modlog entry found.')
         await msg.edit(content=self.process_template(
             entry['type'],
             entry['target'],
@@ -199,7 +210,6 @@ class ModLogs:
             entry['reason'],
             len(data['entries'])
         ))
-        r.table('modlog').filter(lambda a: a['guild'] == str(ctx.guild.id)).update(data).run(self.conn)
         await ctx.send(':ok_hand:')
 
 def setup(bot):

@@ -113,7 +113,7 @@ class Moderation:
             return await ctx.send(":x: I don't have enough permissions.")
         
         meme = switches.parse(' '.join(flags))
-        bots = (lambda: 'bots' in meme[0])()
+        bots = (lambda: 'bots' in meme[0].keys())()
 
         if not bots:
             await ctx.message.delete()
