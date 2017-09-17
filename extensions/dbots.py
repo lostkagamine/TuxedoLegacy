@@ -3,6 +3,7 @@ import aiohttp
 import discord
 from discord.ext import commands
 from datetime import datetime
+from utils import randomness
 
 class HTTPException(Exception):
     # lul
@@ -48,7 +49,7 @@ class DBots:
                 return await ctx.send("This bot is not on bots.discord.pw.")
             embed = discord.Embed(
                 title="Bot information for {}".format(a["name"]),
-                color=0x00FF00
+                color=randomness.random_colour()
             )
             owner_ids = a["owner_ids"]
             embed.add_field(name="Library", value=a["library"])

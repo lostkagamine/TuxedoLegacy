@@ -4,7 +4,7 @@ from discord.ext import commands
 import asyncio
 from utils import permissions
 
-settings = {'modlog_channel': 'channel', 'enable_automod': 'bool'}
+settings = {'modlog_channel': 'channel', 'enable_invite_protection': 'bool', 'staff_channel': 'channel'}
 
 templates = {'ban': '**User Ban** | Case {id}\n**Target:** {user}\n**Moderator:** {mod}\n**Reason:** {rsn}',
              'kick': '**User Kick** | Case {id}\n**Target:** {user}\n**Moderator:** {mod}\n**Reason:** {rsn}',
@@ -190,7 +190,7 @@ class ModLogs:
             lambda a: a['guild'] == str(ctx.guild.id)).run(self.conn)
         data = data.next()
         # print(data)
-        if len(data['entries']) < caseid or len(data['entries']) > caseid: return await ctx.send(':x: List index out of range. (Invalid Case ID)')
+        if caseid < 1 or len(data['entries']) > caseid: return await ctx.send(':x: List index out of range. (Invalid Case ID)')
         entry = data['entries'][caseid-1]
         entry['mod'] = f'{str(ctx.author)} ({ctx.author.id})'
         entry['reason'] = reason

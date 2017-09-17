@@ -23,10 +23,10 @@ class AutoMod:
             # we know the guild has an entry in the settings
             settings = list(r.table('settings').filter(
                 lambda a: a['guild'] == str(msg.guild.id)).run(self.conn))[0]
-            if "enable_automod" not in settings.keys():
+            if "enable_invite_protection" not in settings.keys():
                 return
 
-            if settings['enable_automod']:
+            if settings['enable_invite_protection']:
                 # do cool stuff
                 inv = re.search(regex, msg.content)
                 if not inv:
