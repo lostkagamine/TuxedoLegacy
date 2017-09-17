@@ -190,7 +190,7 @@ class ModLogs:
             lambda a: a['guild'] == str(ctx.guild.id)).run(self.conn)
         data = data.next()
         # print(data)
-        if caseid < 1 or len(data['entries']) > caseid: return await ctx.send(':x: List index out of range. (Invalid Case ID)')
+        if caseid < 1 or caseid > data['count']: return await ctx.send(':x: List index out of range. (Invalid Case ID)')
         entry = data['entries'][caseid-1]
         entry['mod'] = f'{str(ctx.author)} ({ctx.author.id})'
         entry['reason'] = reason
@@ -208,7 +208,7 @@ class ModLogs:
             entry['target'],
             entry['mod'],
             entry['reason'],
-            len(data['entries'])
+            caseid
         ))
         await ctx.send(':ok_hand:')
 
