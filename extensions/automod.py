@@ -28,7 +28,7 @@ class AutoMod:
                 # do cool stuff
                 inv = re.search(regex, msg.content)
 
-                print(inv)
+                # print(inv)
                 if not inv:
                     return
                 
