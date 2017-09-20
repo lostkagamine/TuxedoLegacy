@@ -122,7 +122,6 @@ class Admin:
             title="Command output",
             color=randomness.random_colour()
         )
-        if len(result) == 0: result = [b"No output."]
         if len(result) >= 1: stdout = result[0].decode('utf-8')
         if len(result) >= 2: stderr = result[1].decode('utf-8')
         embed.add_field(name="stdout", value=f'```{stdout}```' if 'stdout' in locals() else 'No output.', inline=False)
