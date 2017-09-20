@@ -67,7 +67,7 @@ Number of users: {len(ctx.bot.users)}
 
 [ Credits ]
 HexadecimalPython: Original core
-Liara dev team: eval
+Liara: eval
 Devoxin: Hosting and rewritten core
 
 [ Special thanks ]
