@@ -42,6 +42,15 @@ class Info:
         except discord.Forbidden:
             await ctx.send(text)
 
+    @commands.command(aliases=['add'])
+    async def invite(self, ctx):
+        text = f'**Add Tuxedo**\n\nAdd Tuxedo with this link: <{self.bot.invite_url}>'
+        try:
+            await ctx.author.send(text)
+            await ctx.send(":mailbox_with_mail: Check your DMs.")
+        except discord.Forbidden:
+            await ctx.send(text)
+
     @commands.command(aliases=['info', 'stats'])
     async def about(self, ctx):
         mem = psutil.virtual_memory()

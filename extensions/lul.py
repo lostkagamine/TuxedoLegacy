@@ -45,6 +45,14 @@ class Lul:
                     r = await r.json()
                     url = r["url"]
                     await ctx.send(embed=discord.Embed(title="Random Dog").set_image(url=url).set_footer(text="Powered by random.dog"))
+
+    @commands.command(aliases=['catgirl'])
+    async def neko(self, ctx):
+        with ctx.channel.typing():
+            with aiohttp.ClientSession() as session:
+                async with session.get('http://nekos.life/api/neko') as r:
+                    r = await r.json()
+                    await ctx.send(embed=discord.Embed(title='Random Neko').set_image(url=r['neko']).set_footer(text='Powered by nekos.life'))
     
     @commands.command()
     @commands.cooldown(10, 1, commands.BucketType.user)
