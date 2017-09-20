@@ -123,7 +123,7 @@ class Moderation:
         await asyncio.sleep(3)
         return await eee.delete()
 
-    @commands.command(description="Ban a user, even when not in the server.", aliases=['shadowban'])
+    @commands.command(description="Ban a user, even when not in the server.", aliases=['shadowban', 'hban'])
     async def hackban(self, ctx, user : int, *, reason : str = None):
         'Ban someone, even when not in the server.'
         if not ctx.author.permissions_in(ctx.channel).ban_members:
