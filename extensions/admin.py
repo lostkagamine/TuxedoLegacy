@@ -112,14 +112,19 @@ class Admin:
     @permissions.owner()
     async def system(self, ctx, *, command : str):
         'Run system commands.'
-        process = subprocess.Popen(command.split(' '), stdout=subprocess.PIPE)
-        result = process.communicate()
+        result = []
+        try:
+            process = subprocess.Popen(command.split(' '), stdout=subprocess.PIPE)
+            result = process.communicate()
+        except FileNotFoundError:
+            stderr = f'Command not found: {command}'
         embed = discord.Embed(
             title="Command output",
             color=randomness.random_colour()
         )
-        if result[0] is not None: stdout = result[0].decode('utf-8')
-        if result[1] is not None: stderr = result[1].decode('utf-8')
+        if len(result) == 0: result = [b"No output."]
+        if len(result) >= 1: stdout = result[0].decode('utf-8')
+        if len(result) >= 2: stderr = result[1].decode('utf-8')
         embed.add_field(name="stdout", value=f'```{stdout}```' if 'stdout' in locals() else 'No output.', inline=False)
         embed.add_field(name="stderr", value=f'```{stderr}```' if 'stderr' in locals() else 'No output.', inline=False)
         await ctx.send(embed=embed)
