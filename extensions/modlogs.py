@@ -3,6 +3,7 @@ import discord
 from discord.ext import commands
 import asyncio
 from utils import permissions
+import shlex
 
 settings = {'modlog_channel': 'channel', 'enable_invite_protection': 'bool', 'staff_channel': 'channel'}
 
@@ -116,8 +117,14 @@ class ModLogs:
     def check_type(self, ctx, thing, value):
         if thing == "channel":
             return hasattr(ctx.message, 'channel_mentions')
-        elif thing == 'bool': # Ignore the memecode
+        elif thing == 'bool':
             return value.lower() in ['true', 'false']
+        elif thing == ('role_list'):
+            try:
+                shlex.split(value)
+                return True
+            except Exception:
+                return False
 
     def do_type(self, ctx, _type, value):
         if _type == "channel":
@@ -125,6 +132,10 @@ class ModLogs:
         elif _type == 'bool':
             if value.lower() in ['true', 'false']:
                 return value.lower() == 'true'
+
+    def do_list(self, ctx, type, stuff):
+        aaaa = shlex.split(stuff)
+        
             
 
     @commands.command(name='set', aliases=['settings', 'setup', 'setting'])

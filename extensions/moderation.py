@@ -14,7 +14,7 @@ class Moderation:
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.command(aliases=['🅱an', 'delete'])
     async def ban(self, ctx, member : discord.Member, *, reason : str = None):
         """Bans a member. You can specify a reason."""
         if ctx.author == member:

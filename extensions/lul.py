@@ -119,9 +119,12 @@ class Lul:
         await ctx.send(f'Your new bot name is `Discord {random.choice(nouns).title()}`')
 
     @commands.command(description='Set the bot\'s nick to something.')
-    async def bnick(self, ctx, *, nick : str):
+    async def bnick(self, ctx, *, nick : str = None):
         'Set the bot\'s nick to something.'
         if not ctx.me.permissions_in(ctx.channel).change_nickname: return await ctx.send(':x: Give me Change Nickname before doing this.')
+        if nick == None:
+            await ctx.me.edit(nick=None)
+            return await ctx.send(':ok_hand:')
         if len(nick) > 32: return await ctx.send(':x: Give me a shorter nickname. (Limit: 32 characters)')
         await ctx.me.edit(nick=nick)
         await ctx.send(':ok_hand:')
