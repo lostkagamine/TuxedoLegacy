@@ -131,13 +131,17 @@ class Admin:
         if len(result) >= 2 and result[0] in [None, b'']: stderr = 'No output.'
         if len(result) >= 1 and result[0] not in [None, b'']: stdout = result[0].decode('utf-8')
         if len(result) >= 2 and result[1] not in [None, b'']: stderr = result[1].decode('utf-8')
+        string = ""
         if len(result) >= 1:
             if (len(result[0]) >= 1024): 
                 stdout = result[0].decode('utf-8')
-                string = f'[[STDOUT]]\n{stdout}'
-                if len(result[1]) >= 2 and result[1] not in [None, b''] and len(result[1]) >= 1024: 
-                    stderr = result[1].decode('utf-8')
-                    string = string + f'[[STDERR]]\n{stderr}'
+                string = string + f'[[STDOUT]]\n{stdout}'
+                key = await self.haste_upload(string)
+                return await ctx.send(f"http://hastebin.com/{key}")
+        if len(result) >= 2:
+            if (len(result[1]) >= 1024): 
+                stdout = result[0].decode('utf-8')
+                string = string + f'[[STDERR]]\n{stdout}'
                 key = await self.haste_upload(string)
                 return await ctx.send(f"http://hastebin.com/{key}")
         embed.add_field(name="stdout", value=f'```{stdout}```' if 'stdout' in locals() else 'No output.', inline=False)
