@@ -13,6 +13,12 @@ class Admin:
         self.bot = bot
         self._eval = {}
 
+    async def haste_upload(self, text):
+        with aiohttp.ClientSession() as sesh:
+            async with sesh.post("https://hastebin.com/documents/", data=text, headers={"Content-Type": "text/plain"}) as r:
+                r = await r.json()
+                return r['key']
+
     @commands.command(name="setavy")
     @permissions.owner()
     async def set_avy(self, ctx, *, avy : str):
@@ -35,7 +41,6 @@ class Admin:
         silent = False
         if codebyspace[0] == "--silent" or codebyspace[0] == "-s": 
             silent = True
-            print("silent mmLol")
             codebyspace = codebyspace[1:]
             code = " ".join(codebyspace)
 
@@ -126,6 +131,15 @@ class Admin:
         if len(result) >= 2 and result[0] in [None, b'']: stderr = 'No output.'
         if len(result) >= 1 and result[0] not in [None, b'']: stdout = result[0].decode('utf-8')
         if len(result) >= 2 and result[1] not in [None, b'']: stderr = result[1].decode('utf-8')
+        if len(result) >= 1:
+            if (len(result[0]) >= 1024): 
+                stdout = result[0].decode('utf-8')
+                string = f'[[STDOUT]]\n{stdout}'
+                if len(result[1]) >= 2 and result[1] not in [None, b''] and len(result[1]) >= 1024: 
+                    stderr = result[1].decode('utf-8')
+                    string = string + f'[[STDERR]]\n{stderr}'
+                key = await self.haste_upload(string)
+                return await ctx.send(f"http://hastebin.com/{key}")
         embed.add_field(name="stdout", value=f'```{stdout}```' if 'stdout' in locals() else 'No output.', inline=False)
         embed.add_field(name="stderr", value=f'```{stderr}```' if 'stderr' in locals() else 'No output.', inline=False)
         await ctx.send(embed=embed)
