@@ -108,13 +108,13 @@ class Admin:
                         )
                         await ctx.send(embed=embed)
 
-    @commands.command(aliases=['sys', 's', 'run'], description="Run system commands.")
+    @commands.command(aliases=['sys', 's', 'run', 'sh'], description="Run system commands.")
     @permissions.owner()
     async def system(self, ctx, *, command : str):
         'Run system commands.'
         result = []
         try:
-            process = subprocess.Popen(command.split(' '), stdout=subprocess.PIPE)
+            process = subprocess.Popen(command.split(' '), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             result = process.communicate()
         except FileNotFoundError:
             stderr = f'Command not found: {command}'
@@ -122,8 +122,10 @@ class Admin:
             title="Command output",
             color=randomness.random_colour()
         )
-        if len(result) >= 1: stdout = result[0].decode('utf-8')
-        if len(result) >= 2: stderr = result[1].decode('utf-8')
+        if len(result) >= 1 and result[0] in [None, b'']: stdout = 'No output.'
+        if len(result) >= 2 and result[0] in [None, b'']: stderr = 'No output.'
+        if len(result) >= 1 and result[0] not in [None, b'']: stdout = result[0].decode('utf-8')
+        if len(result) >= 2 and result[1] not in [None, b'']: stderr = result[1].decode('utf-8')
         embed.add_field(name="stdout", value=f'```{stdout}```' if 'stdout' in locals() else 'No output.', inline=False)
         embed.add_field(name="stderr", value=f'```{stderr}```' if 'stderr' in locals() else 'No output.', inline=False)
         await ctx.send(embed=embed)
