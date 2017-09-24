@@ -144,8 +144,8 @@ class Moderation:
                                                 not i.bot and
                                                 (i.status == discord.Status.online or i.status == 'online')]
         mod = random.choice(mods)
-        reasonless_string = f'**Mod Autoping:** <@{mod.id}> (by **{msg.author.username}#{msg.author.discriminator})'
-        reason_string = f'**Mod Autoping:**\n{reason}\n<@{mod.id} (by **{msg.author.username}**#{msg.author.discriminator})'
+        reasonless_string = f'**Mod Autoping:** <@{mod.id}> (by **{ctx.author.username}#{ctx.author.discriminator})'
+        reason_string = f'**Mod Autoping:**\n{reason}\n<@{mod.id} (by **{ctx.author.username}**#{ctx.author.discriminator})'
         await ctx.send(reason_string if reason != None else reasonless_string)
 
 
