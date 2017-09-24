@@ -148,6 +148,12 @@ class Admin:
         embed.add_field(name="stderr", value=f'```{stderr}```' if 'stderr' in locals() else 'No output.', inline=False)
         await ctx.send(embed=embed)
 
+    @commands.command(aliases=['game', 'status'])
+    @permissions.owner()
+    async def setgame(self, ctx, *, status : str):
+        await ctx.bot.change_presence(game=discord.Game(name=status, type=0))
+        await ctx.send(':ok_hand:')
+
 
 
 def setup(bot):

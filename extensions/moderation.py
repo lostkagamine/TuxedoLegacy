@@ -10,6 +10,8 @@ import asyncio
 import random
 chars = '!#/()=%&'
 
+pingmods_disabled = [110373943822540800]
+
 class Moderation:
     def __init__(self, bot):
         self.bot = bot
@@ -132,6 +134,19 @@ class Moderation:
             return await ctx.send(':no_entry_sign: Grant the bot Ban Members before doing this.')
         await ctx.bot.http.ban(user, ctx.guild.id, 7, reason=f'[{str(ctx.author)}] {reason}' if reason else f'Hackban by {str(ctx.author)}')
         await ctx.send(':ok_hand:')
+
+    @commands.command(description='Ping an online moderator.', aliases=['pingmod'])
+    async def pingmods(self, ctx, *, reason : str = None):
+        'Ping an online moderator.'
+        if ctx.guild.id in pingmods_disabled:
+            return await ctx.send(':x: This feature isn\'t available here.')
+        mods = [i for i in ctx.guild.members if (i.permissions_in(ctx.channel).kick_members or i.permissions_in(ctx.channel).ban_members) and
+                                                not i.bot and
+                                                (i.status == discord.Status.online or i.status == 'online')]
+        mod = random.choice(mods)
+        reasonless_string = f'**Mod Autoping:** <@{mod.id}> (by **{msg.author.username}#{msg.author.discriminator})'
+        reason_string = f'**Mod Autoping:**\n{reason}\n<@{mod.id} (by **{msg.author.username}**#{msg.author.discriminator})'
+        await ctx.send(reason_string if reason != None else reasonless_string)
 
 
         
