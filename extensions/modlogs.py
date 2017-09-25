@@ -141,11 +141,11 @@ class ModLogs:
             if "tracked_roles" not in settings.keys():
                 return
 
-            for i in after.roles:
+            for i in [x for x in after.roles if x not in before.roles]:
                 if str(i.id) in settings['tracked_roles']:
                     return await self.do_role_log(after, 'role_add', i)
             
-            for i in before.roles:
+            for i in [x for x in before.roles if x not in after.roles]:
                 if str(i.id) in settings['tracked_roles']:
                     return await self.do_role_log(before, 'role_remove', i)
 
