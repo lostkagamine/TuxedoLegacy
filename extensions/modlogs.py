@@ -20,15 +20,19 @@ categories = {'ban': discord.AuditLogAction.ban,
               'role_remove': discord.AuditLogAction.member_role_update}
 
 
+default_rsn = 'Unknown. Responsible moderator, do `./reason {caseid} <your reason>` to set a reason.'
+
+
 class ModLogs:
-    async def log_entry(self, _type, guild, target, mod, reason, msgid):
+    async def log_entry(self, _type, guild, target, mod, reason, msgid, role='N/A'):
         data = {
             'guild': str(guild.id),
             'target': target,
             'mod': mod,
             'reason': reason,
             'msgid': msgid,
-            'type': _type
+            'type': _type,
+            'role': role
         }
         objdata = {
             'entries': [],
@@ -70,8 +74,8 @@ class ModLogs:
             return
         return discord.utils.find(lambda a: str(a.id) == settings.get('modlog_channel'), g.text_channels)
 
-    def process_template(self, template, user, mod, reason, case='Unknown', role='N/A'):
-        return templates[template].replace('{user}', user).replace('{mod}', mod).replace('{rsn}', reason).replace('{id}', str(case)).replace('{role}', role)
+    def process_template(self, template, user, mod, reason, case='Unknown', aaaaa='n/a'):
+        return templates[template].replace('{user}', user).replace('{mod}', mod).replace('{rsn}', reason).replace('{id}', str(case)).replace('{role}', aaaaa)
 
     async def do_modlog(self, _type, g, u):
         ch = self.modlog_ch(g)
@@ -80,23 +84,23 @@ class ModLogs:
             await asyncio.sleep(0.10)
             async for audit in g.audit_logs(limit=1, action=categories[_type]):
                 msg = await ch.send(self.process_template(_type, f'{str(u)} ({u.id})',
-                                                          f'{str(audit.user)} ({audit.user.id})', audit.reason if audit.reason else 'Unknown'))
-                cid = await self.log_entry(_type, g, f'{str(u)} ({u.id})', f'{str(audit.user)} ({audit.user.id})', audit.reason if audit.reason else 'Unknown', str(msg.id))
+                                                          f'{str(audit.user)} ({audit.user.id})', audit.reason if audit.reason else default_rsn))
+                cid = await self.log_entry(_type, g, f'{str(u)} ({u.id})', f'{str(audit.user)} ({audit.user.id})', audit.reason if audit.reason else default_rsn, str(msg.id))
                 await msg.edit(content=self.process_template(_type, f'{str(u)} ({u.id})',
-                                                             f'{str(audit.user)} ({audit.user.id})', audit.reason if audit.reason else 'Unknown',
+                                                             f'{str(audit.user)} ({audit.user.id})', audit.reason if audit.reason else default_rsn,
                                                              str(cid)))
         except discord.Forbidden:
             await ch.send(self.process_template(_type, str(u), 'Unknown moderator', 'Unknown. Please grant the bot `View Audit Logs`.'))
 
-    async def do_modlog_raw(self, _type, g, u, reason, mod):
+    async def do_modlog_raw(self, _type, g, u, reason, mod, role='N/A'):
         ch = self.modlog_ch(g)
         if ch == None: return
         msg = await ch.send(self.process_template(_type, f'{str(u)} ({u.id})',
-                                                  f'{str(mod)} ({mod.id})', reason if reason else 'Unknown'))
-        cid = await self.log_entry(_type, g, f'{str(u)} ({u.id})', f'{str(mod)} ({mod.id})', reason if reason else 'Unknown', str(msg.id))
+                                                  f'{str(mod)} ({mod.id})', reason if reason else default_rsn, aaaaa=role))
+        cid = await self.log_entry(_type, g, f'{str(u)} ({u.id})', f'{str(mod)} ({mod.id})', reason if reason else default_rsn, str(msg.id), role=role)
         await msg.edit(content=self.process_template(_type, f'{str(u)} ({u.id})',
-                                                     f'{str(mod)} ({mod.id})', reason if reason else 'Unknown',
-                                                     str(cid)))
+                                                     f'{str(mod)} ({mod.id})', reason if reason else default_rsn,
+                                                     aaaaa=role, case=str(cid)))
 
     def check_perm(self, ctx):
         return (ctx.author.permissions_in(ctx.channel).manage_guild) or (permissions.owner_id_check(ctx.author.id))
@@ -116,7 +120,7 @@ class ModLogs:
             async for audit in g.audit_logs(limit=1):
                 if audit.target.id == m.id and audit.action == discord.AuditLogAction.kick:
                     await self.do_modlog_raw('kick', g, m,
-                                             audit.reason if audit.reason else 'Unknown', audit.user)
+                                             audit.reason if audit.reason else default_rsn, audit.user)
 
         @self.bot.listen('on_member_unban')
         async def on_member_unban(g, u):
@@ -124,6 +128,7 @@ class ModLogs:
 
         @self.bot.listen('on_member_update')
         async def on_member_update(before, after):
+            g = after.guild
             if before.roles == after.roles:
                 return # no role changes, we can drop it
             exists = (lambda: list(r.table('settings').filter(
@@ -135,8 +140,19 @@ class ModLogs:
                 lambda a: a['guild'] == str(g.id)).run(self.conn))[0]
             if "tracked_roles" not in settings.keys():
                 return
-            for i in [str(r.id) for i in after.roles]:
-                if i in settings['tracked_roles']:
+
+            for i in after.roles:
+                if str(i.id) in settings['tracked_roles']:
+                    return await self.do_role_log(after, 'role_add', i)
+            
+            for i in before.roles:
+                if str(i.id) in settings['tracked_roles']:
+                    return await self.do_role_log(before, 'role_remove', i)
+
+    async def do_role_log(self, after, type, i):
+        async for audit in after.guild.audit_logs(limit=1):
+            await self.do_modlog_raw(type, after.guild,
+                                    after, audit.reason if audit.reason else default_rsn, audit.user, i.name)
 
 
     def check_type(self, ctx, thing, value):
@@ -275,6 +291,7 @@ class ModLogs:
         msgs = []
         async for i in channel.history(limit=500):
             msgs.append(i)
+        role = entry['role'] if 'role' in entry.keys() else 'N/A'
         msg = discord.utils.find(lambda a: a.id == int(entry['msgid']), msgs)
         if msg == None: return await ctx.send(':x: No modlog entry found.')
         await msg.edit(content=self.process_template(
@@ -282,7 +299,8 @@ class ModLogs:
             entry['target'],
             entry['mod'],
             entry['reason'],
-            caseid
+            caseid,
+            aaaaa=role
         ))
         await ctx.send(':ok_hand:')
 
