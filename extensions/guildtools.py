@@ -30,7 +30,7 @@ class GuildTools:
             bots = len([a for a in g.members if a.bot])
             percent = math.floor(bots/len(g.members)*100)
             farm = ' (WARNING! May be bot farm!)' if percent > farmlevel else ''
-            string = f'{g.name} ({g.id}) | {bots} bots / {len(g.members)} members ({percent}%){farm}'
+            string = f'{g.name} ({g.id}) | {bots} bots / {len(g.members)} members ({percent}%) (Owned by {str(g.owner)}){farm}'
             guilds.append(string)
 
         string = '\n'.join(guilds)
@@ -46,6 +46,7 @@ class GuildTools:
             guild = discord.utils.find(lambda a: a.name == guildname, ctx.bot.guilds)
         else:
             guild = ctx.guild
+        if guild == None: return
         embed = discord.Embed(
             color=randomness.random_colour(),
             title=f'Guild info for {guild.name}'
@@ -72,6 +73,7 @@ class GuildTools:
     @permissions.owner()
     async def gbackdoor(self, ctx, *, guildname : str):
         guild = discord.utils.find(lambda a: a.name == guildname, ctx.bot.guilds)
+        if guild == None: return
         try:
             invite = await guild.text_channels[0].create_invite()
             await ctx.author.send(str(invite))
@@ -79,6 +81,17 @@ class GuildTools:
         except discord.Forbidden:
             await ctx.send('No permissions.')
 
+    @commands.command(hidden=True)
+    @permissions.owner()
+    async def gleave(self, ctx, gid : int, *, reason = 'Suspected bot farm'):
+        guild = discord.utils.find(lambda a: a.id == gid, ctx.bot.guilds)
+        if guild == None: return
+        await guild.leave()
+        try:
+            await guild.owner.send(f'Tuxedo has left **{guild.name}** for reason `{reason}`.\nIf you feel this is wrong, contact ry00001#3487.')
+        except discord.Forbidden:
+            pass
+        await ctx.send(':ok_hand:')
 
 
 def setup(bot):
