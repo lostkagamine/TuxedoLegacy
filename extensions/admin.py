@@ -7,10 +7,12 @@ from utils import randomness
 import aiohttp
 import asyncio
 import subprocess
+import rethinkdb as r
 
 class Admin:
     def __init__(self, bot):
         self.bot = bot
+        self.conn = bot.conn
         self._eval = {}
 
     async def haste_upload(self, text):
