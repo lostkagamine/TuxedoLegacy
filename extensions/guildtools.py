@@ -40,10 +40,11 @@ class GuildTools:
 
     @commands.command()
     async def ginfo(self, ctx, *, guildname : str = None):
-        try:
-            gid = int(guildname)
-        except ValueError:
-            gid = 0
+        if guildname != None:
+            try:
+                gid = int(guildname)
+            except ValueError:
+                gid = 0
         if guildname != None:
             if not permissions.owner_id_check(ctx.author.id):
                 return
