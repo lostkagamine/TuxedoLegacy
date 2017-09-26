@@ -20,7 +20,7 @@ categories = {'ban': discord.AuditLogAction.ban,
               'role_remove': discord.AuditLogAction.member_role_update}
 
 
-default_rsn = 'Unknown. Responsible moderator, do `./reason {caseid} <your reason>` to set a reason.'
+default_rsn = 'Unknown. Responsible moderator, do `{prefix}reason latest <your reason>` to set a reason.'
 
 
 class ModLogs:
@@ -84,10 +84,10 @@ class ModLogs:
             await asyncio.sleep(0.10)
             async for audit in g.audit_logs(limit=1, action=categories[_type]):
                 msg = await ch.send(self.process_template(_type, f'{str(u)} ({u.id})',
-                                                          f'{str(audit.user)} ({audit.user.id})', audit.reason if audit.reason else default_rsn))
-                cid = await self.log_entry(_type, g, f'{str(u)} ({u.id})', f'{str(audit.user)} ({audit.user.id})', audit.reason if audit.reason else default_rsn, str(msg.id))
+                                                          f'{str(audit.user)} ({audit.user.id})', audit.reason if audit.reason else default_rsn.replace('{prefix}', self.bot.prefix[0])))
+                cid = await self.log_entry(_type, g, f'{str(u)} ({u.id})', f'{str(audit.user)} ({audit.user.id})', audit.reason if audit.reason else default_rsn.replace('{prefix}', self.bot.prefix[0]), str(msg.id))
                 await msg.edit(content=self.process_template(_type, f'{str(u)} ({u.id})',
-                                                             f'{str(audit.user)} ({audit.user.id})', audit.reason if audit.reason else default_rsn,
+                                                             f'{str(audit.user)} ({audit.user.id})', audit.reason if audit.reason else default_rsn.replace('{prefix}', self.bot.prefix[0]),
                                                              str(cid)))
         except discord.Forbidden:
             await ch.send(self.process_template(_type, str(u), 'Unknown moderator', 'Unknown. Please grant the bot `View Audit Logs`.'))
@@ -96,10 +96,10 @@ class ModLogs:
         ch = self.modlog_ch(g)
         if ch == None: return
         msg = await ch.send(self.process_template(_type, f'{str(u)} ({u.id})',
-                                                  f'{str(mod)} ({mod.id})', reason if reason else default_rsn, aaaaa=role))
-        cid = await self.log_entry(_type, g, f'{str(u)} ({u.id})', f'{str(mod)} ({mod.id})', reason if reason else default_rsn, str(msg.id), role=role)
+                                                  f'{str(mod)} ({mod.id})', reason if reason else default_rsn.replace('{prefix}', self.bot.prefix[0]), aaaaa=role))
+        cid = await self.log_entry(_type, g, f'{str(u)} ({u.id})', f'{str(mod)} ({mod.id})', reason if reason else default_rsn.replace('{prefix}', self.bot.prefix[0]), str(msg.id), role=role)
         await msg.edit(content=self.process_template(_type, f'{str(u)} ({u.id})',
-                                                     f'{str(mod)} ({mod.id})', reason if reason else default_rsn,
+                                                     f'{str(mod)} ({mod.id})', reason if reason else default_rsn.replace('{prefix}', self.bot.prefix[0]),
                                                      aaaaa=role, case=str(cid)))
 
     def check_perm(self, ctx):
@@ -120,7 +120,7 @@ class ModLogs:
             async for audit in g.audit_logs(limit=1):
                 if audit.target.id == m.id and audit.action == discord.AuditLogAction.kick:
                     await self.do_modlog_raw('kick', g, m,
-                                             audit.reason if audit.reason else default_rsn, audit.user)
+                                             audit.reason if audit.reason else default_rsn.replace('{prefix}', self.bot.prefix[0]), audit.user)
 
         @self.bot.listen('on_member_unban')
         async def on_member_unban(g, u):
@@ -152,7 +152,7 @@ class ModLogs:
     async def do_role_log(self, after, type, i):
         async for audit in after.guild.audit_logs(limit=1):
             await self.do_modlog_raw(type, after.guild,
-                                    after, audit.reason if audit.reason else default_rsn, audit.user, i.name)
+                                    after, audit.reason if audit.reason else default_rsn.replace('{prefix}', self.bot.prefix[0]), audit.user, i.name)
 
 
     def check_type(self, ctx, thing, value):
@@ -269,7 +269,7 @@ class ModLogs:
         await ctx.send(':ok_hand:')
 
     @commands.command()
-    async def reason(self, ctx, caseid: int, *, reason: str):
+    async def reason(self, ctx, caseid: str, *, reason: str):
         exists = (lambda: list(r.table('modlog').filter(
             lambda a: a['guild'] == str(ctx.guild.id)).run(self.conn)) != [])()
         if not exists:
@@ -279,6 +279,13 @@ class ModLogs:
         data = r.table('modlog').filter(
             lambda a: a['guild'] == str(ctx.guild.id)).run(self.conn)
         data = data.next()
+        if caseid == 'latest' or caseid == '|':
+            caseid = data['count']
+        else:
+            try:
+                caseid = int(caseid)
+            except Exception:
+                return await ctx.send(':x: Invalid case ID.')
         # print(data)
         if caseid < 1 or caseid > data['count']: return await ctx.send(':x: List index out of range. (Invalid Case ID)')
         entry = data['entries'][caseid-1]
