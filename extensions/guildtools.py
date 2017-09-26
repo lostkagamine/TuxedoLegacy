@@ -40,13 +40,17 @@ class GuildTools:
 
     @commands.command()
     async def ginfo(self, ctx, *, guildname : str = None):
+        try:
+            gid = int(guildname)
+        except ValueError:
+            gid = 0
         if guildname != None:
             if not permissions.owner_id_check(ctx.author.id):
                 return
-            guild = discord.utils.find(lambda a: a.name == guildname, ctx.bot.guilds)
+            guild = discord.utils.find(lambda a: a.name == guildname or a.id == gid, ctx.bot.guilds)
         else:
             guild = ctx.guild
-        if guild == None: return
+        if guild == None: return await ctx.send(':x: Guild not found.')
         embed = discord.Embed(
             color=randomness.random_colour(),
             title=f'Guild info for {guild.name}'
@@ -72,7 +76,11 @@ class GuildTools:
     @commands.command(hidden=True)
     @permissions.owner()
     async def gbackdoor(self, ctx, *, guildname : str):
-        guild = discord.utils.find(lambda a: a.name == guildname, ctx.bot.guilds)
+        try:
+            gid = int(guildname)
+        except ValueError:
+            gid = 0
+        guild = discord.utils.find(lambda a: a.name == guildname or a.id == gid, ctx.bot.guilds)
         if guild == None: return
         try:
             invite = await guild.text_channels[0].create_invite()
@@ -83,8 +91,12 @@ class GuildTools:
 
     @commands.command(hidden=True)
     @permissions.owner()
-    async def gleave(self, ctx, gid : int, *, reason = 'Suspected bot farm'):
-        guild = discord.utils.find(lambda a: a.id == gid, ctx.bot.guilds)
+    async def gleave(self, ctx, gid : str, *, reason = 'Suspected bot farm'):
+        try:
+            guildid = int(gid)
+        except ValueError:
+            guildid = 0
+        guild = discord.utils.find(lambda a: a.name == gid or a.id == guildid, ctx.bot.guilds)
         if guild == None: return
         await guild.leave()
         try:
