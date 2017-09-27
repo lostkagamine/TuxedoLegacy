@@ -232,6 +232,8 @@ class ModLogs:
 
     @commands.command(aliases=['delcfg'])
     async def delete_config(self, ctx):
+        if not self.check_perm(ctx):
+            return await ctx.send(':no_entry_sign: Invalid permissions.')
         exists = (lambda: list(r.table('settings').filter(
             lambda a: a['guild'] == str(ctx.guild.id)).run(self.conn)) != [])()
         if not exists:
