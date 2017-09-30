@@ -5,7 +5,9 @@ import asyncio
 from utils import permissions
 import shlex
 
-settings = {'modlog_channel': 'channel', 'enable_invite_protection': 'bool', 'staff_channel': 'channel', 'tracked_roles': 'rolelist'}
+settings = {'modlog_channel': 'channel', 'enable_invite_protection': 'bool',
+            'staff_channel': 'channel', 'tracked_roles': 'rolelist', 'muted_role': 'role',
+            'autoroles': 'rolelist', 'guild_prefix': 'string'}
 
 templates = {'ban': '**User Ban** | Case {id}\n**Target:** {user}\n**Moderator:** {mod}\n**Reason:** {rsn}',
              'kick': '**User Kick** | Case {id}\n**Target:** {user}\n**Moderator:** {mod}\n**Reason:** {rsn}',
@@ -79,7 +81,8 @@ class ModLogs:
 
     async def do_modlog(self, _type, g, u):
         ch = self.modlog_ch(g)
-        if ch == None: return
+        if ch == None:
+            return
         try:
             await asyncio.sleep(0.10)
             async for audit in g.audit_logs(limit=1, action=categories[_type]):
@@ -87,19 +90,22 @@ class ModLogs:
                                                           f'{str(audit.user)} ({audit.user.id})', audit.reason if audit.reason else default_rsn.replace('{prefix}', self.bot.prefix[0])))
                 cid = await self.log_entry(_type, g, f'{str(u)} ({u.id})', f'{str(audit.user)} ({audit.user.id})', audit.reason if audit.reason else default_rsn.replace('{prefix}', self.bot.prefix[0]), str(msg.id))
                 await msg.edit(content=self.process_template(_type, f'{str(u)} ({u.id})',
-                                                             f'{str(audit.user)} ({audit.user.id})', audit.reason if audit.reason else default_rsn.replace('{prefix}', self.bot.prefix[0]),
+                                                             f'{str(audit.user)} ({audit.user.id})', audit.reason if audit.reason else default_rsn.replace(
+                                                                 '{prefix}', self.bot.prefix[0]),
                                                              str(cid)))
         except discord.Forbidden:
             await ch.send(self.process_template(_type, str(u), 'Unknown moderator', 'Unknown. Please grant the bot `View Audit Logs`.'))
 
     async def do_modlog_raw(self, _type, g, u, reason, mod, role='N/A'):
         ch = self.modlog_ch(g)
-        if ch == None: return
+        if ch == None:
+            return
         msg = await ch.send(self.process_template(_type, f'{str(u)} ({u.id})',
                                                   f'{str(mod)} ({mod.id})', reason if reason else default_rsn.replace('{prefix}', self.bot.prefix[0]), aaaaa=role))
         cid = await self.log_entry(_type, g, f'{str(u)} ({u.id})', f'{str(mod)} ({mod.id})', reason if reason else default_rsn.replace('{prefix}', self.bot.prefix[0]), str(msg.id), role=role)
         await msg.edit(content=self.process_template(_type, f'{str(u)} ({u.id})',
-                                                     f'{str(mod)} ({mod.id})', reason if reason else default_rsn.replace('{prefix}', self.bot.prefix[0]),
+                                                     f'{str(mod)} ({mod.id})', reason if reason else default_rsn.replace(
+                                                         '{prefix}', self.bot.prefix[0]),
                                                      aaaaa=role, case=str(cid)))
 
     def check_perm(self, ctx):
@@ -130,7 +136,7 @@ class ModLogs:
         async def on_member_update(before, after):
             g = after.guild
             if before.roles == after.roles:
-                return # no role changes, we can drop it
+                return  # no role changes, we can drop it
             exists = (lambda: list(r.table('settings').filter(
                 lambda a: a['guild'] == str(g.id)).run(self.conn)) != [])()
             if not exists:
@@ -144,7 +150,7 @@ class ModLogs:
             for i in [x for x in after.roles if x not in before.roles]:
                 if str(i.id) in settings['tracked_roles']:
                     return await self.do_role_log(after, 'role_add', i)
-            
+
             for i in [x for x in before.roles if x not in after.roles]:
                 if str(i.id) in settings['tracked_roles']:
                     return await self.do_role_log(before, 'role_remove', i)
@@ -152,8 +158,7 @@ class ModLogs:
     async def do_role_log(self, after, type, i):
         async for audit in after.guild.audit_logs(limit=1):
             await self.do_modlog_raw(type, after.guild,
-                                    after, audit.reason if audit.reason else default_rsn.replace('{prefix}', self.bot.prefix[0]), audit.user, i.name)
-
+                                     after, audit.reason if audit.reason else default_rsn.replace('{prefix}', self.bot.prefix[0]), audit.user, i.name)
 
     def check_type(self, ctx, thing, value):
         if thing == "channel":
@@ -166,6 +171,12 @@ class ModLogs:
                 return True
             except Exception:
                 return False
+        elif thing == 'role':
+            if discord.utils.find(lambda a: a.name == value, ctx.guild.roles) is None:
+                return False
+            return True
+        elif thing == 'string':
+            return True
 
     def do_type(self, ctx, _type, value):
         print(value)
@@ -179,6 +190,13 @@ class ModLogs:
             if roles == False:
                 return 'ERR|One or more roles not found. Make sure to use \' instead of ".'
             return [str(i.id) for i in roles]
+        elif _type == 'role':
+            role = discord.utils.find(lambda a: a.name == value, ctx.guild.roles)
+            if role is None:
+                return 'ERR|Role not found.'
+            return str(role.id)
+        elif _type == 'string':
+            return value.strip('"').strip("'")
 
     def do_list(self, ctx, stuff):
         aaaa = shlex.split(stuff)
@@ -189,7 +207,6 @@ class ModLogs:
                 return False
             roles.append(role)
         return roles
-            
 
     @commands.command(name='set', aliases=['settings', 'setup', 'setting'])
     async def _set(self, ctx, *args):
@@ -204,7 +221,8 @@ class ModLogs:
         if not self.check_type(ctx, settings[thing_to_set], ' '.join(args[1:len(args)])):
             return await ctx.send(':x: This property is of type `{}`.'.format(settings[thing_to_set]))
         data = {'guild': str(ctx.guild.id)}
-        setting = self.do_type(ctx, settings[thing_to_set], ' '.join(args[1:len(args)]).replace('"', "'"))
+        setting = self.do_type(ctx, settings[thing_to_set], ' '.join(
+            args[1:len(args)]).replace('"', "'"))
         if isinstance(setting, str):
             if setting.startswith('ERR'):
                 stuff = setting.split('|')
@@ -289,20 +307,23 @@ class ModLogs:
             except Exception:
                 return await ctx.send(':x: Invalid case ID.')
         # print(data)
-        if caseid < 1 or caseid > data['count']: return await ctx.send(':x: List index out of range. (Invalid Case ID)')
-        entry = data['entries'][caseid-1]
+        if caseid < 1 or caseid > data['count']:
+            return await ctx.send(':x: List index out of range. (Invalid Case ID)')
+        entry = data['entries'][caseid - 1]
         entry['mod'] = f'{str(ctx.author)} ({ctx.author.id})'
         entry['reason'] = reason
         msgid = int(entry['msgid'])
         channel = self.modlog_ch(ctx.guild)
-        if channel == None: return
+        if channel == None:
+            return
         chid = channel.id
         msgs = []
         async for i in channel.history(limit=500):
             msgs.append(i)
         role = entry['role'] if 'role' in entry.keys() else 'N/A'
         msg = discord.utils.find(lambda a: a.id == int(entry['msgid']), msgs)
-        if msg == None: return await ctx.send(':x: No modlog entry found.')
+        if msg == None:
+            return await ctx.send(':x: No modlog entry found.')
         await msg.edit(content=self.process_template(
             entry['type'],
             entry['target'],
@@ -312,6 +333,7 @@ class ModLogs:
             aaaaa=role
         ))
         await ctx.send(':ok_hand:')
+
 
 def setup(bot):
     bot.add_cog(ModLogs(bot))

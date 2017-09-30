@@ -156,6 +156,32 @@ class Admin:
         await ctx.bot.change_presence(game=discord.Game(name=status, type=0))
         await ctx.send(':ok_hand:')
 
+    @commands.command()
+    @permissions.owner()
+    async def maintenance(self, ctx, state : str = None):
+        bools = False
+        if state is not None:
+            if state in ['true', 'false', 'on', 'off']:
+                bools = state in ['on', 'true']
+        
+        if bools == True:
+            prompt = await ctx.send('```Are you sure you want to do this? This will make the bot stop responding to anyone but you!\n\n[y]: Enter Maintenance mode\n[n]: Exit prompt```')
+            msg = await self.bot.wait_for('message', check=lambda m: m.author == ctx.author and m.channel == ctx.channel)
+            if msg.content == 'y':
+                await prompt.delete()
+                await self.bot.change_presence(status=discord.Status.dnd, game=discord.Game(name='Bot is currently being maintained. Please check back later.'))
+                self.bot.maintenance = True
+                await ctx.send(':white_check_mark: Bot now in maintenance mode.')
+                return
+            else:
+                await prompt.delete()
+                await ctx.send('Prompt exited.')
+        elif bools == False:
+            self.bot.maintenance = False
+            await self.bot.change_presence(status=discord.Status.online, game=None)
+            await ctx.send(':white_check_mark: Bot not in maintenance mode anymore.')
+
+
 
 
 def setup(bot):

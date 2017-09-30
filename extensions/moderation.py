@@ -15,6 +15,7 @@ pingmods_disabled = [110373943822540800]
 class Moderation:
     def __init__(self, bot):
         self.bot = bot
+        self.conn = conn
 
     @commands.command(aliases=['🅱an', 'delete'])
     async def ban(self, ctx, member : discord.Member, *, reason : str = None):
@@ -30,7 +31,9 @@ class Moderation:
         if ctx.me.top_role <= member.top_role:
             return await ctx.send(':no_entry_sign: I can\'t ban someone with a higher role than me!')
         await ctx.guild.ban(member, reason=f'[{str(ctx.author)}] {reason}' if reason else f'Ban by {str(ctx.author)}', delete_message_days=7)
-        await ctx.send(':ok_hand:')
+        msg = await ctx.send(':ok_hand:')
+        await asyncio.sleep(3)
+        await msg.delete()
 
     @commands.command()
     async def kick(self, ctx, member : discord.Member, *, reason : str = None):
@@ -46,7 +49,9 @@ class Moderation:
         if ctx.me.top_role <= member.top_role:
             return await ctx.send(':no_entry_sign: I can\'t kick someone with a higher role than me!')
         await ctx.guild.kick(member, reason=f'[{str(ctx.author)}] {reason}' if reason else f'Kick by {str(ctx.author)}')
-        await ctx.send(':ok_hand:')
+        msg = await ctx.send(':ok_hand:')
+        await asyncio.sleep(3)
+        await msg.delete()
 
 
     @commands.command()
@@ -64,7 +69,9 @@ class Moderation:
             except discord.Forbidden:
                 await ctx.send('Oops. I can\'t dehoist this member because my privilege is too low. Move my role higher.')
             else:
-                await ctx.send(':ok_hand:')
+                msg = await ctx.send(':ok_hand:')
+                await asyncio.sleep(3)
+                await msg.delete()
         else:
             await ctx.send('I couldn\'t dehoist this member. Either they weren\'t hoisting or this character isn\'t supported yet.')
 
@@ -133,7 +140,9 @@ class Moderation:
         if not ctx.me.permissions_in(ctx.channel).ban_members:
             return await ctx.send(':no_entry_sign: Grant the bot Ban Members before doing this.')
         await ctx.bot.http.ban(user, ctx.guild.id, 7, reason=f'[{str(ctx.author)}] {reason}' if reason else f'Hackban by {str(ctx.author)}')
-        await ctx.send(':ok_hand:')
+        msg = await ctx.send(':ok_hand:')
+        await asyncio.sleep(3)
+        await msg.delete()
 
     @commands.command(description='Ping an online moderator.', aliases=['pingmod'])
     async def pingmods(self, ctx, *, reason : str = None):
