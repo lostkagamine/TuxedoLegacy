@@ -27,20 +27,7 @@ class Bot(commands.Bot):
         print('Pre-run tasks complete.')
 
     async def getPrefix(self, bot, msg):
-        g = msg.guild
-        prefix = []
-        exists = (lambda: list(r.table('settings').filter(
-            lambda a: a['guild'] == str(g.id)).run(self.conn)) != [])()
-        if exists:
-            settings = list(r.table('settings').filter(
-                lambda a: a['guild'] == str(g.id)).run(self.conn))[0]
-            if 'guild_prefix' in settings.keys():
-                prefix.append(settings['guild_prefix'])
-                [prefix.append(i) for i in self.prefix]
-        else:
-            prefix = self.prefix
-
-        return commands.when_mentioned_or(*prefix)(bot, msg)
+        return commands.when_mentioned_or(*self.prefix)(bot, msg)
 
     async def on_ready(self):
         app_info = await self.application_info()
