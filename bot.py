@@ -42,7 +42,7 @@ class Bot(commands.Bot):
         else:
             prefix = self.prefix
 
-        return commands.when_mentioned_or(*prefix)(bot, msg))
+        return commands.when_mentioned_or(*prefix)(bot, msg)
 
     async def on_ready(self):
         app_info = await self.application_info()
