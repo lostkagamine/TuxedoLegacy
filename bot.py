@@ -35,8 +35,6 @@ class Bot(commands.Bot):
             settings = list(r.table('settings').filter(
                 lambda a: a['guild'] == str(g.id)).run(self.conn))[0]
             if 'guild_prefix' in settings.keys():
-                print(self.prefix)
-                print(settings['guild_prefix'])
                 prefix.append(settings['guild_prefix'])
                 [prefix.append(i) for i in self.prefix]
         else:
