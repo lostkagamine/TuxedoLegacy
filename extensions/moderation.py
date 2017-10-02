@@ -15,7 +15,7 @@ pingmods_disabled = [110373943822540800]
 class Moderation:
     def __init__(self, bot):
         self.bot = bot
-        self.conn = conn
+        self.conn = bot.conn
 
     @commands.command(aliases=['🅱an', 'delete'])
     async def ban(self, ctx, member : discord.Member, *, reason : str = None):
