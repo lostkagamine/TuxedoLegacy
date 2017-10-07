@@ -32,6 +32,9 @@ class AutoMod:
                 if not inv:
                     return
 
+                if msg.author.bot:
+                    return
+
                 try:
                     invite = await self.bot.get_invite(inv[0])
                 except discord.errors.NotFound:
@@ -52,7 +55,7 @@ class AutoMod:
 
                 if msg.channel.permissions_for(msg.guild.me).manage_messages:
                     await msg.delete()
-                    await msg.channel.send(f'{msg.author}, please do not advertise here.')
+                    await msg.channel.send(f'<@{msg.author.id}>, please do not advertise here.')
 
 
 def setup(bot):

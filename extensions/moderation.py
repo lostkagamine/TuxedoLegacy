@@ -56,6 +56,7 @@ class Moderation:
 
     @commands.command()
     async def dehoist(self, ctx, member : discord.Member, *, flags : str = None):
+        'Remove a hoisting member\'s hoist.'
         if not ctx.author.permissions_in(ctx.channel).manage_nicknames:
             return await ctx.send(':no_entry_sign: Not enough permissions. You need Manage Nicknames.')
         if not ctx.me.permissions_in(ctx.channel).manage_nicknames:
