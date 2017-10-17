@@ -9,6 +9,7 @@ from utils import switches
 import asyncio
 import random
 chars = '!#/()=%&'
+dehoist_char = '𛲢' # special character, to be used for dehoisting
 
 pingmods_disabled = [110373943822540800]
 
@@ -61,18 +62,18 @@ class Moderation:
             return await ctx.send(':no_entry_sign: Not enough permissions. You need Manage Nicknames.')
         if not ctx.me.permissions_in(ctx.channel).manage_nicknames:
             return await ctx.send(':no_entry_sign: Grant the bot Manage Nicknames before doing this.')
+        if ctx.author.top_role <= member.top_role or ctx.me.top_role <= member.top_role:
+            return await ctx.send(':no_entry_sign: I can\'t dehoist a member with a higher role than you, and you can\'t dehoist someone with a higher role than you.')
         if ctx.author == member:
             return await ctx.send('Nope, can\'t do this.')
         name = member.nick if member.nick else member.name
         if name.startswith(tuple(chars)):
             try:
-                await member.edit(nick=f'z {name}') # z is temporary
+                await member.edit(nick=f'{dehoist_char}{name}')
             except discord.Forbidden:
                 await ctx.send('Oops. I can\'t dehoist this member because my privilege is too low. Move my role higher.')
             else:
-                msg = await ctx.send(':ok_hand:')
-                await asyncio.sleep(3)
-                await msg.delete()
+                await ctx.send(':ok_hand:')
         else:
             await ctx.send('I couldn\'t dehoist this member. Either they weren\'t hoisting or this character isn\'t supported yet.')
 
