@@ -61,6 +61,13 @@ class Bot(commands.Bot):
             sys.exit(1)
         print('RethinkDB initialisation successful.')
 
+    def find_command(self, cmdname:str):
+        for i in self.commands:
+            if i.name == cmdname:
+                return i
+        return False
+
+
 
 async def cmd_help(ctx):
     if ctx.invoked_subcommand:
@@ -101,7 +108,8 @@ async def on_command_error(ctx, exception):
 
 @bot.command()
 async def help(ctx, command: str = None):
-    helptext = await ctx.bot.formatter.format_help_for(ctx, command if command is not None else ctx.bot)
+    cmd = ctx.bot.find_command(command)
+    helptext = await ctx.bot.formatter.format_help_for(ctx, command if command is not False else ctx.bot)
     helptext = helptext[0]
     try:
         await ctx.author.send(helptext)
