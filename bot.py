@@ -109,7 +109,7 @@ async def on_command_error(ctx, exception):
 @bot.command()
 async def help(ctx, command: str = None):
     cmd = ctx.bot.find_command(command)
-    helptext = await ctx.bot.formatter.format_help_for(ctx, command if command is not False else ctx.bot)
+    helptext = await ctx.bot.formatter.format_help_for(ctx, cmd if cmd is not False else ctx.bot)
     helptext = helptext[0]
     try:
         await ctx.author.send(helptext)
