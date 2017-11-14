@@ -27,7 +27,6 @@ class GuildTools:
         self.bot = bot
         @bot.listen('on_guild_join') # Begin actual anti-collection
         async def on_guild_join(g):
-            await g.text_channels[0].send('meme')
             bots = len([a for a in g.members if a.bot])
             percent = math.floor(bots/len(g.members)*100)
             if percent > farmlevel or bots > 30:
