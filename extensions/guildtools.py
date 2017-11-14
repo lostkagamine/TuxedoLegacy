@@ -30,7 +30,7 @@ class GuildTools:
             bots = len([a for a in g.members if a.bot])
             percent = math.floor(bots/len(g.members)*100)
             if percent > farmlevel or bots > 30:
-                await g.text_channels[0].send()
+                await g.text_channels[0].send(leavestr)
                 await g.leave()
             # End anti-collection meme
 
