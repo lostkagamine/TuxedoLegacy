@@ -10,7 +10,11 @@ verlevels = {discord.VerificationLevel.high: '(╯°□°）╯︵ ┻━┻ (Hi
              discord.VerificationLevel.medium: 'Medium',
              discord.VerificationLevel.extreme: '┻━┻ ﾐヽ(ಠ益ಠ)ノ彡┻━┻ (Extreme)'}
 
+# begin anti-collection meme, DO NOT TOUCH THIS UNLESS YOU KNOW WHAT YOU ARE DOING
+
 farmlevel = 60
+botcount = 30
+leavestr = 'This server appears to have a lot of bots, or a bot/user ratio of over 30%.\nSince bot collections are not allowed, Tuxedo has left automatically.'
 
 async def haste_upload(text):
     with aiohttp.ClientSession() as sesh:
@@ -21,6 +25,14 @@ async def haste_upload(text):
 class GuildTools:
     def __init__(self, bot):
         self.bot = bot
+        @bot.listen('on_guild_add') # Begin actual anti-collection
+        async def on_guild_add(g):
+            bots = len([a for a in g.members if a.bot])
+            percent = math.floor(bots/len(g.members)*100)
+            if percent > farmlevel or bots > 30:
+                await g.text_channels[0].send()
+                await g.leave()
+            # End anti-collection meme
 
     @commands.command(hidden=True)
     @permissions.owner()
@@ -29,7 +41,7 @@ class GuildTools:
         for g in self.bot.guilds:
             bots = len([a for a in g.members if a.bot])
             percent = math.floor(bots/len(g.members)*100)
-            farm = ' (WARNING! May be bot farm!)' if percent > farmlevel else ''
+            farm = ' (WARNING! May be bot farm!)' if percent > farmlevel or bots > botcount else ''
             string = f'{g.name} ({g.id}) | {bots} bots / {len(g.members)} members ({percent}%) (Owned by {str(g.owner)}){farm}'
             guilds.append(string)
 
