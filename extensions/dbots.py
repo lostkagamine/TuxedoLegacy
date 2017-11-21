@@ -13,7 +13,7 @@ async def get_stats(bot, botid):
     token = bot.config["DBOTS_TOKEN"]
     headers = {"Authorization": token}
     async with aiohttp.ClientSession() as cs:
-        async with cs.get("http://bots.discord.pw/api/bots/{}".format(str(botid)), headers=headers) as r:
+        async with cs.get("https://bots.discord.pw/api/bots/{}".format(str(botid)), headers=headers) as r:
             r = await r.json()
             err = False
             try:
