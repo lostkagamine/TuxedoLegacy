@@ -166,7 +166,7 @@ class Moderation:
         if ctx.me.permissions_in(ctx.channel).manage_nicknames:
             cancer = member.display_name
             decancer = unidecode.unidecode_expect_nonascii(cancer)
-            await member.edit(nickname=decancer)
+            await member.edit(nick=decancer)
             await ctx.send(f'Successfully decancered {cancer} to ​`{decancer}​`.')
         else:
             cancer = member.display_name
