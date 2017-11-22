@@ -8,6 +8,7 @@ from discord import utils as dutils
 from utils import switches
 import asyncio
 import random
+import unidecode
 chars = '!#/()=%&'
 dehoist_char = '𛲢' # special character, to be used for dehoisting
 
@@ -18,7 +19,7 @@ class Moderation:
         self.bot = bot
         self.conn = bot.conn
 
-    @commands.command(aliases=['🅱an', 'delete'])
+    @commands.command()
     async def ban(self, ctx, member : discord.Member, *, reason : str = None):
         """Bans a member. You can specify a reason."""
         if ctx.author == member:
@@ -159,6 +160,18 @@ class Moderation:
         reason_string = f'Mod Autoping:\n**{reason}**\n<@{mod.id}> (by **{ctx.author.name}**#{ctx.author.discriminator})'
         await ctx.send(reason_string if reason != None else reasonless_string)
 
+    @commands.command(description='Decancer a member.')
+    async def decancer(self, ctx, member : discord.Member):
+        '"Decancer" a member, or strip all the non-ASCII characters from their name. Useful to make your chat look good.'
+        if ctx.me.permissions_in(ctx.channel).manage_nicknames:
+            cancer = member.display_name
+            decancer = unidecode.unidecode_expect_nonascii(cancer)
+            await member.edit(nickname=decancer)
+            await ctx.send(f'Successfully decancered {cancer} to ​`{decancer}​`.')
+        else:
+            cancer = member.display_name
+            decancer = unidecode.unidecode_expect_nonascii(cancer)
+            await ctx.send(f'The decancered version of {cancer} is ​`{decancer}​`.')
 
         
 
