@@ -20,23 +20,23 @@ class Snipe:
 
     def __init__(self, bot):
         self.bot = bot
-        bot.snipes = {}
+        self.snipes = {}
         @bot.listen('on_message_delete')
         async def on_message_delete(msg):
             if msg.author.bot: return
-            bot.snipes[msg.channel.id] = msg 
+            self.snipes[msg.channel.id] = msg 
 
         @bot.listen('on_message_edit')
         async def on_message_edit(before, after):
             if before.author.bot or after.author.bot: return # DEPARTMENT OF REDUNDANCY DEPARTMENT
             if self.lev(before.content, after.content) >= 10:
-                bot.snipes[before.channel.id] = [before, after]
+                self.snipes[before.channel.id] = [before, after]
 
     @commands.command(description='"Snipes" someone\'s message that\'s been edited or deleted.')
     async def snipe(self, ctx):
         '"Snipes" someone\'s message that\'s been edited or deleted.'
         try:
-            snipe = self.bot.snipes[ctx.channel.id]
+            snipe = self.snipes[ctx.channel.id]
         except KeyError:
             return await ctx.send('No snipes in this channel!')
         if snipe == None:
