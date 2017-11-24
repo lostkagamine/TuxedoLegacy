@@ -55,7 +55,7 @@ class Snipe:
         emb.set_footer(text=f'Message sniped by {str(ctx.author)}', icon_url=ctx.author.avatar_url)
         emb.timestamp = datetime.datetime.now()
         await ctx.send(embed=emb)
-        self.bot.snipes[ctx.channel.id] = None
+        self.snipes[ctx.channel.id] = None
 
 def setup(bot):
     bot.add_cog(Snipe(bot))
