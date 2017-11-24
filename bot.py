@@ -78,7 +78,7 @@ async def cmd_help(ctx):
     for page in _help:
         await ctx.send(page)
 
-bot = Bot()
+bot = Bot(max_messages=10000)
 
 
 @bot.listen("on_command_error")
