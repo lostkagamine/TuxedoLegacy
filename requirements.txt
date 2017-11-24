@@ -7,3 +7,4 @@ psutil
 rethinkdb
 raven
 unidecode
+editdistance

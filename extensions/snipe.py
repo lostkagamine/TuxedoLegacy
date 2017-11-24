@@ -1,23 +1,9 @@
 import discord
 from discord.ext import commands
 import datetime
+import editdistance
 
 class Snipe:
-    def lev(self, s, t):
-        if s == "":
-            return len(t)
-        if t == "":
-            return len(s)
-        if s[-1] == t[-1]:
-            cost = 0
-        else:
-            cost = 1
-        
-        res = min([self.lev(s[:-1], t)+1,
-                self.lev(s, t[:-1])+1, 
-                self.lev(s[:-1], t[:-1]) + cost])
-        return res
-
     def __init__(self, bot):
         self.bot = bot
         self.snipes = {}
@@ -29,7 +15,7 @@ class Snipe:
         @bot.listen('on_message_edit')
         async def on_message_edit(before, after):
             if before.author.bot or after.author.bot: return # DEPARTMENT OF REDUNDANCY DEPARTMENT
-            if self.lev(before.content, after.content) >= 10:
+            if editdistance.eval(before.content, after.content) >= 10:
                 self.snipes[before.channel.id] = [before, after]
 
     @commands.command(description='"Snipes" someone\'s message that\'s been edited or deleted.')

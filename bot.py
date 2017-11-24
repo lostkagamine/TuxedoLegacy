@@ -21,6 +21,7 @@ class Bot(commands.Bot):
         with open("config.json") as f:
             self.config = json.load(f)
             self.prefix = self.config.get('BOT_PREFIX')
+            self.version = self.config.get('VERSION')
         self.remove_command("help")
         self.init_raven()
         self.init_rethinkdb()
@@ -34,6 +35,7 @@ class Bot(commands.Bot):
         self.invite_url = dutils.oauth_url(app_info.id)
         print(
             f'Logged in as {self.user.name}\nBot invite link: {self.invite_url}')
+        await self.change_presence(game=discord.Game(name=f'{self.prefix[0]}help | Version {self.version}', type=0))
         self.load_extension('extensions.core')
 
     async def on_message(self, message):
