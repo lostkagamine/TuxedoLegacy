@@ -11,6 +11,8 @@ import rethinkdb as r
 import sys
 from utils import permissions
 
+nopls = [110373943822540800]
+
 class Bot(commands.Bot):
 
     def __init__(self, **options):
@@ -42,6 +44,8 @@ class Bot(commands.Bot):
         if message.author.bot:
             return
         if message.author.id in self.config.get('BLOCKED'):
+            return
+        if message.content.startswith('pls') and message.guild.id in nopls:
             return
         if not permissions.owner_id_check(str(message.author.id)) and self.maintenance:
             return
@@ -98,6 +102,7 @@ async def on_command_error(ctx, exception):
         )
         sentry_string = "{} in command {}\nTraceback (most recent call last):\n{}{}: {}".format(type(
             exception).__name__, ctx.command.qualified_name, _traceback, type(exception).__name__, exception)
+        print(sentry_string)
         error.add_field(name="`{}` in command `{}`".format(type(exception).__name__, ctx.command.qualified_name),
                         value="```py\nTraceback (most recent call last):\n{}{}: {}```".format(_traceback, type(exception).__name__, exception))
         ctx.bot.sentry.captureMessage(sentry_string)

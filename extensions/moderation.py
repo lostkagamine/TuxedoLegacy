@@ -9,6 +9,7 @@ from utils import switches
 import asyncio
 import random
 import unidecode
+import rethinkdb as r
 chars = '!#/()=%&'
 dehoist_char = '𛲢' # special character, to be used for dehoisting
 
@@ -18,6 +19,89 @@ class Moderation:
     def __init__(self, bot):
         self.bot = bot
         self.conn = bot.conn
+        self.mutes = {}
+
+    def get_role(self, guild, id):
+        for i in guild.roles:
+            if i.id == id: return i
+        return None
+
+    @commands.command(aliases=['roleban', 'rb', 'toss'])
+    async def mute(self, ctx, member:discord.Member, *, reason:str=None):
+        'Mutes a member. You can specify a reason.'
+        g = ctx.guild
+        perms = ctx.author.permissions_in(ctx.channel)
+        if perms.manage_roles or perms.kick_members or perms.ban_members:
+            exists = (lambda: list(r.table('settings').filter(
+                lambda a: a['guild'] == str(g.id)).run(self.conn)) != [])()
+            if not exists:
+                return
+            # we know the guild has an entry in the settings
+            settings = list(r.table('settings').filter(
+                lambda a: a['guild'] == str(g.id)).run(self.conn))[0]
+            if 'muted_role' not in settings.keys():
+                return await ctx.send(f':x: You haven\'t set up a muted role. Please use `{ctx.prefix}set muted_role <role name>`')
+            role = self.get_role(ctx.guild, int(settings['muted_role']))
+            try:
+                meme = self.mutes[member.id]
+                if meme != {} and meme != None:
+                    return await ctx.send(':x: This member is already muted.')
+            except KeyError:
+                pass
+            self.mutes[member.id] = []
+            try:
+                for i in member.roles:
+                    if i != g.default_role:
+                        self.mutes[member.id].append(i)
+                        await member.remove_roles(i)
+                await member.add_roles(role, reason=f'[{str(ctx.author)}] {reason}' if reason != None else f'[Mute by {str(ctx.author)}]')
+                prevroles = ', '.join([i.name for i in self.mutes[member.id]])
+                if prevroles == '': prevroles = 'None'
+                await ctx.send(f'**{member.name}**#{member.discriminator} ({member.id}) has been muted.\nPrevious roles: {prevroles}')
+            except discord.Forbidden:
+                return await ctx.send(':x: I don\'t have permission to do this. Give me Manage Roles or move my role higher.')
+        else:
+            return await ctx.send(':no_entry_sign: Not enough permissions. You need either Manage Roles, Kick Members or Ban Members.')
+
+    @commands.command(aliases=['unroleban', 'urb', 'untoss'])
+    async def unmute(self, ctx, member:discord.Member, *, reason : str=None):
+        'Unmutes a member. You can specify a reason.'
+        g = ctx.guild
+        perms = ctx.author.permissions_in(ctx.channel)
+        if perms.manage_roles or perms.kick_members or perms.ban_members:
+            exists = (lambda: list(r.table('settings').filter(
+                lambda a: a['guild'] == str(g.id)).run(self.conn)) != [])()
+            if not exists:
+                return
+            # we know the guild has an entry in the settings
+            settings = list(r.table('settings').filter(
+                lambda a: a['guild'] == str(g.id)).run(self.conn))[0]
+            if 'muted_role' not in settings.keys():
+                return await ctx.send(f':x: You haven\'t set up a muted role. Please use `{ctx.prefix}set muted_role <role name>`')
+            role = self.get_role(ctx.guild, int(settings['muted_role']))
+            try:
+                meme = self.mutes[member.id]
+                if meme == None or meme == {}:
+                    raise KeyError('is not moot, does not compute')
+            except KeyError:
+                return await ctx.send(':x: This member wasn\'t muted.')
+            try:
+                roles = []
+                for i in self.mutes[member.id]:
+                    if i != g.default_role:
+                        roles.append(i)
+                        await member.add_roles(i)
+                await member.remove_roles(role, reason=f'[{str(ctx.author)}] {reason}' if reason != None else f'[Unmute by {str(ctx.author)}]')
+                prevroles = ', '.join([i.name for i in roles])
+                if prevroles == '': prevroles = 'None'
+                self.mutes[member.id] = {}
+                await ctx.send(f'**{member.name}**#{member.discriminator} ({member.id}) has been unmuted.\nRoles restored: {prevroles}')
+            except discord.Forbidden:
+                return await ctx.send(':x: I don\'t have permission to do this. Give me Manage Roles or move my role higher.')
+        else:
+            return await ctx.send(':no_entry_sign: Not enough permissions. You need either Manage Roles, Kick Members or Ban Members.')
+
+
 
     @commands.command()
     async def ban(self, ctx, member : discord.Member, *, reason : str = None):
