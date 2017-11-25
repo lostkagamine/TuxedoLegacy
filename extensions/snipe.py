@@ -2,6 +2,9 @@ import discord
 from discord.ext import commands
 import datetime
 import editdistance
+import re
+
+invitere = r"(?:discord(?:(?:\.|.?dot.?)gg|app(?:\.|.?dot.?)com\/invite)\/(([\w]{1,}|[a-zA-Z0-9]{1,})))" # SDA ad regex
 
 class Snipe:
     def __init__(self, bot):
@@ -21,6 +24,7 @@ class Snipe:
     def sanitise(self, string):
         if len(string) > 1024:
             string = string[0:1021] + "..."
+        string = re.sub(invitere, '[INVITE REDACTED]', string)
         return string
 
     @commands.command(description='"Snipes" someone\'s message that\'s been edited or deleted.')
@@ -41,7 +45,7 @@ class Snipe:
             emb.add_field(name='After', value=self.sanitise(snipe[1].content), inline=False)
         else: # delete snipe
             emb.set_author(name=str(snipe.author), icon_url=snipe.author.avatar_url)
-            emb.description = snipe.content
+            emb.description = self.sanitise(snipe.content)
             emb.colour = snipe.author.colour
         emb.set_footer(text=f'Message sniped by {str(ctx.author)}', icon_url=ctx.author.avatar_url)
         emb.timestamp = datetime.datetime.now()

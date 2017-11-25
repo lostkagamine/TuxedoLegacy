@@ -95,9 +95,9 @@ class Core:
         await pong.edit(content="`PING discordapp.com {}ms`".format(int(ping)))
 
     @commands.command(description="Manage those prefixes.")
-    @permissions.owner()
     async def prefix(self, ctx, method: str, *, prefix: str=None): # ported from rybot
         if method == "add":
+            if not permissions.is_owner_check(ctx): return await ctx.send(':no_entry_sign: You do not have permission to use this command.')
             prefix = prefix.strip("\"")
             prefix = prefix.strip('\'')
             if prefix == None:
@@ -107,6 +107,7 @@ class Core:
             self.bot.prefix.append(prefix)
             await ctx.send("Added prefix `" + prefix + "`")
         elif method == "remove":
+            if not permissions.is_owner_check(ctx): return await ctx.send(':no_entry_sign: You do not have permission to use this command.')
             prefix = prefix.strip("\"")
             prefix = prefix.strip('\'')
             if prefix == None:
@@ -118,11 +119,8 @@ class Core:
         elif method == "list": # Tuxedo Exclusive Feature™
             prefixes = "\n".join(self.bot.prefix)
             await ctx.send(f"```\n{prefixes}```")
-        elif method == 'reset':
-            self.bot.prefix = self.bot.config.get('BOT_PREFIX')
-            await ctx.send('Bot prefixes reset.')
         else:
-            await ctx.send('Method needs to be `add`, `remove`, `list` or `reset`')
+            await ctx.send('Method needs to be `add`, `remove`, `list`.')
 
     @commands.command()
     @permissions.owner()

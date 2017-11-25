@@ -7,7 +7,7 @@ print('by ry00001')
 setup = "default"
 
 db = "tuxedo"
-table = "settings"
+table = "projects"
 
 cfg = {} # insert details here. keys= user, password, host, port
 
