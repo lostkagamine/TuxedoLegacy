@@ -7,7 +7,7 @@ import shlex
 
 settings = {'modlog_channel': 'channel', 'enable_invite_protection': 'bool',
             'staff_channel': 'channel', 'tracked_roles': 'rolelist', 'muted_role': 'role',
-            'autoroles': 'rolelist'}
+            'autoroles': 'rolelist', 'rolebanned_role': 'role'}
 
 templates = {'ban': '**User Ban** | Case {id}\n**Target:** {user}\n**Moderator:** {mod}\n**Reason:** {rsn}',
              'kick': '**User Kick** | Case {id}\n**Target:** {user}\n**Moderator:** {mod}\n**Reason:** {rsn}',
