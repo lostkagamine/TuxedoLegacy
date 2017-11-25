@@ -55,7 +55,7 @@ class Moderation:
                     if i != g.default_role:
                         self.mutes[member.id][ctx.guild.id].append(i)
                         await member.remove_roles(i)
-                await member.add_roles(role, reason=f'[{str(ctx.author)}] {reason}' if reason != None else f'[Mute by {str(ctx.author)}]')
+                await member.add_roles(role, reason=f'[{str(ctx.author)}] {reason}' if reason != None else f'[Roleban by {str(ctx.author)}]')
                 prevroles = ', '.join([i.name for i in self.mutes[member.id][ctx.guild.id]])
                 if prevroles == '': prevroles = 'None'
                 await ctx.send(f'**{member.name}**#{member.discriminator} ({member.id}) has been rolebanned.\nPrevious roles: {prevroles}')
@@ -92,7 +92,7 @@ class Moderation:
                     if i != g.default_role:
                         roles.append(i)
                         await member.add_roles(i)
-                await member.remove_roles(role, reason=f'[{str(ctx.author)}] {reason}' if reason != None else f'[Unmute by {str(ctx.author)}]')
+                await member.remove_roles(role, reason=f'[{str(ctx.author)}] {reason}' if reason != None else f'[Unroleban by {str(ctx.author)}]')
                 prevroles = ', '.join([i.name for i in roles])
                 if prevroles == '': prevroles = 'None'
                 self.mutes[member.id][ctx.guild.id] = None
