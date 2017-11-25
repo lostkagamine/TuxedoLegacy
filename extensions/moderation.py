@@ -43,19 +43,20 @@ class Moderation:
                 return await ctx.send(f':x: You haven\'t set up a muted role. Please use `{ctx.prefix}set muted_role <role name>`')
             role = self.get_role(ctx.guild, int(settings['muted_role']))
             try:
-                meme = self.mutes[member.id]
-                if meme != {} and meme != None:
+                meme = self.mutes[member.id][ctx.guild.id]
+                if meme != [] and meme != None:
                     return await ctx.send(':x: This member is already muted.')
             except KeyError:
                 pass
-            self.mutes[member.id] = []
+            self.mutes[member.id] = {}
+            self.mutes[member.id][ctx.guild.id] = []
             try:
                 for i in member.roles:
                     if i != g.default_role:
-                        self.mutes[member.id].append(i)
+                        self.mutes[member.id][ctx.guild.id].append(i)
                         await member.remove_roles(i)
                 await member.add_roles(role, reason=f'[{str(ctx.author)}] {reason}' if reason != None else f'[Mute by {str(ctx.author)}]')
-                prevroles = ', '.join([i.name for i in self.mutes[member.id]])
+                prevroles = ', '.join([i.name for i in self.mutes[member.id][ctx.guild.id]])
                 if prevroles == '': prevroles = 'None'
                 await ctx.send(f'**{member.name}**#{member.discriminator} ({member.id}) has been muted.\nPrevious roles: {prevroles}')
             except discord.Forbidden:
@@ -80,21 +81,21 @@ class Moderation:
                 return await ctx.send(f':x: You haven\'t set up a muted role. Please use `{ctx.prefix}set muted_role <role name>`')
             role = self.get_role(ctx.guild, int(settings['muted_role']))
             try:
-                meme = self.mutes[member.id]
-                if meme == None or meme == {}:
+                meme = self.mutes[member.id][ctx.guild.id]
+                if meme == None:
                     raise KeyError('is not moot, does not compute')
             except KeyError:
                 return await ctx.send(':x: This member wasn\'t muted.')
             try:
                 roles = []
-                for i in self.mutes[member.id]:
+                for i in self.mutes[member.id][ctx.guild.id]:
                     if i != g.default_role:
                         roles.append(i)
                         await member.add_roles(i)
                 await member.remove_roles(role, reason=f'[{str(ctx.author)}] {reason}' if reason != None else f'[Unmute by {str(ctx.author)}]')
                 prevroles = ', '.join([i.name for i in roles])
                 if prevroles == '': prevroles = 'None'
-                self.mutes[member.id] = {}
+                self.mutes[member.id][ctx.guild.id] = None
                 await ctx.send(f'**{member.name}**#{member.discriminator} ({member.id}) has been unmuted.\nRoles restored: {prevroles}')
             except discord.Forbidden:
                 return await ctx.send(':x: I don\'t have permission to do this. Give me Manage Roles or move my role higher.')
