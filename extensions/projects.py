@@ -23,8 +23,7 @@ class Projects:
         if members == '': members = 'None'
         name = project['name']
         desc = project['description']
-        complete = '\n[[ PROJECT COMPLETED; CHANNEL ARCHIVED ]]' if 'completed' in project.keys() else ''
-        return f'[EXPAND TOPIC]\n**{name}**\nLead: {lead}\n{desc}\nMembers: {members}{complete}'
+        return f'[EXPAND TOPIC]\n**{name}**\nLead: {lead}\n{desc}\nMembers: {members}'
 
     @projects.command(aliases=['new'])
     async def add(self, ctx, name:str, description:str):
