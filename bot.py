@@ -37,7 +37,7 @@ class Bot(commands.Bot):
         self.invite_url = dutils.oauth_url(app_info.id)
         print(
             f'Logged in as {self.user.name}\nBot invite link: {self.invite_url}')
-        await self.change_presence(game=discord.Game(name=f'{self.prefix[0]}help | Version {self.version}', type=3))
+        await self.change_presence(game=discord.Game(name=f'{self.prefix[0]}help | Version {self.version}', type=2))
         self.load_extension('extensions.core')
 
     async def on_message(self, message):
