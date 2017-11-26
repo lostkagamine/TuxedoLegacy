@@ -32,16 +32,6 @@ class Info:
         elif TB <= B:
             return '{0:.2f} TB'.format(B/TB)
 
-
-    @commands.command(aliases=["support", "guild"])
-    async def server(self, ctx):
-        text = "**Support Server**\n\nIf you're encountering a problem with Tuxedo, or just wanna drop by, use this Discord link to join the official Tuxedo server.\n\nLink => https://discord.gg/KEcme4H"
-        try:
-            await ctx.author.send(text)
-            await ctx.send(":mailbox_with_mail: Check your DMs.")
-        except discord.Forbidden:
-            await ctx.send(text)
-
     @commands.command(aliases=['add'])
     async def invite(self, ctx):
         text = f'**Add Tuxedo**\n\nAdd Tuxedo with this link: <{self.bot.invite_url}>'
