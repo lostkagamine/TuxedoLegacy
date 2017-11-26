@@ -22,7 +22,7 @@ categories = {'ban': discord.AuditLogAction.ban,
               'role_remove': discord.AuditLogAction.member_role_update}
 
 
-default_rsn = 'Unknown. Responsible moderator, do `{prefix}reason latest <your reason>` to set a reason.'
+default_rsn = 'Unknown. Responsible moderator, do {prefix}reason latest <your reason> to set a reason.'
 
 
 class ModLogs:
