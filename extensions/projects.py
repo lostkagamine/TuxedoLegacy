@@ -40,10 +40,12 @@ class Projects:
             if 'hidden' in meme.keys(): # project hidden
                 await channel.set_permissions(ctx.guild.default_role, overwrite=discord.PermissionOverwrite(read_messages=False, send_messages=False))
                 await channel.set_permissions(ctx.author, overwrite=discord.PermissionOverwrite(read_messages=True, send_messages=True))
+                await channel.set_permissions(ctx.me, overwrite=discord.PermissionOverwrite(read_messages=True, send_messages=True))
                 hidden = True
             else:
                 await channel.set_permissions(ctx.guild.default_role, overwrite=discord.PermissionOverwrite(send_messages=False))
                 await channel.set_permissions(ctx.author, overwrite=discord.PermissionOverwrite(send_messages=True))
+                await channel.set_permissions(ctx.me, overwrite=discord.PermissionOverwrite(send_messages=True))
             await channel.edit(topic=f'[EXPAND TOPIC]\n**{name}**\nLead: {ctx.author}\n{description}\nMembers: None')
             await channel.send(f'This channel was created automatically for project **{name}**. Please do not remove it manually. When the project is complete, use `project finish "{name}"`.')
             r.table('projects').insert({

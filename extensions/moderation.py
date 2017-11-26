@@ -102,8 +102,6 @@ class Moderation:
         else:
             return await ctx.send(':no_entry_sign: Not enough permissions. You need either Manage Roles, Kick Members or Ban Members.')
 
-
-
     @commands.command()
     async def ban(self, ctx, member : discord.Member, *, reason : str = None):
         """Bans a member. You can specify a reason."""
@@ -139,7 +137,6 @@ class Moderation:
         msg = await ctx.send(':ok_hand:')
         await asyncio.sleep(3)
         await msg.delete()
-
 
     @commands.command()
     async def dehoist(self, ctx, member : discord.Member, *, flags : str = None):
@@ -186,7 +183,6 @@ class Moderation:
     @commands.command(description="Clean up the bot's messages.")
     async def clean(self, ctx, amount : int=50):
         """Clean up the bot's messages."""
-
         if ctx.channel.permissions_for(ctx.guild.me).manage_messages:
             delet = await ctx.channel.purge(limit=amount+1, check=lambda a: a.author == self.bot.user, bulk=True)
             eee = await ctx.send(self.cleanformat(len(delet)))
@@ -260,8 +256,6 @@ class Moderation:
             cancer = member.display_name
             decancer = unidecode.unidecode_expect_nonascii(cancer)
             await ctx.send(f'The decancered version of {cancer} is ​`{decancer}​`.')
-
         
-
 def setup(bot):
     bot.add_cog(Moderation(bot))
