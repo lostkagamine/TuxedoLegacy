@@ -31,7 +31,7 @@ class Moderation:
         'Mutes a member. You can specify a reason.'
         g = ctx.guild
         perms = ctx.author.permissions_in(ctx.channel)
-        perrms = member.author.permissions_in(ctx.channel)
+        perrms = member.permissions_in(ctx.channel)
         if perms.manage_roles or perms.kick_members or perms.ban_members:
             exists = (lambda: list(r.table('settings').filter(
                 lambda a: a['guild'] == str(g.id)).run(self.conn)) != [])()
