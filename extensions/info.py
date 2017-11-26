@@ -80,7 +80,7 @@ Liara: eval
 Devoxin: Hosting and rewritten core
 
 [ Special thanks ]
-Ryosuke™
+The people that made pull requests and contributed to the bot
 The entirety of Discord Bots
 All my awesome users!
 ```

@@ -38,7 +38,7 @@ class Moderation:
             if not exists:
                 return
             # we know the guild has an entry in the settings
-            if perrms.manage_roles or perms.kick_members or perms.ban_members:
+            if perrms.manage_roles or perrms.kick_members or perrms.ban_members:
                 await ctx.send(':x: You can\'t roleban a mod.')
                 return
             settings = list(r.table('settings').filter(
