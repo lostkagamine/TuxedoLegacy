@@ -39,7 +39,7 @@ class Moderation:
                 return
             # we know the guild has an entry in the settings
             if perrms.manage_roles or perms.kick_members or perms.ban_members:
-                await ctx.send('lolno')
+                await ctx.send(':x: You can\'t roleban a mod.')
                 return
             settings = list(r.table('settings').filter(
                 lambda a: a['guild'] == str(g.id)).run(self.conn))[0]
