@@ -9,11 +9,11 @@ settings = {'modlog_channel': 'channel', 'enable_invite_protection': 'bool',
             'staff_channel': 'channel', 'tracked_roles': 'rolelist', 'muted_role': 'role',
             'autoroles': 'rolelist', 'rolebanned_role': 'role'}
 
-templates = {'ban': '**User Ban** | Case {id}\n**Target:** {user}\n**Moderator:** {mod}\n**Reason:** {rsn}',
-             'kick': '**User Kick** | Case {id}\n**Target:** {user}\n**Moderator:** {mod}\n**Reason:** {rsn}',
-             'unban': '**User Unban** | Case {id}\n**Target:** {user}\n**Moderator:** {mod}\n**Reason:** {rsn}',
-             'role_add': '**Role Add** | Case {id}\n**Role:** {role}\n**Target:** {user}\n**Moderator:** {mod}\n**Reason:** {rsn}',
-             'role_remove': '**Role Remove** | Case {id}\n**Role:** {role}\n**Target:** {user}\n**Moderator:** {mod}\n**Reason:** {rsn}'}
+templates = {'ban': '**User Ban** | Case {id}\n**Target:** {user}\n**Moderator:** {mod}\n**Reason:** `{rsn}`',
+             'kick': '**User Kick** | Case {id}\n**Target:** {user}\n**Moderator:** {mod}\n**Reason:** `{rsn}`',
+             'unban': '**User Unban** | Case {id}\n**Target:** {user}\n**Moderator:** {mod}\n**Reason:** `{rsn}`',
+             'role_add': '**Role Add** | Case {id}\n**Role:** {role}\n**Target:** {user}\n**Moderator:** {mod}\n**Reason:** `{rsn}`',
+             'role_remove': '**Role Remove** | Case {id}\n**Role:** {role}\n**Target:** {user}\n**Moderator:** {mod}\n**Reason:** `{rsn}`'}
 
 categories = {'ban': discord.AuditLogAction.ban,
               'kick': discord.AuditLogAction.kick,
