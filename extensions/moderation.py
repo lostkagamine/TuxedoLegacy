@@ -30,10 +30,13 @@ class Moderation:
             # they had a role removed from them
             if after.roles == [after.guild.default_role]:
                 # no roles; should be after a manual untoss
-                if self.rolebans[after.id][after.guild.id] in [None, []]:
-                    return # they weren't rolebanned
-                await after.edit(roles=self.rolebans[after.id][after.guild.id], reason='[Manual role restore]')
-                self.rolebans[after.id][after.guild.id] = None
+                try:
+                    if self.rolebans[after.id][after.guild.id] in [None, []]:
+                        return # they weren't rolebanned
+                    await after.edit(roles=self.rolebans[after.id][after.guild.id], reason='[Manual role restore]')
+                    self.rolebans[after.id][after.guild.id] = None
+                except KeyError or discord.Forbidden:
+                    return
 
                 
 
@@ -68,7 +71,12 @@ class Moderation:
                     return await ctx.send(':x: This member is already rolebanned.')
             except KeyError:
                 pass
-            self.rolebans[member.id] = {}
+            try:
+                aa = self.rolebans[member.id]
+                if aa == None:
+                    self.rolebans[member.id] = {}
+            except KeyError:
+                self.rolebans[member.id] = {}
             self.rolebans[member.id][ctx.guild.id] = []
             try:
                 for i in member.roles:
@@ -100,6 +108,7 @@ class Moderation:
                 return await ctx.send(f':x: You haven\'t set up a rolebanned role. Please use `{ctx.prefix}set rolebanned_role <role name>`')
             role = self.get_role(ctx.guild, int(settings['rolebanned_role']))
             try:
+                aa = self.rolebans[member.id]
                 meme = self.rolebans[member.id][ctx.guild.id]
                 if meme == None:
                     raise KeyError('is not moot, does not compute')
@@ -110,7 +119,8 @@ class Moderation:
                 for i in self.rolebans[member.id][ctx.guild.id]:
                     if i != g.default_role:
                         roles.append(i)
-                await member.edit(roles=i)
+                if roles == []: return
+                await member.edit(roles=roles)
                 await member.remove_roles(role, reason=f'[{str(ctx.author)}] {reason}' if reason != None else f'[Unroleban by {str(ctx.author)}]')
                 prevroles = ', '.join([i.name for i in roles])
                 if prevroles == '': prevroles = 'None'
