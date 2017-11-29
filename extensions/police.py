@@ -32,7 +32,7 @@ class Police:
                     seconds = int(settings['police_timeout'])
             else:
                 return
-            if (msg.created_at + datetime.timedelta(seconds=seconds)) > datetime.datetime.now() and not msg.author.bot:
+            if (msg.created_at + datetime.timedelta(seconds=seconds)) > datetime.datetime.now() and not msg.author.bot and re.search(invitere, msg.content) == None:
                 # UNFINISHED
                 embed = discord.Embed()
                 embed.description = msg.content
