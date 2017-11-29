@@ -312,7 +312,7 @@ class ModLogs:
         data = r.table('modlog').filter(
             lambda a: a['guild'] == str(ctx.guild.id)).run(self.conn)
         data = data.next()
-        if caseid == 'latest' or caseid == '|':
+        if caseid in ['latest', '|', 'l']:
             caseid = data['count']
         else:
             try:
