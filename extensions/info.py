@@ -40,29 +40,35 @@ class Info:
             await ctx.send(":mailbox_with_mail: Check your DMs.")
         except discord.Forbidden:
             await ctx.send(text)
-
-    @commands.command(aliases=['info', 'stats'])
-    async def about(self, ctx):
+        
+    @commands.command()
+    async def stats(self, ctx):
         mem = psutil.virtual_memory()
         currproc = psutil.Process(os.getpid())
-        print(mem)
         total_ram = self.humanbytes(mem[0])
         available_ram = self.humanbytes(mem[1])
         usage = self.humanbytes(currproc.memory_info().rss)
+        text=f"""
+```
+Total RAM: {total_ram}
+Available RAM: {available_ram}
+RAM used by bot: {usage}
+Number of bot commands: {len(ctx.bot.commands)}
+Number of extensions present: {len(ctx.bot.cogs)}
+Number of guilds: {len(ctx.bot.guilds)}
+Number of users: {len(ctx.bot.users)}
+```
+"""
+        await ctx.send(text)
+
+    @commands.command(aliases=['info'])
+    async def about(self, ctx):
         text = f"""
 ```ini
 [ Tuxedo ]
 An open-source moderation bot for Discord
 Made by ry00001 in Python 3.6 using Discord.py
 Source code freely available at https://github.com/ry00000/Tuxedo
-
-[ Stats ]
-Total RAM: {total_ram}
-Available RAM: {available_ram}
-RAM used by bot: {usage}
-Number of bot commands: {len(ctx.bot.commands)}
-Number of guilds: {len(ctx.bot.guilds)}
-Number of users: {len(ctx.bot.users)}
 
 [ Credits ]
 HexadecimalPython: Original core

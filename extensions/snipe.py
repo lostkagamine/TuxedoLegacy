@@ -4,7 +4,8 @@ import datetime
 import editdistance
 import re
 
-invitere = r"(?:discord(?:(?:\.|.?dot.?)gg|app(?:\.|.?dot.?)com\/invite)\/(([\w]{1,}|[a-zA-Z0-9]{1,})))" # SDA ad regex
+invitere = r"(?:https?:\/\/)?discord(?:\.gg|app\.com\/invite)?\/(?:#\/)([a-zA-Z0-9-]*)" # road ad regex, thanks road
+invitere2 = r"(http[s]?:\/\/)*discord((app\.com\/invite)|(\.gg))\/(invite\/)?(#\/)?([A-Za-z0-9\-]+)(\/)?" # my own regex
 
 class Snipe:
     def __init__(self, bot):
@@ -18,13 +19,13 @@ class Snipe:
         @bot.listen('on_message_edit')
         async def on_message_edit(before, after):
             if before.author.bot or after.author.bot: return # DEPARTMENT OF REDUNDANCY DEPARTMENT
-            if editdistance.eval(before.content, after.content) >= 10:
+            if editdistance.eval(before.content, after.content) >= 10 and len(before.content) > len(after.content):
                 self.snipes[before.channel.id] = [before, after]
 
     def sanitise(self, string):
         if len(string) > 1024:
             string = string[0:1021] + "..."
-        string = re.sub(invitere, '[INVITE REDACTED]', string)
+        string = re.sub(invitere2, '[INVITE REDACTED]', string)
         return string
 
     @commands.command(description='"Snipes" someone\'s message that\'s been edited or deleted.')

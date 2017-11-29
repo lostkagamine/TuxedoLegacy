@@ -9,6 +9,7 @@ from utils import switches
 import asyncio
 import random
 import unidecode
+import re
 import rethinkdb as r
 chars = '!#/()=%&'
 dehoist_char = '𛲢' # special character, to be used for dehoisting
@@ -19,7 +20,22 @@ class Moderation:
     def __init__(self, bot):
         self.bot = bot
         self.conn = bot.conn
-        self.mutes = {}
+        self.rolebans = {}
+        @bot.listen('on_member_update')
+        async def on_member_update(before, after):
+            if before.roles == after.roles:
+                return
+            if len(before.roles) < len(after.roles):
+                return
+            # they had a role removed from them
+            if after.roles == [after.guild.default_role]:
+                # no roles; should be after a manual untoss
+                if self.rolebans[after.id][after.guild.id] in [None, []]:
+                    return # they weren't rolebanned
+                await after.edit(roles=self.rolebans[after.id][after.guild.id], reason='[Manual role restore]')
+                self.rolebans[after.id][after.guild.id] = None
+
+                
 
     def get_role(self, guild, id):
         for i in guild.roles:
@@ -47,20 +63,19 @@ class Moderation:
                 return await ctx.send(f':x: You haven\'t set up a rolebanned role. Please use `{ctx.prefix}set rolebanned_role <role name>`')
             role = self.get_role(ctx.guild, int(settings['rolebanned_role']))
             try:
-                meme = self.mutes[member.id][ctx.guild.id]
+                meme = self.rolebans[member.id][ctx.guild.id]
                 if meme != [] and meme != None:
                     return await ctx.send(':x: This member is already rolebanned.')
             except KeyError:
                 pass
-            self.mutes[member.id] = {}
-            self.mutes[member.id][ctx.guild.id] = []
+            self.rolebans[member.id] = {}
+            self.rolebans[member.id][ctx.guild.id] = []
             try:
                 for i in member.roles:
                     if i != g.default_role:
-                        self.mutes[member.id][ctx.guild.id].append(i)
-                        await member.remove_roles(i)
-                await member.add_roles(role, reason=f'[{str(ctx.author)}] {reason}' if reason != None else f'[Roleban by {str(ctx.author)}]')
-                prevroles = ', '.join([i.name for i in self.mutes[member.id][ctx.guild.id]])
+                        self.rolebans[member.id][ctx.guild.id].append(i)
+                await member.edit(roles=[role], reason=f'[{str(ctx.author)}] {reason}' if reason != None else f'[Roleban by {str(ctx.author)}]')
+                prevroles = ', '.join([i.name for i in self.rolebans[member.id][ctx.guild.id]])
                 if prevroles == '': prevroles = 'None'
                 await ctx.send(f'**{member.name}**#{member.discriminator} ({member.id}) has been rolebanned.\nPrevious roles: {prevroles}')
             except discord.Forbidden:
@@ -85,21 +100,21 @@ class Moderation:
                 return await ctx.send(f':x: You haven\'t set up a rolebanned role. Please use `{ctx.prefix}set rolebanned_role <role name>`')
             role = self.get_role(ctx.guild, int(settings['rolebanned_role']))
             try:
-                meme = self.mutes[member.id][ctx.guild.id]
+                meme = self.rolebans[member.id][ctx.guild.id]
                 if meme == None:
                     raise KeyError('is not moot, does not compute')
             except KeyError:
                 return await ctx.send(':x: This member wasn\'t rolebanned.')
             try:
                 roles = []
-                for i in self.mutes[member.id][ctx.guild.id]:
+                for i in self.rolebans[member.id][ctx.guild.id]:
                     if i != g.default_role:
                         roles.append(i)
-                        await member.add_roles(i)
+                await member.edit(roles=i)
                 await member.remove_roles(role, reason=f'[{str(ctx.author)}] {reason}' if reason != None else f'[Unroleban by {str(ctx.author)}]')
                 prevroles = ', '.join([i.name for i in roles])
                 if prevroles == '': prevroles = 'None'
-                self.mutes[member.id][ctx.guild.id] = None
+                self.rolebans[member.id][ctx.guild.id] = None
                 await ctx.send(f'**{member.name}**#{member.discriminator} ({member.id}) has been unrolebanned.\nRoles restored: {prevroles}')
             except discord.Forbidden:
                 return await ctx.send(':x: I don\'t have permission to do this. Give me Manage Roles or move my role higher.')
@@ -251,6 +266,9 @@ class Moderation:
         if ctx.me.permissions_in(ctx.channel).manage_nicknames and ctx.author.permissions_in(ctx.channel).manage_nicknames:
             cancer = member.display_name
             decancer = unidecode.unidecode_expect_nonascii(cancer)
+            decancer = re.sub(r'\D\W', '', decancer)
+            if len(decancer) > 32:
+                decancer = decancer[0:32-3] + "..."
             try:
                 await member.edit(nick=decancer)
                 await ctx.send(f'Successfully decancered {cancer} to ​`{decancer}​`.')

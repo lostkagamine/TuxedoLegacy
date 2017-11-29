@@ -5,7 +5,8 @@ import asyncio
 from utils import permissions
 import shlex
 
-settings = {'modlog_channel': 'channel', 'enable_invite_protection': 'bool',
+settings = {'modlog_channel': 'channel', 'enable_invite_protection': 'bool', 'police_timeout': 'number',
+            'police_enabled': 'bool',
             'staff_channel': 'channel', 'tracked_roles': 'rolelist', 'muted_role': 'role',
             'autoroles': 'rolelist', 'rolebanned_role': 'role'}
 
@@ -177,6 +178,12 @@ class ModLogs:
             return True
         elif thing == 'string':
             return True
+        elif thing == 'number':
+            try:
+                numbah = int(value)
+                return True
+            except ValueError:
+                return False
 
     def do_type(self, ctx, _type, value):
         print(value)
@@ -197,6 +204,12 @@ class ModLogs:
             return str(role.id)
         elif _type == 'string':
             return value.strip('"').strip("'")
+        elif _type == 'number':
+            try:
+                numbah = int(value)
+                return numbah
+            except ValueError:
+                return 'ERR|This number isn\'t valid.'
 
     def do_list(self, ctx, stuff):
         aaaa = shlex.split(stuff)
