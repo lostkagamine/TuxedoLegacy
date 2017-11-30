@@ -273,7 +273,7 @@ class Moderation:
         if ctx.me.permissions_in(ctx.channel).manage_nicknames and ctx.author.permissions_in(ctx.channel).manage_nicknames:
             cancer = member.display_name
             decancer = unidecode.unidecode_expect_nonascii(cancer)
-            decancer = re.sub(r'\D\W', '', decancer)
+            # decancer = re.sub(r'\D\W', '', decancer)
             if len(decancer) > 32:
                 decancer = decancer[0:32-3] + "..."
             try:
