@@ -179,15 +179,12 @@ class Moderation:
         if ctx.author == member:
             return await ctx.send('Nope, can\'t do this.')
         name = member.nick if member.nick else member.name
-        if name.startswith(tuple(chars)):
-            try:
-                await member.edit(nick=f'{dehoist_char}{name}')
-            except discord.Forbidden:
-                await ctx.send('Oops. I can\'t dehoist this member because my privilege is too low. Move my role higher.')
-            else:
-                await ctx.send(':ok_hand:')
+        try:
+            await member.edit(nick=f'{dehoist_char}{name}')
+        except discord.Forbidden:
+            await ctx.send('Oops. I can\'t dehoist this member because my privilege is too low. Move my role higher.')
         else:
-            await ctx.send('I couldn\'t dehoist this member. Either they weren\'t hoisting or this character isn\'t supported yet.')
+            await ctx.send(':ok_hand:')
 
     def cleanformat(self, number):
         string = ""

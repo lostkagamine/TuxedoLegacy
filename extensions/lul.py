@@ -8,6 +8,7 @@ import math
 import random
 import re
 from utils import randomness
+from utils import permissions
 
 class Lul:
     def __init__(self, bot):
