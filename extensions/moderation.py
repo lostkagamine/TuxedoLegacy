@@ -57,7 +57,7 @@ class Moderation:
             if not exists:
                 return
             # we know the guild has an entry in the settings
-            if perrms.manage_roles or perrms.kick_members or perrms.ban_members:
+            if (perrms.manage_roles or perrms.kick_members or perrms.ban_members) or not ctx.author.top_role >= member.top_role:
                 await ctx.send(':x: You can\'t roleban a mod.')
                 return
             settings = list(r.table('settings').filter(
@@ -67,7 +67,7 @@ class Moderation:
             role = self.get_role(ctx.guild, int(settings['rolebanned_role']))
             try:
                 meme = self.rolebans[member.id][ctx.guild.id]
-                if meme != [] and meme != None:
+                if meme != [] and meme != None or role in member.roles:
                     return await ctx.send(':x: This member is already rolebanned.')
             except KeyError:
                 pass
@@ -110,7 +110,7 @@ class Moderation:
             try:
                 aa = self.rolebans[member.id]
                 meme = self.rolebans[member.id][ctx.guild.id]
-                if meme == None:
+                if meme == None or meme == [] or role not in member.roles:
                     raise KeyError('is not moot, does not compute')
             except KeyError:
                 return await ctx.send(':x: This member wasn\'t rolebanned.')
