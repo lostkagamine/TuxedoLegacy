@@ -110,7 +110,7 @@ class ModLogs:
                                                      aaaaa=role, case=str(cid)))
 
     def check_perm(self, ctx):
-        return (ctx.author.permissions_in(ctx.channel).manage_guild) or (permissions.owner_id_check(ctx.author.id))
+        return (ctx.author.permissions_in(ctx.channel).manage_guild) or (permissions.owner_id_check(ctx.author.id)) or (ctx.author.permissions_in(ctx.channel).kick_members)
 
     def __init__(self, bot):
         self.bot = bot
@@ -308,7 +308,7 @@ class ModLogs:
             lambda a: a['guild'] == str(ctx.guild.id)).run(self.conn)) != [])()
         if not exists:
             return await ctx.send(':x: This guild has no modlog entries.')
-        if not self.check_perm(ctx) or not permission.kick_members or not permission.ban_members:
+        if not self.check_perm(ctx):
             return await ctx.send(':no_entry_sign: Invalid permissions.')
         data = r.table('modlog').filter(
             lambda a: a['guild'] == str(ctx.guild.id)).run(self.conn)
