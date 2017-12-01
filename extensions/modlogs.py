@@ -303,11 +303,12 @@ class ModLogs:
 
     @commands.command()
     async def reason(self, ctx, caseid: str, *, reason: str):
+        permission = ctx.author.permissions_in(ctx.channel)
         exists = (lambda: list(r.table('modlog').filter(
             lambda a: a['guild'] == str(ctx.guild.id)).run(self.conn)) != [])()
         if not exists:
             return await ctx.send(':x: This guild has no modlog entries.')
-        if not self.check_perm(ctx):
+        if not self.check_perm(ctx) or not permission.kick_members or not permission.ban_members:
             return await ctx.send(':no_entry_sign: Invalid permissions.')
         data = r.table('modlog').filter(
             lambda a: a['guild'] == str(ctx.guild.id)).run(self.conn)
