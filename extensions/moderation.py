@@ -90,7 +90,7 @@ class Moderation:
                 if prevroles == '': prevroles = 'None'
                 await ctx.send(f'**{member.name}**#{member.discriminator} ({member.id}) has been rolebanned.\nPrevious roles: {prevroles}')
                 if type(channel) == discord.TextChannel:
-                    await channel.send(f'**{member.name}**#{member.discriminator} ({member.id}) has just been rolebanned in <#{ctx.channel}>.\nTheir previous roles were: {prevroles}')
+                    await channel.send(f'**{member.name}**#{member.discriminator} ({member.id}) has just been rolebanned in <#{ctx.channel.id}>.\nTheir previous roles were: {prevroles}')
             except discord.Forbidden:
                 return await ctx.send(':x: I don\'t have permission to do this. Give me Manage Roles or move my role higher.')
         else:
@@ -135,7 +135,7 @@ class Moderation:
                 self.rolebans[member.id][ctx.guild.id] = None
                 await ctx.send(f'**{member.name}**#{member.discriminator} ({member.id}) has been unrolebanned.\nRoles restored: {prevroles}')
                 if type(channel) == discord.TextChannel:
-                    await channel.send(f'**{member.name}**#{member.discriminator} ({member.id}) has just been unrolebanned in <#{ctx.channel}>.\nThe roles restored are: {prevroles}')
+                    await channel.send(f'**{member.name}**#{member.discriminator} ({member.id}) has just been unrolebanned in <#{ctx.channel.id}>.\nThe roles restored are: {prevroles}')
             except discord.Forbidden:
                 return await ctx.send(':x: I don\'t have permission to do this. Give me Manage Roles or move my role higher.')
         else:
