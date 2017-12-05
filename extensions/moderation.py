@@ -11,7 +11,7 @@ import random
 import unidecode
 import re
 import rethinkdb as r
-chars = '!#/()[]{}-=%&~'
+chars = '!#/()[]{}-=%&~._,;:^\'"'
 dehoist_char = '𛲢' # special character, to be used for dehoisting
 
 pingmods_disabled = [110373943822540800]
@@ -24,6 +24,7 @@ class Moderation:
         @bot.listen('on_member_update')
         async def on_member_update(before, after):
             g = after.guild
+            isascii = lambda s: len(s) == len(s.encode())
             if after.display_name.startswith(tuple(chars)): # BEGIN AUTO DEHOIST MEME
                 exists = (lambda: list(r.table('settings').filter(
                     lambda a: a['guild'] == str(g.id)).run(self.conn)) != [])()
@@ -34,6 +35,19 @@ class Moderation:
                 if 'auto_dehoist' in settings.keys():
                     if settings['auto_dehoist']:
                         await after.edit(nick=f'{dehoist_char}{after.display_name}', reason='[Automatic dehoist]')
+            if isascii(after.display_name) == False:
+                exists = (lambda: list(r.table('settings').filter(
+                    lambda a: a['guild'] == str(g.id)).run(self.conn)) != [])()
+                if not exists:
+                    return
+                settings = list(r.table('settings').filter(
+                    lambda a: a['guild'] == str(g.id)).run(self.conn))[0]
+                if 'auto_decancer' in settings.keys():
+                    if settings['auto_decancer']:
+                        aaa = unidecode.unidecode_expect_nonascii(after.display_name)
+                        if len(aaa) > 32:
+                            aaa = aaa[0:32-3] + '...'
+                        await after.edit(nick=aaa, reason='[Automatic decancer]')
             if before.roles == after.roles:
                 return
             if len(before.roles) < len(after.roles):
