@@ -113,7 +113,7 @@ async def on_command_error(ctx, exception):
         ctx.send(exception)
 
 
-@bot.command()
+@bot.command(aliases=['man'])
 async def help(ctx, command: str = None):
     if ctx.prefix == "pls ":
         return
