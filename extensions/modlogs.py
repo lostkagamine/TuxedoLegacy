@@ -8,7 +8,7 @@ import shlex
 settings = {'modlog_channel': 'channel', 'enable_invite_protection': 'bool', 'police_timeout': 'number',
             'police_enabled': 'bool',
             'staff_channel': 'channel', 'tracked_roles': 'rolelist', 'muted_role': 'role',
-            'autoroles': 'rolelist', 'rolebanned_role': 'role'}
+            'autoroles': 'rolelist', 'rolebanned_role': 'role', 'auto_dehoist': 'bool'}
 
 templates = {'ban': '**User Ban** | Case {id}\n**Target:** {user}\n**Moderator:** {mod}\n**Reason:** `{rsn}`',
              'kick': '**User Kick** | Case {id}\n**Target:** {user}\n**Moderator:** {mod}\n**Reason:** `{rsn}`',
@@ -110,7 +110,7 @@ class ModLogs:
                                                      aaaaa=role, case=str(cid)))
 
     def check_perm(self, ctx):
-        return (ctx.author.permissions_in(ctx.channel).manage_guild) or (permissions.owner_id_check(ctx.author.id)) or (ctx.author.permissions_in(ctx.channel).kick_members)
+        return (ctx.author.permissions_in(ctx.channel).manage_guild) or (permissions.owner_id_check(ctx.bot, ctx.author.id)) or (ctx.author.permissions_in(ctx.channel).kick_members)
 
     def __init__(self, bot):
         self.bot = bot

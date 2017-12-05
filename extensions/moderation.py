@@ -11,7 +11,7 @@ import random
 import unidecode
 import re
 import rethinkdb as r
-chars = '!#/()=%&'
+chars = '!#/()[]{}-=%&~'
 dehoist_char = '𛲢' # special character, to be used for dehoisting
 
 pingmods_disabled = [110373943822540800]
@@ -23,6 +23,17 @@ class Moderation:
         self.rolebans = {}
         @bot.listen('on_member_update')
         async def on_member_update(before, after):
+            g = after.guild
+            if after.display_name.startswith(tuple(chars)): # BEGIN AUTO DEHOIST MEME
+                exists = (lambda: list(r.table('settings').filter(
+                    lambda a: a['guild'] == str(g.id)).run(self.conn)) != [])()
+                if not exists:
+                    return
+                settings = list(r.table('settings').filter(
+                    lambda a: a['guild'] == str(g.id)).run(self.conn))[0]
+                if 'auto_dehoist' in settings.keys():
+                    if settings['auto_dehoist']:
+                        await after.edit(nick=f'{dehoist_char}{after.display_name}', reason='[Automatic dehoist]')
             if before.roles == after.roles:
                 return
             if len(before.roles) < len(after.roles):

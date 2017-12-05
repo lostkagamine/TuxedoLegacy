@@ -47,7 +47,7 @@ class Bot(commands.Bot):
             return
         if message.content.startswith('pls') and message.guild.id in nopls:
             return
-        if not permissions.owner_id_check(str(message.author.id)) and self.maintenance:
+        if not permissions.owner_id_check(self, str(message.author.id)) and self.maintenance:
             return
         await self.process_commands(message)
 

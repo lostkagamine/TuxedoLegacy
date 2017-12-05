@@ -58,7 +58,7 @@ class GuildTools:
             except ValueError:
                 gid = 0
         if guildname != None:
-            if not permissions.owner_id_check(ctx.author.id):
+            if not permissions.owner_id_check(ctx.bot, ctx.author.id):
                 return
             guild = discord.utils.find(lambda a: a.name == guildname or a.id == gid, ctx.bot.guilds)
         else:
