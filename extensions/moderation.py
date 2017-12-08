@@ -11,7 +11,7 @@ import random
 import unidecode
 import re
 import rethinkdb as r
-chars = '!#/()[]{}-=%&~._,;:^\'"'
+chars = '!#/()[]{}-=%&~._,;:^\'"+-`'
 dehoist_char = '𛲢' # special character, to be used for dehoisting
 
 pingmods_disabled = [110373943822540800]
@@ -320,6 +320,31 @@ class Moderation:
             cancer = member.display_name
             decancer = unidecode.unidecode_expect_nonascii(cancer)
             await ctx.send(f'The decancered version of {cancer} is ​`{decancer}​`.')
+
+    @commands.command(description='View online mods.')
+    async def mods(self, ctx):
+        online = []
+        offline = []
+        idle = []
+        dnd = []
+        icons = {'online': '<:online:313956277808005120>', 'offline': '<:offline:313956277237710868>', 'idle': '<:away:313956277220802560>', 'dnd': '<:dnd:313956276893646850>',
+                 'invis': '<:invisible:313956277107556352>'} # dbots icons
+        mods = [i for i in ctx.guild.members if not i.bot and (i.permissions_in(ctx.channel).kick_members or i.permissions_in(ctx.channel).ban_members)]
+        for i in mods:
+            if i.status == discord.Status.online: online.append(f'**{i.name}**#{i.discriminator}')
+            if i.status == discord.Status.offline: offline.append(f'**{i.name}**#{i.discriminator}')
+            if i.status == discord.Status.idle: idle.append(f'**{i.name}**#{i.discriminator}')
+            if i.status == discord.Status.dnd: dnd.append(f'**{i.name}**#{i.discriminator}')
+
+        msg = f'''
+**Moderators in {ctx.guild}**:
+{icons['online']} **Online:** {', '.join(online) if online != [] else 'None'}
+{icons['idle']} **Away:** {', '.join(idle) if idle != [] else 'None'}
+{icons['dnd']} **DnD:** {', '.join(dnd) if dnd != [] else 'None'}
+{icons['offline']} **Offline:** {', '.join(offline) if offline != [] else 'None'}
+'''
+        await ctx.send(msg)
+        
         
 def setup(bot):
     bot.add_cog(Moderation(bot))

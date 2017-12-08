@@ -78,6 +78,7 @@ Devoxin: Hosting and rewritten core
 [ Special thanks ]
 The people that made pull requests and contributed to the bot
 The entirety of Discord Bots
+LewisTehMinerz, for being awesome and hosting
 All my awesome users!
 ```
         """
