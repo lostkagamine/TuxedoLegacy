@@ -332,7 +332,7 @@ class Moderation:
         mods = [i for i in ctx.guild.members if not i.bot and (i.permissions_in(ctx.channel).kick_members or i.permissions_in(ctx.channel).ban_members)]
         for i in mods: # HIGHLIGHT-PROOF (tm) TECHNOLOGY
             if i.status == discord.Status.online: online.append(f'**{i.name[0:1]}\u200b{i.name[1:len(i.name)]}**#{i.discriminator}')
-            if i.status == discord.Status.offline: offline.append(f'{i.name[0:1]}\u200b{i.name[1:len(i.name)]}**#{i.discriminator}')
+            if i.status == discord.Status.offline: offline.append(f'**{i.name[0:1]}\u200b{i.name[1:len(i.name)]}**#{i.discriminator}')
             if i.status == discord.Status.idle: idle.append(f'**{i.name[0:1]}\u200b{i.name[1:len(i.name)]}**#{i.discriminator}')
             if i.status == discord.Status.dnd: dnd.append(f'**{i.name[0:1]}\u200b{i.name[1:len(i.name)]}**#{i.discriminator}')
 
