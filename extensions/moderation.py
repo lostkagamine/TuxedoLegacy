@@ -338,10 +338,10 @@ class Moderation:
 
         msg = f'''
 **Moderators in {ctx.guild}**:
-{icons['online']} **Online:** {', '.join(online) if online != [] else 'None'}
-{icons['idle']} **Away:** {', '.join(idle) if idle != [] else 'None'}
-{icons['dnd']} **DnD:** {', '.join(dnd) if dnd != [] else 'None'}
-{icons['offline']} **Offline:** {', '.join(offline) if offline != [] else 'None'}
+{icons['online']} **Online:** {' | '.join(online) if online != [] else 'None'}
+{icons['idle']} **Away:** {' | '.join(idle) if idle != [] else 'None'}
+{icons['dnd']} **DnD:** {' | '.join(dnd) if dnd != [] else 'None'}
+{icons['offline']} **Offline:** {' | '.join(offline) if offline != [] else 'None'}
 '''
         await ctx.send(msg)
         
