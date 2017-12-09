@@ -183,7 +183,7 @@ class Client:
                 elif j.get('op') == 'isConnectedReq':
                     await self._validate_shard(j)
                 elif j.get('op') == 'sendWS':
-                    await self.bot._connection._get_websocket(330777295952543744).send(j.get('message'))  # todo: move this to play (voice updates)
+                    await self.bot._connection._get_websocket(110373943822540800).send(j.get('message'))  # todo: move this to play (voice updates)
                 elif j.get('op') == 'event':
                     await self._dispatch_event(j)
                 elif j.get('op') == 'playerUpdate':
