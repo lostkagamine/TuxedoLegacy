@@ -29,6 +29,8 @@ class Generators:
         else:
             opt = 0.5
         multi = parsers.as_number(opt, 0.5)
+        if multi < 0:
+            return await ctx.send('Minimum multiplier is 0')
         if multi > 10:
             return await ctx.send('Maximum multiplier is 10')
 
