@@ -69,8 +69,7 @@ class Music:
     @commands.command(aliases=['dc'])
     async def disconnect(self, ctx):
         player = await self.lavalink.get_player(guild_id=ctx.guild.id)
-        if hasattr(ctx, 'voice_client'):
-            await ctx.send(f'Left voice channel {ctx.voice_client.channel}')
+        await ctx.send(f'Stopped playing and disconnected from channel {ctx.guild.get_channel(player.channel_id)}')
         await player.disconnect()
 
     async def on_voice_server_update(self, data):
