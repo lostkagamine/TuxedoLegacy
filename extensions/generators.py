@@ -29,8 +29,8 @@ class Generators:
         else:
             opt = 0.5
         multi = parsers.as_number(opt, 0.5)
-        if multi > 10:
-            return await ctx.send('Maximum multiplier is 10')
+        if multi > 10 or multi < 1:
+            return await ctx.send('Maximum multiplier is 10, minimum multiplier is 1')
 
         m = await ctx.send("pls wait am generating")
         try:

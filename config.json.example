@@ -1,0 +1,17 @@
+{
+    "VERSION": "1.2 BETA",
+    "BOT_TOKEN": "[BOT TOKEN HERE]",
+    "BOT_PREFIX": ["tuxb ", "b/", "tb!", "plsb "],
+    "LAVALINK_PASSWORD": "[LAVALINK PASSWD HERE]",
+    "OWNERS": ["190544080164487168"],    
+    "DBOTS_TOKEN": "[BOTS.PW TOKEN HERE]",
+    "BLOCKED": [],
+    "SENTRY": "[SENTRY URL HERE]",
+    "RETHINKDB": {
+	"DB": "tuxedo",
+	"USERNAME": "admin",
+	"PASSWORD": "",
+	"HOST": "localhost",
+	"PORT": 28015
+    }
+}
