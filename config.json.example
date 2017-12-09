@@ -6,7 +6,7 @@
         "PASSWORD": "[INSERT YOUR PASSWORD]",
         "HOST": "[YOUR HOST]",
         "PORT": [PORT AS NUMBER *WITHOUT* QUOTES]
-    }
+    },
     "OWNERS": ["190544080164487168"],    
     "DBOTS_TOKEN": "[BOTS.PW TOKEN HERE]",
     "BLOCKED": [],

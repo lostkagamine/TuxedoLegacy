@@ -38,6 +38,7 @@ class Music:
     async def skip(self, ctx):
         player = await self.lavalink.get_player(guild_id=ctx.guild.id)
         await player.skip()
+        await ctx.send('Track skipped.')
 
     @commands.command(aliases=['np', 'n'])
     async def now(self, ctx):
@@ -65,9 +66,10 @@ class Music:
         embed = discord.Embed(colour=ctx.guild.me.top_role.colour, title='Queue', description=queue_list)
         await ctx.send(embed=embed)
     
-    @commands.command()
+    @commands.command(aliases=['dc'])
     async def disconnect(self, ctx):
         player = await self.lavalink.get_player(guild_id=ctx.guild.id)
+        await ctx.send(f'Left voice channel {ctx.voice_client.channel}')
         await player.disconnect()
 
     async def on_voice_server_update(self, data):
