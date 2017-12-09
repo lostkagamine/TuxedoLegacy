@@ -143,14 +143,15 @@ class Player:
 
 
 class Client:
-    def __init__(self, bot, password='', host='localhost', port=80, rest=2333, loop=asyncio.get_event_loop(), shard_count=0):
+    def __init__(self, bot, password='', host='localhost', port=80, rest=2333, loop=asyncio.get_event_loop()):
         self.bot = bot
 
         if not hasattr(self.bot, 'players'):
             self.bot.players = {}
 
         self.loop = loop
-        self.shard_count = shard_count
+        self.shard_count = len(self.bot.shards) if hasattr(self.bot, 'shards') else 0
+        self.user_id = self.bot.user.id
         self.password = password
         self.host = host
         self.port = port
@@ -164,6 +165,7 @@ class Client:
         headers = {
             'Authorization': self.password,
             'Num-Shards': self.shard_count,
+            'User-Id': self.user_id
         }
         try:
             self.ws = await websockets.connect(self.uri, extra_headers=headers)
