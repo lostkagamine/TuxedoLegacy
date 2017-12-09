@@ -6,7 +6,7 @@ from utils import lavalink
 class Music:
     def __init__(self, bot):
         self.bot = bot
-        self.lavalink = lavalink.Client(bot=bot, password=bot.config.get('LAVALINK_PASSWORD'), loop=self.bot.loop)
+        self.lavalink = lavalink.Client(bot=bot, password=bot.config['LAVALINK']['PASSWORD'], loop=self.bot.loop, host=bot.config['LAVALINK']['HOST'], port=bot.config['LAVALINK']['PORT'])
 
         self.state_keys = {}
         self.validator = ['op', 'guildId', 'sessionId', 'event']

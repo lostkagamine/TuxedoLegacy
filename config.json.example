@@ -2,7 +2,11 @@
     "VERSION": "1.2 BETA",
     "BOT_TOKEN": "[BOT TOKEN HERE]",
     "BOT_PREFIX": ["tuxb ", "b/", "tb!", "plsb "],
-    "LAVALINK_PASSWORD": "[LAVALINK PASSWD HERE]",
+    "LAVALINK": {
+        "PASSWORD": "[INSERT YOUR PASSWORD]",
+        "HOST": "[YOUR HOST]",
+        "PORT": [PORT AS NUMBER *WITHOUT* QUOTES]
+    }
     "OWNERS": ["190544080164487168"],    
     "DBOTS_TOKEN": "[BOTS.PW TOKEN HERE]",
     "BLOCKED": [],
