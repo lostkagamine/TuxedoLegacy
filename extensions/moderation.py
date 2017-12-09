@@ -11,7 +11,7 @@ import random
 import unidecode
 import re
 import rethinkdb as r
-chars = '!#/()[]{}-=%&~._,;:^\'"+-`'
+chars = '!#/()[]{}-=%&~._,;:^\'"+-`$'
 dehoist_char = '𛲢' # special character, to be used for dehoisting
 
 pingmods_disabled = [110373943822540800]
@@ -323,6 +323,7 @@ class Moderation:
 
     @commands.command(description='View online mods.')
     async def mods(self, ctx):
+        'View online mods.'
         online = []
         offline = []
         idle = []
