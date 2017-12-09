@@ -5,4 +5,4 @@ Tuxedo Discord bot.
 
 Hexadecimal™: V1 Bot core  
 Eval taken from Liara, an open source discord bot made by Pandentia, adapted to work with tuxedo by @HexadecimalPython  
-Devoxin: Hosting & V2 Rewrite Bot core  
+Devoxin: Hosting & V2 Rewrite Bot core, Lavalink.py. Without your help, Tuxedo's music wouldn't exist. Thank you so much!

@@ -131,6 +131,14 @@ class Player:
         }
         await self.client.send(payload)
 
+    async def seek(self, position):
+        payload = {
+            'op': 'seek',
+            'guildId': self.guild_id,
+            'position': position
+        }
+        await self.client.send(payload)
+
     async def skip(self):
         await self.play()
 

@@ -73,7 +73,7 @@ Source code freely available at https://github.com/ry00000/Tuxedo
 [ Credits ]
 HexadecimalPython: Original core
 Liara: eval
-Devoxin: Hosting and rewritten core
+Devoxin/Kromatic: Hosting and rewritten core, Lavalink.py that powers music!
 
 [ Special thanks ]
 The people that made pull requests and contributed to the bot

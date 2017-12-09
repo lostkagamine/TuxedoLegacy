@@ -75,13 +75,38 @@ class Music:
     async def pause(self, ctx):
         player = await self.lavalink.get_player(guild_id=ctx.guild.id)
         await player.pause()
-        await ctx.send(':play_pause_button: Paused.')
+        await ctx.send(':play_pause: Paused.')
 
-    @commands.command()
+    @commands.command(aliases=['unpause'])
     async def resume(self, ctx):
         player = await self.lavalink.get_player(guild_id=ctx.guild.id)
         await player.resume()
-        await ctx.send(':play_pause_button: Resuming...')
+        await ctx.send(':play_pause: Resuming...')
+
+    @commands.command()
+    async def seek(self, ctx, position:str):
+        minsec = position.split(':')
+        if len(minsec) != 2:
+            return await ctx.send(':x: Time must be in minutes:seconds format.')
+        try:
+            if int(minsec[0]) < 0 or int(minsec[1]) < 0:
+                return await ctx.send(':x: Time must be more than 0.')
+            minms = int(minsec[0]) * 60000
+            secms = int(minsec[1]) * 1000
+            pos = minms + secms
+        except ValueError:
+            return await ctx.send(':x: Time must be in minutes:seconds format.')
+        player = await self.lavalink.get_player(guild_id=ctx.guild.id)
+        if not hasattr(player, 'current'):
+            return await ctx.send(':x: You\'re not playing anything.')
+        if player.current == None:
+            return await ctx.send(':x: You\'re not playing anything.')
+        if pos >= player.current.duration:
+            return await ctx.send(':x: You cannot seek to a value off the end of the track.')
+        await player.seek(pos)
+        await ctx.send(f':control_knobs: Went to {int(minsec[0])}:{int(minsec[1])}')
+
+
     
     @commands.command(aliases=['vol', 'v'])
     async def volume(self, ctx, vol:int=100):
