@@ -27,12 +27,20 @@ class GuildTools:
         self.bot = bot
         @bot.listen('on_guild_join') # Begin actual anti-collection
         async def on_guild_join(g):
+            TOKEN = bot.config.get('DBL_TOKEN')
             bots = len([a for a in g.members if a.bot])
             percent = math.floor(bots/len(g.members)*100)
             if percent > farmlevel or bots > 30:
                 await g.text_channels[0].send(leavestr)
                 await g.leave()
+            await aiohttp.ClientSession().post('https://discordbots.org/api/bots/' + str(bot.user.id) + '/stats/', json={"server_count": len(bot.guilds)}, headers={'Authorization': TOKEN})
             # End anti-collection meme
+        
+        @bot.listen('on_guild_leave')
+        async def on_guild_leave(g):
+            TOKEN = bot.config.get('DBL_TOKEN')
+            await aiohttp.ClientSession().post('https://discordbots.org/api/bots/' + str(bot.user.id) + '/stats/', json={"server_count": len(bot.guilds)}, headers={'Authorization': TOKEN})
+
 
     @commands.command(hidden=True)
     @permissions.owner()

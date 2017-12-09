@@ -68,7 +68,8 @@ class Music:
     @commands.command(aliases=['dc'])
     async def disconnect(self, ctx):
         player = await self.lavalink.get_player(guild_id=ctx.guild.id)
-        await ctx.send(f'Stopped playing and disconnected.')
+        chan = self.bot.get_channel(int(player.channel_id))
+        await ctx.send(f'Stopped playing and disconnected from channel {chan}.')
         await player.disconnect()
 
     @commands.command()
