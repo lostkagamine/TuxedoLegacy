@@ -106,6 +106,30 @@ class Player:
         }
         await self.client.send(payload)
         self.current = None
+    
+    async def pause(self):
+        payload = {
+            'op': 'pause',
+            'guildId': self.guild_id,
+            'pause': True
+        }
+        await self.client.send(payload)
+
+    async def resume(self):
+        payload = {
+            'op': 'pause',
+            'guildId': self.guild_id,
+            'pause': False
+        }
+        await self.client.send(payload)
+
+    async def volume(self, vol):
+        payload = {
+            'op': 'volume',
+            'guildId': self.guild_id,
+            'volume': vol
+        }
+        await self.client.send(payload)
 
     async def skip(self):
         await self.play()

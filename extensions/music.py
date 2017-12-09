@@ -58,7 +58,6 @@ class Music:
     @commands.command(aliases=['q'])
     async def queue(self, ctx):
         player = await self.lavalink.get_player(guild_id=ctx.guild.id)
-
         queue_list = 'Nothing queued' if not player.queue else ''
         for track in player.queue:
             queue_list += f'[**{track.title}**]({track.uri})\n'
@@ -71,6 +70,27 @@ class Music:
         player = await self.lavalink.get_player(guild_id=ctx.guild.id)
         await ctx.send(f'Stopped playing and disconnected from channel {ctx.guild.get_channel(player.channel_id)}')
         await player.disconnect()
+
+    @commands.command()
+    async def pause(self, ctx):
+        player = await self.lavalink.get_player(guild_id=ctx.guild.id)
+        await player.pause()
+        await ctx.send(':play_pause_button: Paused.')
+
+    @commands.command()
+    async def resume(self, ctx):
+        player = await self.lavalink.get_player(guild_id=ctx.guild.id)
+        await player.resume()
+        await ctx.send(':play_pause_button: Resuming...')
+    
+    @commands.command(aliases=['vol', 'v'])
+    async def volume(self, ctx, vol:int=100):
+        if vol > 150 or vol < 0:
+            return await ctx.send('Volume can range between 0 to 150.')
+        player = await self.lavalink.get_player(guild_id=ctx.guild.id)
+        await player.volume(vol)
+        await ctx.send(f':control_knobs: Set volume to {vol}')
+
 
     async def on_voice_server_update(self, data):
         self.state_keys.update({
