@@ -24,7 +24,7 @@ async def haste_upload(text):
 
 async def post_stats_dbl(bot):
     TOKEN = bot.config.get('DBL_TOKEN')
-    await aiohttp.ClientSession().post('https://discordbots.org/api/bots/' + str(bot.user.id) + '/stats', json={"server_count": len(bot.guilds)}, headers={'Authorization': TOKEN})
+    await aiohttp.ClientSession().post('https://discordbots.org/api/bots/' + str(bot.user.id) + '/stats', data=json.dumps({"server_count": len(bot.guilds)}), headers={'Authorization': TOKEN})
 
 
 class GuildTools:
