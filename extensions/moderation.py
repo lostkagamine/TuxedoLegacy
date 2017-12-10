@@ -294,7 +294,7 @@ class Moderation:
         'Ping an online moderator.'
         if ctx.guild.id in pingmods_disabled:
             return await ctx.send(':x: This feature isn\'t available here.')
-        mods = [i for i in ctx.guild.members if (i.permissions_in(ctx.channel).kick_members or i.permissions_in(ctx.channel).ban_members) and
+        mods = [i for i in ctx.guild.members if (i.permissions_in(ctx.channel).kick_members or i.permissions_in(ctx.channel).ban_members or i.permissions_in(ctx.channel).manage_roles) and
                                                 not i.bot and
                                                 (i.status == discord.Status.online or i.status == 'online')]
         if mods == []:
