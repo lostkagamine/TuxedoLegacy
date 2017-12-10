@@ -72,17 +72,21 @@ class Music:
         await ctx.send(f'Stopped playing and disconnected from channel {chan}.')
         await player.disconnect()
 
-    @commands.command()
-    async def pause(self, ctx):
+    @commands.command(aliases=['unpause', 'resume'])
+    async def pause(self, ctx, pause:bool=None):
         player = await self.lavalink.get_player(guild_id=ctx.guild.id)
-        await player.pause()
-        await ctx.send(':play_pause: Paused.')
+        if pause == None:
+            pause = not player.paused
+        await player.pause(pause)
+        await ctx.send(':pause_button: Paused.' if pause else ':arrow_forward: Playing...')
 
-    @commands.command(aliases=['unpause'])
-    async def resume(self, ctx):
+    @commands.command()
+    async def shuffle(self, ctx, shuffle:bool=None):
         player = await self.lavalink.get_player(guild_id=ctx.guild.id)
-        await player.resume()
-        await ctx.send(':play_pause: Resuming...')
+        if shuffle == None:
+            shuffle = not player.shuffle
+        player.shuffle = shuffle
+        await ctx.send(':control_knobs: Shuffle enabled.' if shuffle else ':control_knobs: Shuffle disabled.')
 
     @commands.command()
     async def seek(self, ctx, position:str):
@@ -114,7 +118,7 @@ class Music:
         if vol > 150 or vol < 0:
             return await ctx.send('Volume can range between 0 to 150.')
         player = await self.lavalink.get_player(guild_id=ctx.guild.id)
-        await player.volume(vol)
+        vol = await player.set_volume(vol)
         await ctx.send(f':control_knobs: Set volume to {vol}')
 
 
