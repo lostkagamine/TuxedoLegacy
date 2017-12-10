@@ -297,6 +297,8 @@ class Moderation:
         mods = [i for i in ctx.guild.members if (i.permissions_in(ctx.channel).kick_members or i.permissions_in(ctx.channel).ban_members) and
                                                 not i.bot and
                                                 (i.status == discord.Status.online or i.status == 'online')]
+        if mods == []:
+            return await ctx.send(':x: No online mods available!')
         mod = random.choice(mods)
         reasonless_string = f'Mod Autoping: <@{mod.id}> (by **{ctx.author.name}**#{ctx.author.discriminator})'
         reason_string = f'Mod Autoping:\n**{reason}**\n<@{mod.id}> (by **{ctx.author.name}**#{ctx.author.discriminator})'
