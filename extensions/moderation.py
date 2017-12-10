@@ -63,7 +63,7 @@ class Moderation:
                 except KeyError or discord.Forbidden:
                     return
 
-                
+
 
     def get_role(self, guild, id):
         for i in guild.roles:

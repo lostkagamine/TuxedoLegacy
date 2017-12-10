@@ -15,6 +15,17 @@ class Gbans:
         @bot.listen('on_member_join')
         async def on_member_join(u):
             g = u.guild
+            exists = (lambda: list(r.table('settings').filter(
+                lambda a: a['guild'] == str(g.id)).run(self.conn)) != [])()
+            if not exists:
+                return
+            # we know the guild has an entry in the settings
+            settings = list(r.table('settings').filter(
+                lambda a: a['guild'] == str(g.id)).run(self.conn))[0]
+            if "global_bans" not in settings.keys():
+                return
+            if not settings['global_bans']:
+                return
             try:
                 if self.is_gbanned(u.id):
                     nomsg = False
@@ -35,11 +46,27 @@ You were banned for {details['reason']} with proof {details['proof']}.
                 else:
                     await msg.delete()
 
-    
-    def ban(self, uid:int, mod:int, reason:str='<none specified>', proof:str='<none specified>'):
-        'Easy interface with the global banner'
+    async def get_user(self, uid: int):
+        user = None  # database fetch
+        if user is not None:
+            # noinspection PyProtectedMember
+            return discord.User(state=self.bot._connection, data=user)  # I'm sorry Danny
+
         user = self.bot.get_user(uid)
-        moderator = self.bot.get_user(mod)
+        if user is not None:
+            return user
+
+        try:
+            user = await self.bot.get_user_info(uid)
+        except discord.NotFound:
+            user = None
+        if user is not None:  # intentionally leaving this at the end so we can add more methods after this one
+            return user
+    
+    async def ban(self, uid:int, mod:int, reason:str='<none specified>', proof:str='<none specified>'):
+        'Easy interface with the global banner'
+        user = await self.get_user(uid)
+        moderator = await self.get_user(mod)
         if self.is_gbanned(uid):
             raise GbanException('This user is already globally banned.')
         if not (user != None and moderator != None):
@@ -54,9 +81,9 @@ You were banned for {details['reason']} with proof {details['proof']}.
         }, conflict='update').run(self.conn)
         print(f'[Global bans] {moderator} has just banned {user} globally for {reason} with proof {proof}')
 
-    def unban(self, uid:int):
+    async def unban(self, uid:int):
         'Easy interface with the global banner'
-        user = self.bot.get_user(uid)
+        user = await self.get_user(uid)
         if not self.is_gbanned(uid):
             raise GbanException('This user wasn\'t globally banned.')
         if not (user != None):
@@ -88,7 +115,7 @@ You were banned for {details['reason']} with proof {details['proof']}.
         if type(user) == str: 
             try:
                 user = int(user)
-                puser = self.bot.get_user(user)
+                puser = await self.get_user(user)
                 uid = user
             except ValueError:
                 return
@@ -97,7 +124,7 @@ You were banned for {details['reason']} with proof {details['proof']}.
         if puser == None: return await ctx.send(':x: An invalid user was passed. Mention or use an ID that is present to the bot.')
         uid = puser.id
         try:
-            self.ban(uid, ctx.author.id, reason, proof)
+            await self.ban(uid, ctx.author.id, reason, proof)
             await ctx.send(f'**{puser.name}**#{puser.discriminator} ({puser.id}) has been globally banned. RIP in peace.')
         except GbanException as e:
             await ctx.send(f':x: {e}')
@@ -108,7 +135,7 @@ You were banned for {details['reason']} with proof {details['proof']}.
         if type(user) == str: 
             try:
                 user = int(user)
-                puser = self.bot.get_user(user)
+                puser = await self.get_user(user)
                 uid = user
             except ValueError:
                 return
@@ -117,7 +144,7 @@ You were banned for {details['reason']} with proof {details['proof']}.
         if puser == None: return await ctx.send(':x: An invalid user was passed. Mention or use an ID that is present to the bot.')
         uid = puser.id
         try:
-            self.unban(uid)
+            await self.unban(uid)
             await ctx.send(f'**{puser.name}**#{puser.discriminator} ({puser.id}) has been globally unbanned.')
         except GbanException as e:
             await ctx.send(f':x: {e}')
@@ -127,7 +154,7 @@ You were banned for {details['reason']} with proof {details['proof']}.
         if type(user) == str: 
             try:
                 user = int(user)
-                puser = self.bot.get_user(user)
+                puser = await self.get_user(user)
                 uid = user
             except ValueError:
                 return
@@ -136,13 +163,16 @@ You were banned for {details['reason']} with proof {details['proof']}.
         if puser == None: return await ctx.send(':x: An invalid user was passed. Mention or use an ID that is present to the bot.')
         uid = puser.id
         details = self.gban_details(uid)
-        embed = discord.Embed(title=f'Global ban statistics for {puser}')
+        mod = str(puser.id) in ctx.bot.config.get('OWNERS')
+        embed = discord.Embed(title=f'Global ban statistics for {puser}{" (Global Moderator)" if mod else ""}')
         if details != None:
             embed.colour = 0xFF0000
             embed.add_field(name='__This user is globally banned.__', value=f'Banned by: {details["modstr"]}\nReason: {details["reason"]}\nProof: {details["proof"]}')
         else:
             embed.colour = 0x00FF00
             embed.description = 'This user isn\'t globally banned.'
+        if mod:
+            embed.colour = 0x00C8C8
         await ctx.send(embed=embed)
 
 

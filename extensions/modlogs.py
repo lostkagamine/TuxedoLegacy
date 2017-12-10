@@ -6,9 +6,9 @@ from utils import permissions
 import shlex
 
 settings = {'modlog_channel': 'channel', 'enable_invite_protection': 'bool', 'police_timeout': 'number',
-            'police_enabled': 'bool',
-            'staff_channel': 'channel', 'tracked_roles': 'rolelist', 'muted_role': 'role',
-            'autoroles': 'rolelist', 'rolebanned_role': 'role', 'auto_dehoist': 'bool', 'auto_decancer': 'bool'}
+            'police_enabled': 'bool', 'staff_channel': 'channel', 'tracked_roles': 'rolelist', 'muted_role': 'role',
+            'autoroles': 'rolelist', 'rolebanned_role': 'role', 'auto_dehoist': 'bool', 'auto_decancer': 'bool',
+            'global_bans': 'bool'}
 
 templates = {'ban': '**User Ban** | Case {id}\n**Target:** {user}\n**Moderator:** {mod}\n**Reason:** `{rsn}`',
              'kick': '**User Kick** | Case {id}\n**Target:** {user}\n**Moderator:** {mod}\n**Reason:** `{rsn}`',
@@ -65,7 +65,7 @@ class ModLogs:
 
         return count
 
-    def modlog_ch(self, g):
+    def modlog_ch(self, g): # I just keep coming back to this piece of code, don't I?
         exists = (lambda: list(r.table('settings').filter(
             lambda a: a['guild'] == str(g.id)).run(self.conn)) != [])()
         if not exists:
