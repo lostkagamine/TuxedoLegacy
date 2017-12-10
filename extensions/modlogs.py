@@ -5,9 +5,8 @@ import asyncio
 from utils import permissions
 import shlex
 
-settings = {'modlog_channel': 'channel', 'enable_invite_protection': 'bool', 'police_timeout': 'number',
-            'police_enabled': 'bool', 'staff_channel': 'channel', 'tracked_roles': 'rolelist', 'muted_role': 'role',
-            'autoroles': 'rolelist', 'rolebanned_role': 'role', 'auto_dehoist': 'bool', 'auto_decancer': 'bool',
+settings = {'modlog_channel': 'channel', 'staff_channel': 'channel', 
+            'tracked_roles': 'rolelist','rolebanned_role': 'role', 'auto_dehoist': 'bool', 'auto_decancer': 'bool',
             'global_bans': 'bool'}
 
 templates = {'ban': '**User Ban** | Case {id}\n**Target:** {user}\n**Moderator:** {mod}\n**Reason:** `{rsn}`',
