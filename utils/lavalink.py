@@ -8,6 +8,11 @@ import websockets
 __version__ = '1.0.1'
 
 
+class InvalidTrack(Exception):
+    def __init__(self, message):
+        super().__init__(message)
+
+
 class IGeneric:
     def __init__(self):
         self.requester = None
@@ -33,16 +38,32 @@ class Requests:
 
 
 class AudioTrack:
-    def __init__(self, track, identifier, can_seek, author, duration, stream, title, uri, requester):
-        self.track = track
-        self.identifier = identifier
-        self.can_seek = can_seek
-        self.author = author
-        self.duration = duration
-        self.stream = stream
-        self.title = title
-        self.uri = uri
-        self.requester = requester
+    def __init__(self):
+        self.track = None
+        self.identifier = None
+        self.can_seek = False
+        self.author = None
+        self.duration = None
+        self.stream = False
+        self.title = None
+        self.uri = None
+        self.requester = None
+    
+    async def build(self, track, requester):
+        try:
+            self.track = track['track']
+            self.identifier = track['info']['identifier']
+            self.can_seek = track['info']['isSeekable']
+            self.author = track['info']['author']
+            self.duration = track['info']['length']
+            self.stream = track['info']['isStream']
+            self.title = track['info']['title']
+            self.uri = track['info']['uri']
+            self.requester = requester
+
+            return self
+        except KeyError:
+            raise InvalidTrack('an invalid track was passed')
 
 
 class Player:
@@ -53,7 +74,7 @@ class Player:
         self.channel_id = None
 
         self.is_connected = lambda: self.channel_id is not None
-        self.is_playing = lambda: self.current is not None
+        self.is_playing = lambda: self.channel_id is not None and self.current is not None
         self.paused = False
 
         self.position = 0
@@ -64,14 +85,10 @@ class Player:
         self.current = None
 
         self.shuffle = False
+        self.repeat = False
 
     async def connect(self, channel_id):
-        payload = {
-            'op': 'connect',
-            'guildId': self.guild_id,
-            'channelId': str(channel_id)
-        }
-        await self.client.send(payload)
+        await self.client.send(op='connect', guildId=self.guild_id, channelId=str(channel_id))
         self.channel_id = str(channel_id)
 
     async def disconnect(self):
@@ -81,15 +98,11 @@ class Player:
         if self.is_playing():
             await self.stop()
 
-        payload = {
-            'op': 'disconnect',
-            'guildId': self.guild_id
-        }
-        await self.client.send(payload)
+        await self.client.send(op='disconnect', guildId=self.guild_id)
         self.channel_id = None
 
     async def add(self, requester, track, play=False):
-        await self._build_track(requester, track)
+        self.queue.append(await AudioTrack().build(track, requester))
 
         if play and not self.is_playing():
             await self.play()
@@ -107,32 +120,18 @@ class Player:
         else:
             track = self.queue.pop(0)
 
-        payload = {
-            'op': 'play',
-            'guildId': self.guild_id,
-            'track': track.track
-        }
-        await self.client.send(payload)
+        await self.client.send(op='play', guildId=self.guild_id, track=track.track)
         self.current = track
 
     async def stop(self):
-        payload = {
-            'op': 'stop',
-            'guildId': self.guild_id
-        }
-        await self.client.send(payload)
+        await self.client.send(op='stop', guildId=self.guild_id)
         self.current = None
 
     async def skip(self):
         await self.play()
 
     async def set_paused(self, pause):
-        payload = {
-            'op': 'pause',
-            'guildId': self.guild_id,
-            'pause': pause
-        }
-        await self.client.send(payload)
+        await self.client.send(op='pause', guildId=self.guild_id, pause=pause)
         self.paused = pause
 
     async def set_volume(self, vol):
@@ -145,22 +144,12 @@ class Player:
         if vol > 150:
             vol = 150
 
-        payload = {
-            'op': 'volume',
-            'guildId': self.guild_id,
-            'volume': vol
-        }
-        await self.client.send(payload)
+        await self.client.send(op='volume', guildId=self.guild_id, volume=vol)
         self.volume = vol
         return vol
 
     async def seek(self, pos):
-        payload = {
-            'op': 'seek',
-            'guildId': self.guild_id,
-            'position': pos
-        }
-        await self.client.send(payload)
+        await self.client.send(op='seek', guildId=self.guild_id, position=pos)
 
     async def _on_track_end(self, data):
         self.position = 0
@@ -169,45 +158,23 @@ class Player:
         if data.get('reason') == 'FINISHED':
             await self.play()
 
-    async def _build_track(self, requester, track):
-        try:
-            a = track.get('track')
-            info = track.get('info')
-            b = info.get('identifier')
-            c = info.get('isSeekable')
-            d = info.get('author')
-            e = info.get('length')
-            f = info.get('isStream')
-            g = info.get('title')
-            h = info.get('uri')
-            i = requester
-            t = AudioTrack(a, b, c, d, e, f, g, h, i)
-            self.queue.append(t)
-        except KeyError:
-            return  # Raise invalid track passed
-
     async def _validate_join(self, data):
-        payload = {
-            'op': 'validationRes',
-            'guildId': data.get('guildId'),
-            'channelId': data.get('channelId', None),
-            'valid': True
-        }
-        await self.client.send(payload)
+        await self.client.send(op='validationRes', guildId=data.get('guildId'), channelId=data.get('channelId', None), valid=True)
 
 
 class Client:
-    def __init__(self, bot, password='', host='localhost', port=80, rest=2333, loop=asyncio.get_event_loop()):
+    def __init__(self, bot, shard_count=1, password='', host='localhost', port=80, rest=2333, ws_retry=3, loop=asyncio.get_event_loop()):
         self.bot = bot
 
         self.loop = loop
-        self.shard_count = self.bot.shard_count if hasattr(self.bot, 'shard_count') else 1
+        self.shard_count = self.bot.shard_count or shard_count
         self.user_id = self.bot.user.id
         self.password = password
         self.host = host
         self.port = port
         self.rest = rest
         self.uri = f'ws://{host}:{port}'
+        self.ws_retry = ws_retry
 
         if not hasattr(self.bot, 'players'):
             self.bot.players = {}
@@ -242,7 +209,8 @@ class Client:
                     elif j.get('op') == 'isConnectedReq':
                         await self._validate_shard(j)
                     elif j.get('op') == 'sendWS':
-                        await self.bot._connection._get_websocket(330777295952543744).send(j.get('message'))  # todo: move this to play (voice updates)
+                        m = json.loads(j['message'])
+                        await self.bot._connection._get_websocket(int(m['d'].get('guild_id', None))).send(j.get('message'))
                     elif j.get('op') == 'event':
                         await self._dispatch_event(j)
                     elif j.get('op') == 'playerUpdate':
@@ -250,9 +218,9 @@ class Client:
         except websockets.ConnectionClosed:
             print('[Lavalink.py] Connection closed... Attempting to reconnect in 30 seconds')
             self.bot.lavalink.ws.close()
-            for a in [1, 2, 3]:  # 3 Attempts
+            for a in range(0, self.ws_retry): 
                 await asyncio.sleep(30)
-                print(f'[Lavalink.py] Attempting to reconnect (attempt: {a})')
+                print(f'[Lavalink.py] Attempting to reconnect (Attempt: {a + 1})')
                 await self._connect()
                 if self.bot.lavalink.ws.open:
                     return
@@ -275,44 +243,32 @@ class Client:
             p = self.bot.players[int(data.get('guildId'))]
             await p._validate_join(data)
         else:
-            payload = {
-                'op': 'validationRes',
-                'guildId': data.get('guildId'),
-                'channelId': data.get('channelId', None),
-                'valid': False
-            }
-            await self.send(payload)
+            await self.send(op='validationRes', guildId=data.get('guildId'), channelId=data.get('channelId', None), valid=False)
 
     async def _update_state(self, data):
         g = int(data.get('guildId'))
 
-        if g not in self.bot.players:
+        if g not in self.bot.players or not self.bot.players[g].is_playing():
             return
 
         p = self.bot.players[g]
-
-        if not p.is_playing():
-            return
 
         p.position = data['state'].get('position', 0)
         p.position_timestamp = data['state'].get('time', 0)
 
     async def _validate_shard(self, data):
-        payload = {
-            'op': 'isConnectedRes',
-            'shardId': data.get('shardId'),
-            'connected': True
-        }
-        await self.send(payload)
+        await self.send(op='isConnectedRes', shardId=data.get('shardId'), connected=True)
 
-    async def send(self, data):
+    async def send(self, **opts):
         if not self.bot.lavalink.ws or not self.bot.lavalink.ws.open:
             return
-        payload = json.dumps(data)
-        await self.bot.lavalink.ws.send(payload)
 
-    async def dispatch_voice_update(self, payload):
-        await self.send(payload)
+        payload = {}
+
+        for k, v in opts.items():
+            payload.update({ k: v })
+
+        await self.bot.lavalink.ws.send(json.dumps(payload))
 
     async def get_player(self, guild_id):
         if guild_id not in self.bot.players:
@@ -321,17 +277,15 @@ class Client:
 
         return self.bot.players[guild_id]
 
+    async def get_playing(self):
+        return len([p for p in self.bot.players.values() if p.is_playing()])
+
     async def get_tracks(self, query):
         headers = {
             'Authorization': self.password,
             'Accept': 'application/json'
         }
         return await self.bot.lavalink.requester.get(url=f'http://{self.host}:{self.rest}/loadtracks?identifier={query}', jsonify=True, headers=headers)
-        # data = {
-        #     'is_search': any(s in query for s in ['ytsearch', 'scsearch']),
-        #     'results': tracks
-        # }
-        # return data
 
 
 class Utils:
@@ -345,6 +299,9 @@ class Utils:
 
     @staticmethod
     def is_number(num):
+        if num is None:
+            return default
+
         try:
             int(num)
             return True
