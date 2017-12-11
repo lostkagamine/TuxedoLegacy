@@ -48,6 +48,7 @@ class Info:
         total_ram = self.humanbytes(mem[0])
         available_ram = self.humanbytes(mem[1])
         usage = self.humanbytes(currproc.memory_info().rss)
+        streams = await ctx.bot.cogs['Music'].lavalink.get_playing()
         text=f"""
 ```
 Total RAM: {total_ram}
@@ -57,6 +58,7 @@ Number of bot commands: {len(ctx.bot.commands)}
 Number of extensions present: {len(ctx.bot.cogs)}
 Number of guilds: {len(ctx.bot.guilds)}
 Number of users: {len(ctx.bot.users)}
+Number of current music streams: {streams}
 ```
 """
         await ctx.send(text)

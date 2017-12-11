@@ -110,7 +110,7 @@ You were banned for {details['reason']} with proof {details['proof']}.
         raise commands.errors.MissingRequiredArgument()
 
     @gban.command(aliases=['new', 'ban'])
-    @permissions.owner()
+    @permissions.owner_or_gmod()
     async def add(self, ctx, user, reason:str='<none specified>', proof:str='<none specified>'):
         if type(user) == str: 
             try:
@@ -130,7 +130,7 @@ You were banned for {details['reason']} with proof {details['proof']}.
             await ctx.send(f':x: {e}')
 
     @gban.command(aliases=['rm', 'delete', 'unban'])
-    @permissions.owner()
+    @permissions.owner_or_gmod()
     async def remove(self, ctx, user):
         if type(user) == str: 
             try:
