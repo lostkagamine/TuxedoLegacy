@@ -10,7 +10,8 @@ time_rx = re.compile('[0-9]+')
 class Music:
     def __init__(self, bot):
         self.bot = bot
-        self.lavalink = lavalink.Client(bot=bot, password='youshallnotpass', loop=self.bot.loop)
+        cfg = bot.config.get('LAVALINK')
+        self.lavalink = lavalink.Client(bot=bot, password=cfg['PASSWORD'], host=cfg['HOST'], port=cfg['PORT'], rest=cfg['REST'], loop=self.bot.loop)
 
     @commands.command(aliases=['p'])
     async def play(self, ctx, *, query):
