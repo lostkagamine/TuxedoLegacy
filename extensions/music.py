@@ -1,17 +1,16 @@
 import discord
 import math
+import re
 from discord.ext import commands
-from utils import lavalink
+import lavalink
+
+time_rx = re.compile('[0-9]+')
 
 
 class Music:
     def __init__(self, bot):
         self.bot = bot
-        cfg = self.bot.config['LAVALINK']
-        self.lavalink = lavalink.Client(bot=bot, password=cfg['PASSWORD'], host=cfg['HOST'], port=cfg['PORT'], rest=cfg['REST'], loop=self.bot.loop)
-
-        self.state_keys = {}
-        self.validator = ['op', 'guildId', 'sessionId', 'event']
+        self.lavalink = lavalink.Client(bot=bot, password='youshallnotpass', loop=self.bot.loop)
 
     @commands.command(aliases=['p'])
     async def play(self, ctx, *, query):
@@ -92,8 +91,8 @@ class Music:
 
         queue_list = ''
 
-        for track in player.queue[start:end]:
-            queue_list += f'[**{track.title}**]({track.uri})\n'
+        for i, track in enumerate(player.queue[start:end], start=start):
+            queue_list += f'`{i + 1}.` [**{track.title}**]({track.uri})\n'
 
         embed = discord.Embed(colour=ctx.guild.me.top_role.colour,
                               description=f'**{len(player.queue)} tracks**\n\n{queue_list}')
@@ -163,6 +162,50 @@ class Music:
         player.repeat = not player.repeat
 
         await ctx.send('🔁 | Repeat ' + ('enabled' if player.repeat else 'disabled'))
+    
+    @commands.command()
+    async def seek(self, ctx, time):
+        player = await self.lavalink.get_player(guild_id=ctx.guild.id)
+
+        if not player.is_playing():
+            return await ctx.send('Nothing playing.')
+
+        if not ctx.author.voice or (player.is_connected() and ctx.author.voice.channel.id != int(player.channel_id)):
+            return await ctx.send('You\'re not in my voicechannel!')
+
+        pos = '+'
+        if time.startswith('-'):
+            pos = '-'
+        
+        if not time_rx.search(time):
+            return await ctx.send('You need to specify the amount of seconds to skip!')
+
+        seconds = int(time_rx.match(time).group())
+
+        if pos == '-':
+            seconds = seconds * -1
+        
+        track_time = self.position + seconds
+
+        await player.seek(track_time)
+
+        await ctx.send(f'Moved track to **{lavalink.Utils.format_time(track_time)}**')
+
+    
+    @commands.command()
+    async def stop(self, ctx):
+        player = await self.lavalink.get_player(guild_id=ctx.guild.id)
+
+        if not player.is_playing():
+            return await ctx.send('Nothing playing.')
+    
+        if not ctx.author.voice or (player.is_connected() and ctx.author.voice.channel.id != int(player.channel_id)):
+            return await ctx.send('You\'re not in my voicechannel!')
+
+        player.queue.clear()
+        await player.stop()
+
+        await ctx.send('⏹ | Stopped.')
 
     @commands.command(aliases=['dc'])
     async def disconnect(self, ctx):
@@ -173,26 +216,10 @@ class Music:
 
         await player.disconnect()
 
-    async def on_voice_server_update(self, data):
-        self.state_keys.update({
-            'op': 'voiceUpdate',
-            'guildId': data.get('guild_id'),
-            'event': data
-        })
-
-        await self.verify_and_dispatch()
-
-    async def on_voice_state_update(self, member, before, after):
-        if member.id == self.bot.user.id:
-            self.state_keys.update({'sessionId': after.session_id})
-
-        await self.verify_and_dispatch()
-
-    async def verify_and_dispatch(self):
-        if all(k in self.state_keys for k in self.validator):
-            await self.lavalink.send(**self.state_keys)
-            self.state_keys.clear()
-
 
 def setup(bot):
     bot.add_cog(Music(bot))
+
+
+def teardown(bot):
+    bot._lavaclient._destroy()

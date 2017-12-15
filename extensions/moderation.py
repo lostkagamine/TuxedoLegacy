@@ -10,6 +10,7 @@ import asyncio
 import random
 import unidecode
 import re
+import time
 import rethinkdb as r
 chars = '!#/()[]{}-=%&~._,;:^\'"+-`$'
 dehoist_char = '𛲢' # special character, to be used for dehoisting
@@ -34,7 +35,7 @@ class Moderation:
                     lambda a: a['guild'] == str(g.id)).run(self.conn))[0]
                 if 'auto_dehoist' in settings.keys():
                     if settings['auto_dehoist']:
-                        await after.edit(nick=f'{dehoist_char}{after.display_name}', reason='[Automatic dehoist]')
+                        await after.edit(nick=f'{dehoist_char}{after.display_name[0:31]}', reason='[Automatic dehoist]')
             if isascii(after.display_name) == False and not after.display_name.startswith(dehoist_char):
                 exists = (lambda: list(r.table('settings').filter(
                     lambda a: a['guild'] == str(g.id)).run(self.conn)) != [])()
@@ -62,9 +63,7 @@ class Moderation:
                     self.rolebans[after.id][after.guild.id] = None
                 except KeyError or discord.Forbidden:
                     return
-
-
-
+        
     def get_role(self, guild, id):
         for i in guild.roles:
             if i.id == id: return i
