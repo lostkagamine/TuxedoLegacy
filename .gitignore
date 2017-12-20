@@ -109,3 +109,4 @@ pm2.json
 
 rethinkdb_data/
 Lavalink/
+.internal.json # bot settings that don't need config

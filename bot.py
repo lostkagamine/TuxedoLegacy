@@ -10,7 +10,6 @@ import raven
 import rethinkdb as r
 import sys
 from utils import permissions
-
 nopls = [110373943822540800]
 
 class Bot(commands.Bot):
@@ -26,6 +25,8 @@ class Bot(commands.Bot):
             self.version = self.config.get('VERSION')
         self.remove_command("help")
         self.init_raven()
+        self.rdb = self.config['RETHINKDB']['DB']
+        self.rtables = ['gbans', 'settings', 'modlogs']
         self.init_rethinkdb()
         print('Pre-run tasks complete.')
 
@@ -62,6 +63,15 @@ class Bot(commands.Bot):
         try:
             self.conn = r.connect(host=dbc['HOST'], port=dbc['PORT'],
                                   db=dbc['DB'], user=dbc['USERNAME'], password=dbc['PASSWORD'])
+            dbs = r.db_list().run(self.conn)
+            if self.rdb not in dbs:
+                print('Database not present. Creating...')
+                r.db_create(self.rdb).run(self.conn)
+            tables = r.db(self.rdb).table_list().run(self.conn)
+            for i in self.rtables:
+                if i not in tables:
+                    print(f'Table {i} not found. Creating...')
+                    r.table_create(i).run(self.conn)
         except Exception as e:
             print('RethinkDB init error!\n{}: {}'.format(type(e).__name__, e))
             sys.exit(1)
