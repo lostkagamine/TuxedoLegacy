@@ -4,23 +4,8 @@ import discord
 from discord.ext import commands
 import rethinkdb as r 
 from utils import permissions
-import argparse
 import aiohttp
-
-class DiscordArgparseError(Exception):
-    pass
-
-
-class DiscordArgparseMessage(DiscordArgparseError):
-    pass
-
-
-class DiscordFriendlyArgparse(argparse.ArgumentParser):
-    def _print_message(self, message, file=None):
-        raise DiscordArgparseMessage(f'```\n{message}\n```')
-
-    def error(self, message):
-        raise DiscordArgparseError(f'```\n{self.format_usage()}\nerror: {message}\n```')
+from utils.argparse import DiscordFriendlyArgparse, DiscordArgparseError, DiscordArgparseMessage
 
 class GbanException(Exception):
     pass
@@ -49,7 +34,7 @@ class Gbans:
                     nomsg = False
                     try:
                         details = self.gban_details(u.id)
-                        mod = await self.get_user(int(details['mod']))
+                        mod = await self.get_user(int(details['moderator']))
                         modstr = f'**{mod.name}**#{mod.discriminator} ({mod.id})'
                         msg = await u.send(f'''
 **You were banned automatically from {g}.**
@@ -85,21 +70,26 @@ You were banned for `{details['reason']}` with proof `{details['proof']}`.
     
     async def ban(self, uid:int, mod:int, reason:str='<none specified>', proof:str='<none specified>'):
         'Easy interface with the global banner'
+        if str(uid) in self.bot.config.get('OWNERS') or str(uid) in self.bot.config.get('GLOBAL_MODS'):
+            raise GbanException('You cannot ban a bot owner/global moderator.')
+        if uid == self.bot.user.id:
+            raise GbanException('You cannot ban the bot itself. Duh, did you think I\'d let you?')
         if await self.is_gbanned(uid):
             raise GbanException(f'ID {uid} is already globally banned.')
         r.table('gbans').insert({
             'user': str(uid),
-            'mod': str(mod),
+            'moderator': str(mod),
             'proof': proof,
             'reason': reason
         }, conflict='update').run(self.conn)
-        async with aiohttp.ClientSession().put(f'https://api-pandentia.qcx.io/discord/global_bans/{uid}', headers={'Authorization': self.token},
+        hss = aiohttp.ClientSession()
+        async with hss.put(f'https://api-pandentia.qcx.io/discord/global_bans/{uid}', headers={'Authorization': self.token},
                                                json={'moderator': mod, 'reason': reason, 'proof': proof}) as resp:
             if resp.status == 403:
                 raise GbanException(f'Uh-oh, the API returned Forbidden. Check your token.')
             elif resp.status == 409:
                 raise GbanException(f'This user is already remotely banned. They have been banned locally.')
-
+        await hss.close()
         print(f'[Global bans] {mod} has just banned {uid} globally for {reason} with proof {proof}')
 
     async def unban(self, uid:int):
@@ -107,9 +97,11 @@ You were banned for `{details['reason']}` with proof `{details['proof']}`.
         if not await self.is_gbanned(uid):
             raise GbanException(f'ID {uid} wasn\'t globally banned.')
         r.table('gbans').filter({'user': str(uid)}).delete().run(self.conn)
-        async with aiohttp.ClientSession().delete(f'https://api-pandentia.qcx.io/discord/global_bans/{uid}', headers={'Authorization': self.token}) as resp:
+        hss = aiohttp.ClientSession()
+        async with hss.delete(f'https://api-pandentia.qcx.io/discord/global_bans/{uid}', headers={'Authorization': self.token}) as resp:
             if resp.status == 403:
                 raise GbanException(f'Uh-oh, the API returned Forbidden. Check your token.')
+        await hss.close()
         print(f'[Global bans] {uid} just got globally unbanned')
     
     async def is_gbanned(self, user:int):
@@ -117,18 +109,27 @@ You were banned for `{details['reason']}` with proof `{details['proof']}`.
             meme = r.table('gbans').filter({'user': str(user)}).run(self.conn).next()
             return True # is gbanned
         except Exception: # local then remote
-            async with aiohttp.ClientSession().get(f'https://api-pandentia.qcx.io/discord/global_bans/{user}') as resp:
+            hss = aiohttp.ClientSession()
+            async with hss.get(f'https://api-pandentia.qcx.io/discord/global_bans/{user}') as resp:
                 if resp.status == 200:
                     return True
                 else:
                     return False
+            await hss.close()
 
-    def gban_details(self, user:int):
+    async def gban_details(self, user:int):
         try:
             meme = r.table('gbans').filter({'user': str(user)}).run(self.conn).next()
             return meme
-        except Exception:
-            return None
+        except Exception: # *not* locally banned
+            hss = aiohttp.ClientSession()
+            async with hss.get(f'https://api-pandentia.qcx.io/discord/global_bans/{user}') as resp:
+                if resp.status == 200:
+                    return await resp.json()
+                else:
+                    return None
+            await hss.close()
+
 
     @commands.group(name='gban', aliases=['gbans', 'globalbans', 'global_bans'], invoke_without_command=True)
     async def gban(self, ctx, param):
@@ -170,10 +171,32 @@ You were banned for `{details['reason']}` with proof `{details['proof']}`.
                 await self.unban(uid)
             except GbanException as e:
                 return await ctx.send(f':x: {e}')
-        
-        await ctx.send(f'User(s) unbanned successfully.')
+        await ctx.send('User(s) unbanned successfully.')
 
-
+    @gban.command()
+    async def check(self, ctx, *args):
+        parser = DiscordFriendlyArgparse(prog=ctx.command.name, add_help=True)
+        parser.add_argument('-u', '--users', nargs='+', type=int, metavar='ID', required=True, help='List of users to check for.')
+        try:
+            args = parser.parse_args(args)
+        except DiscordArgparseError as e:
+            return await ctx.send(str(e))
+        embed = discord.Embed(title='Global ban info')
+        for uid in args.users:
+            user = await self.get_user(uid)
+            isban = await self.is_gbanned(uid)
+            detail = await self.gban_details(uid)
+            if isban:
+                mod = await self.get_user(detail['moderator'])
+            print(detail)
+            stri = f'''
+Globally banned? {"<:check:314349398811475968>" if isban else "<:xmark:314349398824058880>"}{f"""
+Banned by: {mod}
+Reason: {detail['reason']}
+Proof: {detail['proof']}
+""" if detail != None else ""}'''
+            embed.add_field(name=f'**{user.name}**#{user.discriminator}', value=stri)
+        await ctx.send(embed=embed)
 
 def setup(bot):
     bot.add_cog(Gbans(bot))
