@@ -185,6 +185,10 @@ You were banned for `{details['reason']}` with proof `{details['proof']}`.
         embed = discord.Embed(title='Global ban info')
         for uid in args.users:
             user = await self.get_user(uid)
+            if user == None:
+                ustring = f'Unknown ({uid})'
+            else:
+                ustring = f'**{user.name}**#{user.discriminator}'
             isban = await self.is_gbanned(uid)
             detail = await self.gban_details(uid)
             if isban:
@@ -199,7 +203,7 @@ Banned by: {mod}
 Reason: {detail['reason']}
 Proof: {detail['proof']}
 """ if detail != None else ""}'''
-            embed.add_field(name=f'**{user.name}**#{user.discriminator}', value=stri)
+            embed.add_field(name=ustring, value=stri)
         await ctx.send(embed=embed)
 
 def setup(bot):
