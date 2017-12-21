@@ -34,8 +34,11 @@ class Gbans:
                     nomsg = False
                     try:
                         details = self.gban_details(u.id)
-                        mod = await self.get_user(int(details['moderator']))
-                        modstr = f'**{mod.name}**#{mod.discriminator} ({mod.id})'
+                        if details['moderator'] != None:
+                            mod = await self.get_user(int(details['moderator']))
+                            modstr = f'**{mod.name}**#{mod.discriminator} ({mod.id})'
+                        else:
+                            modstr = '**Unknown moderator**'
                         msg = await u.send(f'''
 **You were banned automatically from {g}.**
 The reason for this was that you are globally banned.
@@ -79,13 +82,13 @@ You were banned for `{details['reason']}` with proof `{details['proof']}`.
         r.table('gbans').insert({
             'user': str(uid),
             'moderator': str(mod),
-            'proof': proof,
-            'reason': reason
+            'proof': str(proof),
+            'reason': str(reason)
         }, conflict='update').run(self.conn)
         hss = aiohttp.ClientSession()
         async with hss.put(f'https://api-pandentia.qcx.io/discord/global_bans/{uid}', headers={'Authorization': self.token},
                                                json={'moderator': mod, 'reason': reason, 'proof': proof}) as resp:
-            if resp.status == 403:
+            if resp.status == 401:
                 raise GbanException(f'Uh-oh, the API returned Forbidden. Check your token.')
             elif resp.status == 409:
                 raise GbanException(f'This user is already remotely banned. They have been banned locally.')
@@ -99,7 +102,7 @@ You were banned for `{details['reason']}` with proof `{details['proof']}`.
         r.table('gbans').filter({'user': str(uid)}).delete().run(self.conn)
         hss = aiohttp.ClientSession()
         async with hss.delete(f'https://api-pandentia.qcx.io/discord/global_bans/{uid}', headers={'Authorization': self.token}) as resp:
-            if resp.status == 403:
+            if resp.status == 401:
                 raise GbanException(f'Uh-oh, the API returned Forbidden. Check your token.')
         await hss.close()
         print(f'[Global bans] {uid} just got globally unbanned')
@@ -146,16 +149,14 @@ You were banned for `{details['reason']}` with proof `{details['proof']}`.
             args = parser.parse_args(args)
         except DiscordArgparseError as e:
             return await ctx.send(str(e))
-        reason = args.reason if args.reason != None else '<no reason specified>'
-        proof = args.proof if args.proof != None else '<no proof specified>'
         if args.reason == None and args.proof == None:
             return await ctx.send('Specify either a reason or proof.')
         for uid in args.users:
             try:
-                await self.ban(uid, ctx.author.id, reason, proof)
+                await self.ban(uid, ctx.author.id, args.reason, args.proof)
             except GbanException as e:
                 return await ctx.send(f':x: {e}')
-        await ctx.send(f'User(s) banned for reason `{reason}` with proof `{proof}`.')
+        await ctx.send(f'User(s) banned for reason `{args.reason}` with proof `{args.proof}`.')
 
     @gban.command(aliases=['rm', 'delete', 'unban'])
     @permissions.owner_or_gmod()
@@ -187,7 +188,10 @@ You were banned for `{details['reason']}` with proof `{details['proof']}`.
             isban = await self.is_gbanned(uid)
             detail = await self.gban_details(uid)
             if isban:
-                mod = await self.get_user(detail['moderator'])
+                if detail['moderator'] != None:
+                    mod = await self.get_user(detail['moderator'])
+                else:
+                    mod = 'Unknown'
             print(detail)
             stri = f'''
 Globally banned? {"<:check:314349398811475968>" if isban else "<:xmark:314349398824058880>"}{f"""
