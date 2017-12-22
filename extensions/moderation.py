@@ -12,16 +12,21 @@ import unidecode
 import re
 import time
 import rethinkdb as r
+import isodate
+from utils import argparse
+import datetime
 chars = '!#/()[]{}-=%&~._,;:^\'"+-`$'
 dehoist_char = '𛲢' # special character, to be used for dehoisting
 
 pingmods_disabled = [110373943822540800]
 
 class Moderation:
+
     def __init__(self, bot):
         self.bot = bot
         self.conn = bot.conn
         self.rolebans = {}
+        self.task = bot.loop.create_task(self.loop())
         @bot.listen('on_member_update')
         async def on_member_update(before, after):
             g = after.guild
@@ -63,7 +68,55 @@ class Moderation:
                     self.rolebans[after.id][after.guild.id] = None
                 except KeyError or discord.Forbidden:
                     return
+
+    def __unload(self):
+        self.task.cancel()
+
+    async def get_user(self, uid: int):
+        user = None  # database fetch
+        if user is not None:
+            # noinspection PyProtectedMember
+            return discord.User(state=self.bot._connection, data=user)  # I'm sorry Danny
+
+        user = self.bot.get_user(uid)
+        if user is not None:
+            return user
+
+        try:
+            user = await self.bot.get_user_info(uid)
+        except discord.NotFound:
+            user = None
+        if user is not None:  # intentionally leaving this at the end so we can add more methods after this one
+            return user
         
+    async def loop(self):
+        while True:
+            await asyncio.sleep(120) # check bans every 2 minutes 
+            tbl = r.table('tempbans').run(self.conn)
+            tbl = [i for i in tbl]
+            for i in tbl: # syntax: {'guild': guild ID, 'moderator': mod ID, 'user': user ID, 'timestamp': original timestamp, 'expiration': when it expires}
+                if float(i['expiration']) <= datetime.datetime.utcnow().timestamp():
+                    print('someones getting unbanne')
+                    mod = await self.get_user(int(i['moderator']))
+                    user = await self.get_user(int(i['user'])) # LOL PARENTHESES
+                    try:
+                        await self.bot.get_guild(int(i['guild'])).unban(user, reason=f'[Automatic: ban placed by {mod} expired]') # LOL PARENTHESES V2
+                        r.table('tempbans').filter({'guild': i['guild'], 'user': i['user']}).delete().run(self.conn)
+                    except discord.Forbidden:
+                        try:
+                            hecc = datetime.datetime.fromtimestamp(float(i['timestamp']))
+                            await mod.send(f'''
+Your ban for user {user} has expired, but Tuxedo could not unban them automatically.
+This is a reminder to unban said user.
+The original ban was placed for reason `{i['reason']}` on date `{hecc}`.
+                            ''')
+                        except discord.Forbidden:
+                            continue # can't dm, give up
+                        continue 
+                    except discord.HTTPException: # will test tomorrow, bleh
+                        continue     
+
+
     def get_role(self, guild, id):
         for i in guild.roles:
             if i.id == id: return i
@@ -166,19 +219,54 @@ class Moderation:
             return await ctx.send(':no_entry_sign: Not enough permissions. You need either Manage Roles, Kick Members or Ban Members.')
 
     @commands.command()
-    async def ban(self, ctx, member : discord.Member, *, reason : str = None):
+    async def ban(self, ctx, *args):
         """Bans a member. You can specify a reason."""
-        if ctx.author == member:
-            return await ctx.send('Don\'t ban yourself, please.')
-        if not ctx.author.permissions_in(ctx.channel).ban_members:
-            return await ctx.send(':no_entry_sign: Not enough permissions. You need Ban Members.')
-        if not ctx.me.permissions_in(ctx.channel).ban_members:
-            return await ctx.send(':no_entry_sign: Grant the bot Ban Members before doing this.')
-        if ctx.author.top_role <= member.top_role:
-            return await ctx.send(':no_entry_sign: You can\'t ban someone with a higher role than you!')
-        if ctx.me.top_role <= member.top_role:
-            return await ctx.send(':no_entry_sign: I can\'t ban someone with a higher role than me!')
-        await ctx.guild.ban(member, reason=f'[{str(ctx.author)}] {reason}' if reason else f'Ban by {str(ctx.author)}', delete_message_days=7)
+        parser = argparse.DiscordFriendlyArgparse(prog=ctx.command.name, add_help=True)
+        parser.add_argument('-u', '--users', nargs='+', metavar='@user', required=True, help='List of users to ban.')
+        parser.add_argument('-r', '--reason', metavar='Reason', help='A reason for the ban.')
+        parser.add_argument('-t', '--time', metavar='Time', 
+                            help='A time for temporary bans. Once this is up, the ban will expire and the person will be unbanned. Must be formatted in ISO 8601. Omit for permanent ban.')
+        parser.add_argument('-d', '--days', metavar='Delete days', type=int, help='How many days\' worth of messages to delete from the banned user.')
+        try:
+            args = parser.parse_args(args)
+        except argparse.DiscordArgparseError as e:
+            return await ctx.send(e)
+        people = []
+        for i in args.users:
+            try:
+                member = await commands.MemberConverter().convert(ctx, i)
+            except commands.errors.BadArgument as e:
+                return await ctx.send(f':x: | {e}')
+            if ctx.author == member:
+                return await ctx.send('Don\'t ban yourself, please.')
+            if not ctx.author.permissions_in(ctx.channel).ban_members:
+                return await ctx.send(':no_entry_sign: Not enough permissions. You need Ban Members.')
+            if not ctx.me.permissions_in(ctx.channel).ban_members:
+                return await ctx.send(':no_entry_sign: Grant the bot Ban Members before doing this.')
+            if ctx.author.top_role <= member.top_role:
+                return await ctx.send(':no_entry_sign: You can\'t ban someone with a higher role than you!')
+            if ctx.me.top_role <= member.top_role:
+                return await ctx.send(':no_entry_sign: I can\'t ban someone with a higher role than me!')
+            people.append(member)
+        if args.time != None:
+            for i in people:            
+                try:
+                    dura = isodate.parse_duration(args.time)
+                except isodate.ISO8601Error as e:
+                    return await ctx.send(f':x: | {e}')
+                if type(dura) == isodate.Duration:
+                    dura = dura.totimedelta() # make it super-safe
+                expire = (dura + datetime.datetime.utcnow()).timestamp()
+                now = datetime.datetime.utcnow().timestamp()
+                r.table('tempbans').insert({
+                    'moderator': str(ctx.author.id),
+                    'user': str(i.id),
+                    'timestamp': str(now),
+                    'expiration': str(expire),
+                    'guild': str(ctx.guild.id)
+                }).run(self.bot.conn)
+        for member in people:
+            await ctx.guild.ban(member, reason=f'[{str(ctx.author)}] {args.reason}' if args.reason != None else f'Ban by {str(ctx.author)}', delete_message_days=args.days if args.days != None else 7)
         msg = await ctx.send(':ok_hand:')
         await asyncio.sleep(3)
         await msg.delete()
