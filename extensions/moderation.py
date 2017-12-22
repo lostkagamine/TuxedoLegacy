@@ -121,6 +121,59 @@ The original ban was placed for reason `{i['reason']}` on date `{hecc}`.
             if i.id == id: return i
         return None
 
+    @commands.command(aliases=['m'])
+    async def mute(self, ctx, *args):
+        nosetting = f':x: You have not set up a mute list. Set one up now with `{ctx.prefix}set muted_roles \'Role 1\' \'Role 2\' \'Role 3\'`. You can have an infinite amount of roles in the list.'
+        badsetting = f':x: The muted role list is incomplete. Did you delete a muted role? Please rerun setup with `{ctx.prefix}set muted_roles \'Role 1\' \'Role 2\' \'Role 3\'`. You can have an infinite amount of roles in the list.'
+        parser = argparse.DiscordFriendlyArgparse(prog=ctx.invoked_with, add_help=True)
+        parser.add_argument('-u', '--users', nargs='+', required=True, metavar='@user', help='List of users to mute.')
+        parser.add_argument('-t', '--tier', metavar='tier', type=int, help='Tier number for the type of mute.')
+        parser.add_argument('-r', '--reason', metavar='reason', help='The reason for the mute.')
+        try:
+            args = parser.parse_args(args)
+        except argparse.DiscordArgparseError or argparse.DiscordArgparseMessage as e:
+            return await ctx.send(e)
+        tier = args.tier if args.tier != None else 0
+        g = ctx.guild
+        exists = (lambda: list(r.table('settings').filter(
+            lambda a: a['guild'] == str(g.id)).run(self.conn)) != [])()
+        if not exists:
+            return await ctx.send(nosetting)
+        settings = list(r.table('settings').filter(
+            lambda a: a['guild'] == str(g.id)).run(self.conn))[0]
+        if 'muted_roles' not in settings.keys():
+            return await ctx.send(nosetting)
+        def get_role(g, id):
+            for i in g.roles:
+                if i.id == id:
+                    return i
+            return None
+        roles = [get_role(g, int(i)) for i in settings['muted_roles']]
+        if any(i == None for i in roles):
+            return await ctx.send(badsetting) #shouldn't happen
+        if tier > len(roles) or tier < 0:
+            return await ctx.send(f':x: The tier value must range between 0 and {len(roles)}.')
+        if not ctx.author.permissions_in(ctx.channel).manage_roles:
+            return await ctx.send(':no_entry_sign: Not enough permissions. You need Manage Roles.')
+        if not ctx.me.permissions_in(ctx.channel).manage_roles:
+            return await ctx.send(':no_entry_sign: I don\'t have enough permissions. Give me Manage Roles.')
+        people = []
+        for i in args.users:
+            try:
+                m = await commands.MemberConverter().convert(ctx, i)
+            except commands.errors.BadArgument as e:
+                return await ctx.send(f':x: | {e}')
+            people.append(m)
+        if any(ctx.author.top_role <= i.top_role for i in people):
+            return await ctx.send(':x: You cannot mute someone with an equal or greater top role.')
+        if any(ctx.me.top_role <= i.top_role for i in people):
+            return await ctx.send(':x: I cannot mute someone with a higher top role than me. Move my role up.')
+        for i in people:
+            await i.add_roles(roles[tier], reason=f'[{ctx.author}] {args.reason}' if args.reason != None else f'Mute by {ctx.author}')
+        await ctx.send(f':ok_hand: {", ".join([f"**{i.name}**#{i.discriminator}" for i in people])} {"has" if len(people) == 1 else "have"} been muted with tier **{tier}**, which is role {roles[tier]}.')
+
+
+
     @commands.command(aliases=['rb', 'toss'])
     async def roleban(self, ctx, member:discord.Member, *, reason:str=None):
         'Mutes a member. You can specify a reason.'
