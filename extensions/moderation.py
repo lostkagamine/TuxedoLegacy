@@ -91,7 +91,7 @@ class Moderation:
         
     async def loop(self):
         while True:
-            await asyncio.sleep(120) # check bans every 2 minutes 
+            await asyncio.sleep(60) # check bans every minute
             tbl = r.table('tempbans').run(self.conn)
             tbl = [i for i in tbl]
             for i in tbl: # syntax: {'guild': guild ID, 'moderator': mod ID, 'user': user ID, 'timestamp': original timestamp, 'expiration': when it expires}
@@ -100,7 +100,6 @@ class Moderation:
                     user = await self.get_user(int(i['user'])) # LOL PARENTHESES
                     try:
                         await self.bot.get_guild(int(i['guild'])).unban(user, reason=f'[Automatic: ban placed by {mod} expired]') # LOL PARENTHESES V2
-                        r.table('tempbans').filter({'guild': i['guild'], 'user': i['user']}).delete().run(self.conn)
                     except discord.Forbidden:
                         try:
                             hecc = datetime.datetime.fromtimestamp(float(i['timestamp']))
@@ -114,6 +113,7 @@ The original ban was placed for reason `{i['reason']}` on date `{hecc}`.
                         continue 
                     except discord.HTTPException: # will test tomorrow, bleh
                         continue     
+                r.table('tempbans').filter({'guild': i['guild'], 'user': i['user']}).delete().run(self.conn)
 
 
     def get_role(self, guild, id):

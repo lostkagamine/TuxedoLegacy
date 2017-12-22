@@ -81,6 +81,8 @@ Devoxin/Kromatic: Hosting and rewritten core, Lavalink.py that powers music!
 The people that made pull requests and contributed to the bot
 The entirety of Discord Bots
 LewisTehMinerz, for being awesome and hosting
+Liara, for being awesome in general
+Liz, for being a human rubber ducky for tempbans. (Rubber ducky debugging helps.)
 All my awesome users!
 ```
         """
