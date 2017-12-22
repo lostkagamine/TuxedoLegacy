@@ -119,6 +119,7 @@ class Admin:
     @permissions.owner()
     async def system(self, ctx, *, command : str):
         'Run system commands.'
+        message = await ctx.send('<a:typing4:393837093190762506> Processing...')
         result = []
         try:
             process = subprocess.Popen(command.split(' '), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -148,7 +149,7 @@ class Admin:
                 return await ctx.send(f"http://hastebin.com/{key}")
         embed.add_field(name="stdout", value=f'```{stdout}```' if 'stdout' in locals() else 'No output.', inline=False)
         embed.add_field(name="stderr", value=f'```{stderr}```' if 'stderr' in locals() else 'No output.', inline=False)
-        await ctx.send(embed=embed)
+        await message.edit(content='', embed=embed)
 
     @commands.command(aliases=['game', 'status'])
     @permissions.owner()
