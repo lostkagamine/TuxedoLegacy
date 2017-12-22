@@ -119,7 +119,7 @@ class Admin:
     @permissions.owner()
     async def system(self, ctx, *, command : str):
         'Run system commands.'
-        message = await ctx.send('<a:typing4:393837093190762506> Processing...')
+        message = await ctx.send('<a:typing:393848431413559296> Processing...')
         result = []
         try:
             process = subprocess.Popen(command.split(' '), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
