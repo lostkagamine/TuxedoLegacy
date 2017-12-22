@@ -96,7 +96,6 @@ class Moderation:
             tbl = [i for i in tbl]
             for i in tbl: # syntax: {'guild': guild ID, 'moderator': mod ID, 'user': user ID, 'timestamp': original timestamp, 'expiration': when it expires}
                 if float(i['expiration']) <= datetime.datetime.utcnow().timestamp():
-                    print('someones getting unbanne')
                     mod = await self.get_user(int(i['moderator']))
                     user = await self.get_user(int(i['user'])) # LOL PARENTHESES
                     try:
