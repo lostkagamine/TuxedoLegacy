@@ -156,6 +156,24 @@ You were banned for `{details['reason']}` with proof `{details['proof']}`.
                 await self.ban(uid, ctx.author.id, args.reason, args.proof)
             except GbanException as e:
                 return await ctx.send(f':x: {e}')
+        actual_u = [await self.get_user(i) for i in args.users]
+        for k, v in enumerate(actual_u):
+            if v == None:
+                actual_u[k] = 'Unknown'
+        for g in ctx.bot.guilds:
+            try:
+                settings = list(r.table('settings').filter(
+                    lambda a: a['guild'] == str(g.id)).run(self.conn))[0]
+            except Exception:
+                continue
+            if "gban_alerts" not in settings.keys():
+                continue
+            chan = g.get_channel(int(settings['gban_alerts']))
+            if chan != None:
+                try:
+                    await chan.send(f':hammer: {", ".join([str(i) for i in actual_u])} {"has" if len(actual_u) == 1 else "have"} been globally banned.\nReason given: `{args.reason}`\nProof given: `{args.proof}`')
+                except discord.Forbidden:
+                    pass
         await ctx.send(f'User(s) banned for reason `{args.reason}` with proof `{args.proof}`.')
 
     @gban.command(aliases=['rm', 'delete', 'unban'])
@@ -163,6 +181,8 @@ You were banned for `{details['reason']}` with proof `{details['proof']}`.
     async def remove(self, ctx, *args):
         parser = DiscordFriendlyArgparse(prog=ctx.command.name, add_help=True)
         parser.add_argument('-u', '--users', nargs='+', type=int, metavar='ID', required=True, help='List of users to unban.')
+        parser.add_argument('-r', '--reason', help='Reason for unbanning.')
+        parser.add_argument('-p', '--proof', help='Proof for unbanning.')
         try:
             args = parser.parse_args(args)
         except DiscordArgparseError as e:
@@ -172,6 +192,24 @@ You were banned for `{details['reason']}` with proof `{details['proof']}`.
                 await self.unban(uid)
             except GbanException as e:
                 return await ctx.send(f':x: {e}')
+        actual_u = [await self.get_user(i) for i in args.users]
+        for k, v in enumerate(actual_u):
+            if v == None:
+                actual_u[k] = 'Unknown'
+        for g in ctx.bot.guilds:
+            try:
+                settings = list(r.table('settings').filter(
+                    lambda a: a['guild'] == str(g.id)).run(self.conn))[0]
+            except Exception:
+                continue
+            if "gban_alerts" not in settings.keys():
+                continue
+            chan = g.get_channel(int(settings['gban_alerts']))
+            if chan != None:
+                try:
+                    await chan.send(f'<:tuxAlert:390564666977419264> {", ".join([str(i) for i in actual_u])} {"has" if len(actual_u) == 1 else "have"} been globally unbanned.\nReason given: `{args.reason}`\nProof given: `{args.proof}`')
+                except discord.Forbidden:
+                    pass
         await ctx.send('User(s) unbanned successfully.')
 
     @gban.command()
