@@ -9,11 +9,11 @@ settings = {'modlog_channel': 'channel', 'staff_channel': 'channel',
             'tracked_roles': 'rolelist','rolebanned_role': 'role', 'auto_dehoist': 'bool', 'auto_decancer': 'bool',
             'global_bans': 'bool', 'muted_roles': 'rolelist', 'gban_alerts': 'channel'}
 
-templates = {'ban': '**User Ban** | Case {id}\n**Target:** {user}\n**Moderator:** {mod}\n**Reason:** `{rsn}`',
-             'kick': '**User Kick** | Case {id}\n**Target:** {user}\n**Moderator:** {mod}\n**Reason:** `{rsn}`',
-             'unban': '**User Unban** | Case {id}\n**Target:** {user}\n**Moderator:** {mod}\n**Reason:** `{rsn}`',
-             'role_add': '**Role Add** | Case {id}\n**Role:** {role}\n**Target:** {user}\n**Moderator:** {mod}\n**Reason:** `{rsn}`',
-             'role_remove': '**Role Remove** | Case {id}\n**Role:** {role}\n**Target:** {user}\n**Moderator:** {mod}\n**Reason:** `{rsn}`'}
+templates = {'ban': '**Ban** | Case {id}\n**Target:** {user}\n**Reason:** {rsn}\n**Responsible moderator:** {mod}',
+             'kick': '**Kick** | Case {id}\n**Target:** {user}\n**Reason:** {rsn}\n**Responsible moderator:** {mod}',
+             'unban': '**Unban** | Case {id}\n**Target:** {user}\n**Reason:** {rsn}\n**Responsible moderator:** {mod}',
+             'role_add': '**Special Role Added** | Case {id}\n**Role:** {role}\n**Target:** {user}\n**Reason:** {rsn}\n**Responsible moderator:** {mod}',
+             'role_remove': '**Special Role Removed** | Case {id}\n**Role:** {role}\n**Target:** {user}\n**Reason:** {rsn}\n**Responsible moderator:** {mod}'}
 
 categories = {'ban': discord.AuditLogAction.ban,
               'kick': discord.AuditLogAction.kick,
@@ -101,10 +101,10 @@ class ModLogs:
         if ch == None:
             return
         msg = await ch.send(self.process_template(_type, f'{str(u)} ({u.id})',
-                                                  f'{str(mod)} ({mod.id})', reason if reason else default_rsn.replace('{prefix}', self.bot.prefix[0]), aaaaa=role))
-        cid = await self.log_entry(_type, g, f'{str(u)} ({u.id})', f'{str(mod)} ({mod.id})', reason if reason else default_rsn.replace('{prefix}', self.bot.prefix[0]), str(msg.id), role=role)
+                                                  f'{str(mod)}', reason if reason else default_rsn.replace('{prefix}', self.bot.prefix[0]), aaaaa=role))
+        cid = await self.log_entry(_type, g, f'{str(u)} ({u.id})', f'{str(mod)}', reason if reason else default_rsn.replace('{prefix}', self.bot.prefix[0]), str(msg.id), role=role)
         await msg.edit(content=self.process_template(_type, f'{str(u)} ({u.id})',
-                                                     f'{str(mod)} ({mod.id})', reason if reason else default_rsn.replace(
+                                                     f'{str(mod)}', reason if reason else default_rsn.replace(
                                                          '{prefix}', self.bot.prefix[0]),
                                                      aaaaa=role, case=str(cid)))
 
@@ -158,7 +158,7 @@ class ModLogs:
     async def do_role_log(self, after, type, i):
         async for audit in after.guild.audit_logs(limit=1):
             await self.do_modlog_raw(type, after.guild,
-                                     after, audit.reason if audit.reason else default_rsn.replace('{prefix}', self.bot.prefix[0]), audit.user, i.name)
+                                     after, audit.reason if audit.reason else default_rsn.replace('{prefix}', self.bot.prefix[0]), audit.user, f'{i.name} ({i.id})')
 
     def check_type(self, ctx, thing, value):
         if thing == "channel":
@@ -323,7 +323,7 @@ class ModLogs:
         if caseid < 1 or caseid > data['count']:
             return await ctx.send(':x: List index out of range. (Invalid Case ID)')
         entry = data['entries'][caseid - 1]
-        entry['mod'] = f'{str(ctx.author)} ({ctx.author.id})'
+        entry['mod'] = f'{str(ctx.author)}'
         entry['reason'] = reason
         msgid = int(entry['msgid'])
         channel = self.modlog_ch(ctx.guild)
