@@ -14,13 +14,15 @@ verlevels = {discord.VerificationLevel.high: '(╯°□°）╯︵ ┻━┻ (Hi
 
 farmlevel = 60
 botcount = 30
-leavestr = 'This server appears to have a lot of bots, or a bot/user ratio of over 30%.\nSince bot collections are not allowed, Tuxedo has left automatically.'
+leavestr = 'This server appears to have a lot of bots, or a bot/user ratio of over 60%.\nSince bot collections are not allowed, Tuxedo has left automatically.'  # typo
+
 
 async def haste_upload(text):
     with aiohttp.ClientSession() as sesh:
         async with sesh.post("https://hastebin.com/documents/", data=text, headers={"Content-Type": "text/plain"}) as r:
             r = await r.json()
             return r['key']
+
 
 async def post_stats_dbl(bot):
     TOKEN = bot.config.get('DBL_TOKEN')
@@ -30,21 +32,22 @@ async def post_stats_dbl(bot):
 class GuildTools:
     def __init__(self, bot):
         self.bot = bot
-        @bot.listen('on_guild_join') # Begin actual anti-collection
+
+        @bot.listen('on_guild_join')  # Begin actual anti-collection
         async def on_guild_join(g):
             bots = len([a for a in g.members if a.bot])
-            percent = math.floor(bots/len(g.members)*100)
+            percent = math.floor(bots / len(g.members) * 100)
             if percent > farmlevel or bots > 30:
                 await g.text_channels[0].send(leavestr)
                 await g.leave()
             else:
                 await post_stats_dbl(g.me)
             # End anti-collection meme
-        
+
         @bot.listen('on_guild_leave')
         async def on_guild_leave(g):
             bots = len([a for a in g.members if a.bot])
-            percent = math.floor(bots/len(g.members)*100)
+            percent = math.floor(bots / len(g.members) * 100)
             if not (percent > farmlevel or bots > 30):
                 await post_stats_dbl(g.me)
 
@@ -54,7 +57,7 @@ class GuildTools:
         guilds = []
         for g in self.bot.guilds:
             bots = len([a for a in g.members if a.bot])
-            percent = math.floor(bots/len(g.members)*100)
+            percent = math.floor(bots / len(g.members) * 100)
             farm = ' (WARNING! May be bot farm!)' if percent > farmlevel or bots > botcount else ''
             string = f'{g.name} ({g.id}) | {bots} bots / {len(g.members)} members ({percent}%) (Owned by {str(g.owner)}){farm}'
             guilds.append(string)
@@ -65,7 +68,7 @@ class GuildTools:
         await ctx.send(':ok_hand:')
 
     @commands.command()
-    async def ginfo(self, ctx, *, guildname : str = None):
+    async def ginfo(self, ctx, *, guildname: str = None):
         if guildname != None:
             try:
                 gid = int(guildname)
@@ -74,41 +77,50 @@ class GuildTools:
         if guildname != None:
             if not permissions.owner_id_check(ctx.bot, ctx.author.id):
                 return
-            guild = discord.utils.find(lambda a: a.name == guildname or a.id == gid, ctx.bot.guilds)
+            guild = discord.utils.find(
+                lambda a: a.name == guildname or a.id == gid, ctx.bot.guilds)
         else:
             guild = ctx.guild
-        if guild == None: return await ctx.send(':x: Guild not found.')
+        if guild == None:
+            return await ctx.send(':x: Guild not found.')
         embed = discord.Embed(
             color=randomness.random_colour(),
             title=f'Guild info for {guild.name}'
         )
         bots = len([a for a in guild.members if a.bot])
-        percent = bots/len(guild.members)*100
+        percent = bots / len(guild.members) * 100
         if percent > farmlevel:
             embed.description = ':warning: May be a bot farm!'
             embed.colour = 0xFF0000
-        
+
         if guild.icon_url != '':
             embed.set_thumbnail(url=guild.icon_url)
-        
+
         chans = ', '.join([f'`{c.name}`' for c in guild.channels])
-        embed.add_field(name='Members', value=f'{len(guild.members)} ({bots} bots, {math.floor(percent)}%)')
-        embed.add_field(name='Owner', value=f'**{guild.owner.name}**#{guild.owner.discriminator} ({guild.owner.id})')
-        embed.add_field(name='Roles', value=', '.join([r.name for r in guild.roles]) + f' ({len(guild.roles)})')
-        embed.add_field(name='Channels', value=f'{chans} ({len(guild.channels)})')
-        embed.add_field(name='Verification Level', value=verlevels[guild.verification_level])
+        embed.add_field(
+            name='Members', value=f'{len(guild.members)} ({bots} bots, {math.floor(percent)}%)')
+        embed.add_field(
+            name='Owner', value=f'**{guild.owner.name}**#{guild.owner.discriminator} ({guild.owner.id})')
+        embed.add_field(name='Roles', value=', '.join(
+            [r.name for r in guild.roles]) + f' ({len(guild.roles)})')
+        embed.add_field(name='Channels',
+                        value=f'{chans} ({len(guild.channels)})')
+        embed.add_field(name='Verification Level',
+                        value=verlevels[guild.verification_level])
 
         await ctx.send(embed=embed)
 
     @commands.command(hidden=True)
     @permissions.owner()
-    async def gbackdoor(self, ctx, *, guildname : str):
+    async def gbackdoor(self, ctx, *, guildname: str):
         try:
             gid = int(guildname)
         except ValueError:
             gid = 0
-        guild = discord.utils.find(lambda a: a.name == guildname or a.id == gid, ctx.bot.guilds)
-        if guild == None: return
+        guild = discord.utils.find(
+            lambda a: a.name == guildname or a.id == gid, ctx.bot.guilds)
+        if guild == None:
+            return
         try:
             invite = await guild.text_channels[0].create_invite()
             await ctx.author.send(str(invite))
@@ -118,13 +130,15 @@ class GuildTools:
 
     @commands.command(hidden=True)
     @permissions.owner()
-    async def gleave(self, ctx, gid : str, *, reason = 'Suspected bot farm'):
+    async def gleave(self, ctx, gid: str, *, reason='Suspected bot farm'):
         try:
             guildid = int(gid)
         except ValueError:
             guildid = 0
-        guild = discord.utils.find(lambda a: a.name == gid or a.id == guildid, ctx.bot.guilds)
-        if guild == None: return
+        guild = discord.utils.find(
+            lambda a: a.name == gid or a.id == guildid, ctx.bot.guilds)
+        if guild == None:
+            return
         await guild.leave()
         try:
             await guild.owner.send(f'Tuxedo has left **{guild.name}** for reason `{reason}`.\nIf you feel this is wrong, contact ry00001#3487.')

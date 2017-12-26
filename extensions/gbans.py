@@ -1,8 +1,8 @@
 # Global ban cog for Tuxedo
-
+# flake8: noqa E501
 import discord
 from discord.ext import commands
-import rethinkdb as r 
+import rethinkdb as r
 from utils import permissions
 import aiohttp
 from utils.argparse import DiscordFriendlyArgparse, DiscordArgparseError, DiscordArgparseMessage
@@ -10,11 +10,13 @@ from utils.argparse import DiscordFriendlyArgparse, DiscordArgparseError, Discor
 class GbanException(Exception):
     pass
 
+
 class Gbans:
     def __init__(self, bot):
         self.conn = bot.conn
         self.bot = bot
         self.token = bot.config.get('GBANS_TOKEN')
+
         @bot.listen('on_member_join')
         async def on_member_join(u):
             g = u.guild
@@ -58,7 +60,7 @@ You were banned for `{details['reason']}` with proof `{details['proof']}`.
         user = None  # database fetch
         if user is not None:
             # noinspection PyProtectedMember
-            return discord.User(state=self.bot._connection, data=user)  # I'm sorry Danny
+            return discord.User(state=self.bot._connection, data=user) # I'm sorry Danny
 
         user = self.bot.get_user(uid)
         if user is not None:
@@ -70,13 +72,14 @@ You were banned for `{details['reason']}` with proof `{details['proof']}`.
             user = None
         if user is not None:  # intentionally leaving this at the end so we can add more methods after this one
             return user
-    
-    async def ban(self, uid:int, mod:int, reason:str='<none specified>', proof:str='<none specified>'):
+
+    async def ban(self, uid: int, mod: int, reason: str='<none specified>', proof: str='<none specified>'):
         'Easy interface with the global banner'
         if str(uid) in self.bot.config.get('OWNERS') or str(uid) in self.bot.config.get('GLOBAL_MODS'):
             raise GbanException('You cannot ban a bot owner/global moderator.')
         if uid == self.bot.user.id:
-            raise GbanException('You cannot ban the bot itself. Duh, did you think I\'d let you?')
+            raise GbanException(
+                'You cannot ban the bot itself. Duh, did you think I\'d let you?')
         if await self.is_gbanned(uid):
             raise GbanException(f'ID {uid} is already globally banned.')
         r.table('gbans').insert({
@@ -87,15 +90,18 @@ You were banned for `{details['reason']}` with proof `{details['proof']}`.
         }, conflict='update').run(self.conn)
         hss = aiohttp.ClientSession()
         async with hss.put(f'https://api-pandentia.qcx.io/discord/global_bans/{uid}', headers={'Authorization': self.token},
-                                               json={'moderator': mod, 'reason': reason, 'proof': proof}) as resp:
+                           json={'moderator': mod, 'reason': reason, 'proof': proof}) as resp:
             if resp.status == 401:
-                raise GbanException(f'Uh-oh, the API returned Forbidden. Check your token.')
+                raise GbanException(
+                    f'Uh-oh, the API returned Forbidden. Check your token.')
             elif resp.status == 409:
-                raise GbanException(f'This user is already remotely banned. They have been banned locally.')
+                raise GbanException(
+                    f'This user is already remotely banned. They have been banned locally.')
         await hss.close()
-        print(f'[Global bans] {mod} has just banned {uid} globally for {reason} with proof {proof}')
+        print(
+            f'[Global bans] {mod} has just banned {uid} globally for {reason} with proof {proof}')
 
-    async def unban(self, uid:int):
+    async def unban(self, uid: int):
         'Easy interface with the global banner'
         if not await self.is_gbanned(uid):
             raise GbanException(f'ID {uid} wasn\'t globally banned.')
@@ -103,15 +109,17 @@ You were banned for `{details['reason']}` with proof `{details['proof']}`.
         hss = aiohttp.ClientSession()
         async with hss.delete(f'https://api-pandentia.qcx.io/discord/global_bans/{uid}', headers={'Authorization': self.token}) as resp:
             if resp.status == 401:
-                raise GbanException(f'Uh-oh, the API returned Forbidden. Check your token.')
+                raise GbanException(
+                    f'Uh-oh, the API returned Forbidden. Check your token.')
         await hss.close()
         print(f'[Global bans] {uid} just got globally unbanned')
-    
-    async def is_gbanned(self, user:int):
+
+    async def is_gbanned(self, user: int):
         try:
-            meme = r.table('gbans').filter({'user': str(user)}).run(self.conn).next()
-            return True # is gbanned
-        except Exception: # local then remote
+            meme = r.table('gbans').filter(
+                {'user': str(user)}).run(self.conn).next()
+            return True  # is gbanned
+        except Exception:  # local then remote
             hss = aiohttp.ClientSession()
             async with hss.get(f'https://api-pandentia.qcx.io/discord/global_bans/{user}') as resp:
                 if resp.status == 200:
@@ -120,11 +128,12 @@ You were banned for `{details['reason']}` with proof `{details['proof']}`.
                     return False
             await hss.close()
 
-    async def gban_details(self, user:int):
+    async def gban_details(self, user: int):
         try:
-            meme = r.table('gbans').filter({'user': str(user)}).run(self.conn).next()
+            meme = r.table('gbans').filter(
+                {'user': str(user)}).run(self.conn).next()
             return meme
-        except Exception: # *not* locally banned
+        except Exception:  # *not* locally banned
             hss = aiohttp.ClientSession()
             async with hss.get(f'https://api-pandentia.qcx.io/discord/global_bans/{user}') as resp:
                 if resp.status == 200:
@@ -132,7 +141,6 @@ You were banned for `{details['reason']}` with proof `{details['proof']}`.
                 else:
                     return None
             await hss.close()
-
 
     @commands.group(name='gban', aliases=['gbans', 'globalbans', 'global_bans'], invoke_without_command=True)
     async def gban(self, ctx, param):
@@ -142,7 +150,8 @@ You were banned for `{details['reason']}` with proof `{details['proof']}`.
     @permissions.owner_or_gmod()
     async def add(self, ctx, *args):
         parser = DiscordFriendlyArgparse(prog=ctx.command.name, add_help=True)
-        parser.add_argument('-u', '--users', nargs='+', type=int, metavar='ID', required=True, help='List of users to ban.')
+        parser.add_argument('-u', '--users', nargs='+', type=int,
+                            metavar='ID', required=True, help='List of users to ban.')
         parser.add_argument('-r', '--reason', help='A reason for the ban.')
         parser.add_argument('-p', '--proof', help='A proof for the ban.')
         try:
@@ -180,7 +189,8 @@ You were banned for `{details['reason']}` with proof `{details['proof']}`.
     @permissions.owner_or_gmod()
     async def remove(self, ctx, *args):
         parser = DiscordFriendlyArgparse(prog=ctx.command.name, add_help=True)
-        parser.add_argument('-u', '--users', nargs='+', type=int, metavar='ID', required=True, help='List of users to unban.')
+        parser.add_argument('-u', '--users', nargs='+', type=int,
+                            metavar='ID', required=True, help='List of users to unban.')
         parser.add_argument('-r', '--reason', help='Reason for unbanning.')
         parser.add_argument('-p', '--proof', help='Proof for unbanning.')
         try:
@@ -215,7 +225,8 @@ You were banned for `{details['reason']}` with proof `{details['proof']}`.
     @gban.command()
     async def check(self, ctx, *args):
         parser = DiscordFriendlyArgparse(prog=ctx.command.name, add_help=True)
-        parser.add_argument('-u', '--users', nargs='+', type=int, metavar='ID', required=True, help='List of users to check for.')
+        parser.add_argument('-u', '--users', nargs='+', type=int,
+                            metavar='ID', required=True, help='List of users to check for.')
         try:
             args = parser.parse_args(args)
         except DiscordArgparseError as e:
@@ -243,6 +254,7 @@ Proof: {detail['proof']}
 """ if detail != None else ""}'''
             embed.add_field(name=ustring, value=stri)
         await ctx.send(embed=embed)
+
 
 def setup(bot):
     bot.add_cog(Gbans(bot))
