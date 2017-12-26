@@ -152,7 +152,7 @@ class Lul:
     async def ship(self, ctx, member1:discord.Member, member2:discord.Member):
         name1 = member1.display_name[0:round(len(member1.display_name)/2)]
         name2 = member2.display_name[round(len(member2.display_name)/2):0:-1][::-1]
-        return await ctx.send(f'Your ship name is {f"{name1}{name2}" if random.random >= 0.5 else f"{name2}{name1}"}')
+        return await ctx.send(f'Your ship name is {f"{name1}{name2}" if random.random() >= 0.5 else f"{name2}{name1}"}')
         
     
 # reeeeEEE you make a comment
