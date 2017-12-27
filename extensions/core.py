@@ -127,9 +127,18 @@ class Core:
     async def error(self, ctx):
         3/0
 
-
-
-
+    @commands.command()
+    @permissions.owner()
+    async def alias(self, ctx, _from, to):
+        fromcmd = self.bot.get_command(_from)
+        if _from == to:
+            return await ctx.send(':x: You cannot register an alias with the same name as the command.')
+        if fromcmd == None:
+            return await ctx.send(':x: The command that needs to be registered is invalid.')
+        if to in self.bot.all_commands:
+            return await ctx.send(':x: The command to register is already a thing.')
+        self.bot.all_commands[to] = fromcmd
+        await ctx.send(':ok_hand: Registered. Or at least I hope. This command is in beta and probably buggy. It may not work.')
 
 
 def setup(bot):
