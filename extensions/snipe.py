@@ -44,12 +44,13 @@ class Snipe:
             emb.colour = snipe[0].author.colour
             emb.add_field(name='Before', value=self.sanitise(snipe[0].content), inline=False)
             emb.add_field(name='After', value=self.sanitise(snipe[1].content), inline=False)
+            emb.timestamp = snipe[0].created_at
         else: # delete snipe
             emb.set_author(name=str(snipe.author), icon_url=snipe.author.avatar_url)
             emb.description = self.sanitise(snipe.content)
             emb.colour = snipe.author.colour
+            emb.timestamp = snipe.created_at
         emb.set_footer(text=f'Message sniped by {str(ctx.author)}', icon_url=ctx.author.avatar_url)
-        emb.timestamp = datetime.datetime.now()
         await ctx.send(embed=emb)
         self.snipes[ctx.channel.id] = None
 

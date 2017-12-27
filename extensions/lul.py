@@ -88,15 +88,12 @@ class Lul:
         """ Number suffixes are fun. """
         numbers = ["fir", "seco", "thi", "four", "fif", "six", "seven", "eig", "nin", "ten"]
         suffix = ["st", "nd", "rd", "th"]
-        correctlist = ["first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eigth", "ninth", "tenth"]
+        correctlist = [v + self.gensuffix(i + 1) for i, v in enumerate(numbers)] # whee
         finished = []
-        correct = []
-        correctsuffixes = []
-        for i in range(len(numbers)):
-            correctsuffixes.append(self.gensuffix(i + 1))
+        correctsuffixes = [self.gensuffix(i + 1) for i in range(len(numbers))]
         for i, v in enumerate(numbers):
             finished.append(v + random.choice(suffix))
-
+        correct = [i for i,v in enumerate(finished) if correctlist[i] == v]
         for ind, val in enumerate(finished):
             if correctlist[ind] == val:
                 correct.append(val)
@@ -153,10 +150,15 @@ class Lul:
         name1 = member1.display_name[0:round(len(member1.display_name)/2)]
         name2 = member2.display_name[round(len(member2.display_name)/2):0:-1][::-1]
         return await ctx.send(f'Your ship name is {f"{name1}{name2}" if random.random() >= 0.5 else f"{name2}{name1}"}')
-        
-    
-# reeeeEEE you make a comment
-# ^ why is that still there? :LUL:
+
+    @commands.command(aliases=['eggtimer', 'えぐ']) # egu
+    async def egg(self, ctx, time:int=180, emote:str='🥚⏲'):
+        if time > 300 or time < 5:
+            return await ctx.send('Maximum time allowed is 5 minutes (300 seconds). Minimum time allowed is 5 seconds.')
+        await ctx.send(emote)
+        await asyncio.sleep(time)
+        m = await ctx.send(ctx.author.mention)
+        await m.edit(content=emote)
 
 
 def setup(bot):

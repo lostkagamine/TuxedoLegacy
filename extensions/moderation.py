@@ -15,7 +15,8 @@ import rethinkdb as r
 import isodate
 from utils import argparse
 import datetime
-chars = '!#/()[]{}-=%&~._,;:^\'"+-`$'
+chars = ("!", "\"", "#", "$", "%", "&", "'", "(", ")", "*", "+", ",", "-", ".", "/", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ":", ";", "<", "=", ">", "?", "@", "[", "\\", "]", "^", "_", "`")
+# to the above char tuple: thanks road
 dehoist_char = '𛲢' # special character, to be used for dehoisting
 
 pingmods_disabled = [110373943822540800]
