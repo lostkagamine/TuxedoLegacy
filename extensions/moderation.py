@@ -41,7 +41,10 @@ class Moderation:
                     lambda a: a['guild'] == str(g.id)).run(self.conn))[0]
                 if 'auto_dehoist' in settings.keys():
                     if settings['auto_dehoist']:
-                        await after.edit(nick=f'{dehoist_char}{after.display_name[0:31]}', reason='[Automatic dehoist]')
+                        try:
+                            await after.edit(nick=f'{dehoist_char}{after.display_name[0:31]}', reason='[Automatic dehoist]')
+                        except discord.Forbidden:
+                            return
             if isascii(after.display_name) == False and not after.display_name.startswith(dehoist_char):
                 exists = (lambda: list(r.table('settings').filter(
                     lambda a: a['guild'] == str(g.id)).run(self.conn)) != [])()
@@ -54,7 +57,10 @@ class Moderation:
                         aaa = unidecode.unidecode_expect_nonascii(after.display_name)
                         if len(aaa) > 32:
                             aaa = aaa[0:32-3] + '...'
-                        await after.edit(nick=aaa, reason='[Automatic decancer]')
+                        try:
+                            await after.edit(nick=aaa, reason='[Automatic decancer]')
+                        except discord.Forbidden:
+                            return
             if before.roles == after.roles:
                 return
             if len(before.roles) < len(after.roles):
