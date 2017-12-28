@@ -24,9 +24,6 @@ async def haste_upload(text):
             return r['key']
 
 
-async def post_stats_dbl(bot):
-    TOKEN = bot.config.get('DBL_TOKEN')
-    await aiohttp.ClientSession().post('https://discordbots.org/api/bots/' + str(bot.user.id) + '/stats', data=json.dumps({"server_count": len(bot.guilds)}), headers={'Authorization': TOKEN})
 
 
 class GuildTools:
@@ -41,7 +38,7 @@ class GuildTools:
                 await g.text_channels[0].send(leavestr)
                 await g.leave()
             else:
-                await post_stats_dbl(g.me)
+                await self.post_stats_dbl()
             # End anti-collection meme
 
         @bot.listen('on_guild_leave')
@@ -49,7 +46,12 @@ class GuildTools:
             bots = len([a for a in g.members if a.bot])
             percent = math.floor(bots / len(g.members) * 100)
             if not (percent > farmlevel or bots > 30):
-                await post_stats_dbl(g.me)
+                await self.post_stats_dbl()
+
+    async def post_stats_dbl(self):
+        TOKEN = self.bot.config.get('DBL_TOKEN')
+        await aiohttp.ClientSession().post('https://discordbots.org/api/bots/' + str(self.bot.user.id) + '/stats', data=json.dumps({"server_count": len(self.bot.guilds)}), headers={'Authorization': TOKEN})
+
 
     @commands.command(hidden=True)
     @permissions.owner()

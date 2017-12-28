@@ -130,6 +130,8 @@ class Core:
     @commands.command()
     @permissions.owner()
     async def alias(self, ctx, _from, to):
+        _from = _from.replace('\'', '').replace('"', '')
+        to = to.replace('\'', '').replace('"', '')
         fromcmd = self.bot.get_command(_from)
         if _from == to:
             return await ctx.send(':x: You cannot register an alias with the same name as the command.')
