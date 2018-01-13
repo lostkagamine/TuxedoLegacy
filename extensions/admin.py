@@ -20,8 +20,7 @@ class Admin:
             async with sesh.post("https://hastebin.com/documents/", data=text, headers={"Content-Type": "text/plain"}) as r:
                 r = await r.json()
                 return r['key']
-
-    @commands.command(name="setavy")
+            
     @permissions.owner()
     async def set_avy(self, ctx, *, avy : str):
         async with aiohttp.ClientSession() as sesh:

@@ -83,6 +83,15 @@ class Bot(commands.Bot):
                 return i
         return False
 
+    async def get_settings(self, g):
+        exists = (lambda: list(r.table('settings').filter(
+            lambda a: a['guild'] == str(g.id)).run(self.conn)) != [])()
+        if not exists:
+            return None
+        settings = list(r.table('settings').filter(
+            lambda a: a['guild'] == str(g.id)).run(self.conn))[0]
+        return settings
+
 
 
 async def cmd_help(ctx):

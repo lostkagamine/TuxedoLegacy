@@ -3,11 +3,12 @@ import discord
 from discord.ext import commands
 import asyncio
 from utils import permissions
-import shlex
+import shlex, re
 
 settings = {'modlog_channel': 'channel', 'staff_channel': 'channel', 
             'tracked_roles': 'rolelist','rolebanned_role': 'role', 'auto_dehoist': 'bool', 'auto_decancer': 'bool',
-            'global_bans': 'bool', 'muted_roles': 'rolelist', 'gban_alerts': 'channel', 'no_animated_emojis': 'bool'}
+            'global_bans': 'bool', 'muted_roles': 'rolelist', 'gban_alerts': 'channel', 'no_animated_emojis': 'bool',
+            'starboard_min_count': 'number', 'starboard_channel': 'channel', 'starboard_emote': 'emote'}
 
 templates = {'ban': '**Ban** | Case {id}\n**Target:** {user}\n**Reason:** {rsn}\n**Responsible moderator:** {mod}',
              'kick': '**Kick** | Case {id}\n**Target:** {user}\n**Reason:** {rsn}\n**Responsible moderator:** {mod}',
@@ -24,6 +25,8 @@ categories = {'ban': discord.AuditLogAction.ban,
 
 default_rsn = 'Unknown. Responsible moderator, do {prefix}reason latest <your reason> to set a reason.'
 
+emote_regex = r':([A-Za-z0-9_\-~]+):'
+emote_regex_2 = r'<:([A-Za-z0-9_\-~]+):([0-9]+)>'
 
 class ModLogs:
     async def log_entry(self, _type, guild, target, mod, reason, msgid, role='N/A'):
@@ -183,14 +186,23 @@ class ModLogs:
                 return True
             except ValueError:
                 return False
+        elif thing == 'emote':
+            reg2 = re.match(emote_regex_2, value)
+            if reg2 is not None:
+                try:
+                    return True
+                except Exception as e:
+                    return False
+            return True
+
 
     def do_type(self, ctx, _type, value):
         print(value)
         if _type == "channel":
             return str(ctx.message.channel_mentions[0].id)
         elif _type == 'bool':
-            if value.lower() in ['true', 'false']:
-                return value.lower() == 'true'
+            if value.lower() in ['true', 'false', 'y', 'n', 'yes', 'no']:
+                return value.lower() in ['y', 'yes', 'true']
         elif _type == 'rolelist':
             roles = self.do_list(ctx, value)
             if roles == False:
@@ -209,6 +221,11 @@ class ModLogs:
                 return numbah
             except ValueError:
                 return 'ERR|This number isn\'t valid.'
+        elif _type == 'emote':
+            r2 = re.match(emote_regex_2, value)
+            if r2:
+                return r2.group(1)
+            return value
 
     def do_list(self, ctx, stuff):
         aaaa = shlex.split(stuff)

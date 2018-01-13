@@ -160,8 +160,8 @@ The original ban was placed for reason `{i['reason']}` on date `{hecc}`.
             return await ctx.send(badsetting) #shouldn't happen
         if tier > len(roles) or tier < 0:
             return await ctx.send(f':x: The tier value must range between 0 and {len(roles)}.')
-        if not ctx.author.permissions_in(ctx.channel).manage_roles:
-            return await ctx.send(':no_entry_sign: Not enough permissions. You need Manage Roles.')
+        if not ctx.author.permissions_in(ctx.channel).manage_roles or not ctx.author.permissions_in(ctx.channel).kick_members or not ctx.author.permissions_in(ctx.channel).ban_members:
+            return await ctx.send(':no_entry_sign: Not enough permissions. You need Manage Roles, Kick Members or Ban Members.')
         if not ctx.me.permissions_in(ctx.channel).manage_roles:
             return await ctx.send(':no_entry_sign: I don\'t have enough permissions. Give me Manage Roles.')
         people = []
@@ -211,8 +211,8 @@ The original ban was placed for reason `{i['reason']}` on date `{hecc}`.
         roles = [get_role(g, int(i)) for i in settings['muted_roles']]
         if any(i == None for i in roles):
             return await ctx.send(badsetting) #shouldn't happen
-        if not ctx.author.permissions_in(ctx.channel).manage_roles:
-            return await ctx.send(':no_entry_sign: Not enough permissions. You need Manage Roles.')
+        if not ctx.author.permissions_in(ctx.channel).manage_roles or not ctx.author.permissions_in(ctx.channel).kick_members or not ctx.author.permissions_in(ctx.channel).ban_members:
+            return await ctx.send(':no_entry_sign: Not enough permissions. You need Manage Roles, Kick Members or Ban Members.')
         if not ctx.me.permissions_in(ctx.channel).manage_roles:
             return await ctx.send(':no_entry_sign: I don\'t have enough permissions. Give me Manage Roles.')
         people = []
