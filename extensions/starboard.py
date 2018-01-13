@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from utils import database, randomness
-import datetime
+import datetime, random
 
 # Tuxedo starboard module
 # Don't steal pls, it's FOSS but don't thanks. 
@@ -31,6 +31,7 @@ class Starboard:
             e.set_author(name=str(r.message.author), icon_url=r.message.author.avatar_url_as(format='png'))
             e.description = r.message.content
             e.timestamp = datetime.datetime.utcnow()
+            e.title = f'{random.choice([':star:', ':star2:', ':dizzy:'])} **{count}** <#{r.message.channel.id}>'
             await channel.send(embed=e)
 
 def setup(bot):

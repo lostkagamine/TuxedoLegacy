@@ -386,20 +386,50 @@ The original ban was placed for reason `{i['reason']}` on date `{hecc}`.
         await asyncio.sleep(3)
         await msg.delete()
 
+    @commands.command(aliases=['uban'])
+    async def unban(self, ctx, *args):
+        'Unbans multiple users. You can specify a reason.'
+        parser = argparse.DiscordFriendlyArgparse(prog=ctx.command.name, add_help=True)
+        parser.add_argument('-u', '--users', nargs='+', metavar='<id>', required=True, help='List of users to unban.')
+        parser.add_argument('-r', '--reason', metavar='Reason', help='A reason for the unban.')
+        try:
+            args = parser.parse_args(args)
+        except argparse.DiscordArgparseError as e:
+            return await ctx.send(e)
+        for i in args.users:
+            if not ctx.author.permissions_in(ctx.channel).ban_members:
+                return await ctx.send(':no_entry_sign: Not enough permissions. You need Ban Members.')
+            if not ctx.me.permissions_in(ctx.channel).ban_members:
+                return await ctx.send(':no_entry_sign: Grant the bot Ban Members before doing this.')
+            await ctx.guild.unban(self.get_user(i), reason=f'[{str(ctx.author)}] {args.reason}' if args.reason != None else f'Unban by {str(ctx.author)}')
+        await ctx.send(':ok_hand:', delete_after=3)
+
     @commands.command()
-    async def kick(self, ctx, member : discord.Member, *, reason : str = None):
+    async def kick(self, ctx, *args):
         """Kicks a member. You can specify a reason."""
-        if ctx.author == member:
-            return await ctx.send('Don\'t kick yourself, please.')
-        if not ctx.author.permissions_in(ctx.channel).kick_members:
-            return await ctx.send(':no_entry_sign: Not enough permissions. You need Kick Members.')
-        if not ctx.me.permissions_in(ctx.channel).kick_members:
-            return await ctx.send(':no_entry_sign: Grant the bot Kick Members before doing this.')
-        if ctx.author.top_role <= member.top_role:
-            return await ctx.send(':no_entry_sign: You can\'t kick someone with a higher role than you!')
-        if ctx.me.top_role <= member.top_role:
-            return await ctx.send(':no_entry_sign: I can\'t kick someone with a higher role than me!')
-        await ctx.guild.kick(member, reason=f'[{str(ctx.author)}] {reason}' if reason else f'Kick by {str(ctx.author)}')
+        parser = argparse.DiscordFriendlyArgparse(prog=ctx.command.name, add_help=True)
+        parser.add_argument('-u', '--users', nargs='+', metavar='@user', required=True, help='List of users to kick.')
+        parser.add_argument('-r', '--reason', metavar='Reason', help='A reason for the kick.')
+        try:
+            args = parser.parse_args(args)
+        except argparse.DiscordArgparseError as e:
+            return await ctx.send(e)
+        for i in args.users:
+            try:
+                member = await commands.MemberConverter().convert(ctx, i)
+            except commands.errors.BadArgument as e:
+                return await ctx.send(f':x: | {e}')
+            if ctx.author == member:
+                return await ctx.send('Don\'t kick yourself, please.')
+            if not ctx.author.permissions_in(ctx.channel).kick_members:
+                return await ctx.send(':no_entry_sign: Not enough permissions. You need Kick Members.')
+            if not ctx.me.permissions_in(ctx.channel).kick_members:
+                return await ctx.send(':no_entry_sign: Grant the bot Kick Members before doing this.')
+            if ctx.author.top_role <= member.top_role:
+                return await ctx.send(':no_entry_sign: You can\'t kick someone with a higher role than you!')
+            if ctx.me.top_role <= member.top_role:
+                return await ctx.send(':no_entry_sign: I can\'t kick someone with a higher role than me!')
+            await ctx.guild.kick(member, reason=f'[{str(ctx.author)}] {args.reason}' if args.reason else f'Kick by {str(ctx.author)}')
         msg = await ctx.send(':ok_hand:')
         await asyncio.sleep(3)
         await msg.delete()
