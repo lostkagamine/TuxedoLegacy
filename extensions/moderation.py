@@ -333,7 +333,7 @@ The original ban was placed for reason `{i['reason']}` on date `{hecc}`.
         else:
             return await ctx.send(':no_entry_sign: Not enough permissions. You need either Manage Roles, Kick Members or Ban Members.')
 
-    @commands.command()
+    @commands.command(aliases=['b'])
     async def ban(self, ctx, *args):
         """Bans a member. You can specify a reason."""
         parser = argparse.DiscordFriendlyArgparse(prog=ctx.command.name, add_help=True)
@@ -386,7 +386,7 @@ The original ban was placed for reason `{i['reason']}` on date `{hecc}`.
         await asyncio.sleep(3)
         await msg.delete()
 
-    @commands.command(aliases=['uban'])
+    @commands.command(aliases=['uban', 'ub'])
     async def unban(self, ctx, *args):
         'Unbans multiple users. You can specify a reason.'
         parser = argparse.DiscordFriendlyArgparse(prog=ctx.command.name, add_help=True)
@@ -401,10 +401,10 @@ The original ban was placed for reason `{i['reason']}` on date `{hecc}`.
                 return await ctx.send(':no_entry_sign: Not enough permissions. You need Ban Members.')
             if not ctx.me.permissions_in(ctx.channel).ban_members:
                 return await ctx.send(':no_entry_sign: Grant the bot Ban Members before doing this.')
-            await ctx.guild.unban(self.get_user(i), reason=f'[{str(ctx.author)}] {args.reason}' if args.reason != None else f'Unban by {str(ctx.author)}')
+            await ctx.guild.unban(await self.get_user(i), reason=f'[{str(ctx.author)}] {args.reason}' if args.reason != None else f'Unban by {str(ctx.author)}')
         await ctx.send(':ok_hand:', delete_after=3)
 
-    @commands.command()
+    @commands.command(aliases=['k'])
     async def kick(self, ctx, *args):
         """Kicks a member. You can specify a reason."""
         parser = argparse.DiscordFriendlyArgparse(prog=ctx.command.name, add_help=True)
@@ -414,6 +414,7 @@ The original ban was placed for reason `{i['reason']}` on date `{hecc}`.
             args = parser.parse_args(args)
         except argparse.DiscordArgparseError as e:
             return await ctx.send(e)
+        members = []
         for i in args.users:
             try:
                 member = await commands.MemberConverter().convert(ctx, i)
@@ -429,12 +430,14 @@ The original ban was placed for reason `{i['reason']}` on date `{hecc}`.
                 return await ctx.send(':no_entry_sign: You can\'t kick someone with a higher role than you!')
             if ctx.me.top_role <= member.top_role:
                 return await ctx.send(':no_entry_sign: I can\'t kick someone with a higher role than me!')
-            await ctx.guild.kick(member, reason=f'[{str(ctx.author)}] {args.reason}' if args.reason else f'Kick by {str(ctx.author)}')
+            members.append(member)
+        for i in members:
+            await ctx.guild.kick(i, reason=f'[{str(ctx.author)}] {args.reason}' if args.reason else f'Kick by {str(ctx.author)}')
         msg = await ctx.send(':ok_hand:')
         await asyncio.sleep(3)
         await msg.delete()
 
-    @commands.command()
+    @commands.command(aliases=['dh'])
     async def dehoist(self, ctx, member : discord.Member, *, flags : str = None):
         'Remove a hoisting member\'s hoist.'
         if not ctx.author.permissions_in(ctx.channel).manage_nicknames:
