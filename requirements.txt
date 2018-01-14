@@ -6,3 +6,7 @@ py-cpuinfo
 psutil
 rethinkdb
 raven
+unidecode
+editdistance
+lavalink
+isodate

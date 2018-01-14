@@ -7,13 +7,20 @@ from utils import randomness
 import aiohttp
 import asyncio
 import subprocess
+import rethinkdb as r
 
 class Admin:
     def __init__(self, bot):
         self.bot = bot
+        self.conn = bot.conn
         self._eval = {}
 
-    @commands.command(name="setavy")
+    async def haste_upload(self, text):
+        with aiohttp.ClientSession() as sesh:
+            async with sesh.post("https://hastebin.com/documents/", data=text, headers={"Content-Type": "text/plain"}) as r:
+                r = await r.json()
+                return r['key']
+            
     @permissions.owner()
     async def set_avy(self, ctx, *, avy : str):
         async with aiohttp.ClientSession() as sesh:
@@ -35,7 +42,6 @@ class Admin:
         silent = False
         if codebyspace[0] == "--silent" or codebyspace[0] == "-s": 
             silent = True
-            print("silent mmLol")
             codebyspace = codebyspace[1:]
             code = " ".join(codebyspace)
 
@@ -108,21 +114,73 @@ class Admin:
                         )
                         await ctx.send(embed=embed)
 
-    @commands.command(aliases=['sys', 's', 'run'], description="Run system commands.")
+    @commands.command(aliases=['sys', 's', 'run', 'sh'], description="Run system commands.")
     @permissions.owner()
     async def system(self, ctx, *, command : str):
         'Run system commands.'
-        process = subprocess.Popen(command.split(' '), stdout=subprocess.PIPE)
-        result = process.communicate()
+        message = await ctx.send('<a:typing:393848431413559296> Processing...')
+        result = []
+        try:
+            process = subprocess.Popen(command.split(' '), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            result = process.communicate()
+        except FileNotFoundError:
+            stderr = f'Command not found: {command}'
         embed = discord.Embed(
             title="Command output",
             color=randomness.random_colour()
         )
-        if result[0] is not None: stdout = result[0].decode('utf-8')
-        if result[1] is not None: stderr = result[1].decode('utf-8')
+        if len(result) >= 1 and result[0] in [None, b'']: stdout = 'No output.'
+        if len(result) >= 2 and result[0] in [None, b'']: stderr = 'No output.'
+        if len(result) >= 1 and result[0] not in [None, b'']: stdout = result[0].decode('utf-8')
+        if len(result) >= 2 and result[1] not in [None, b'']: stderr = result[1].decode('utf-8')
+        string = ""
+        if len(result) >= 1:
+            if (len(result[0]) >= 1024): 
+                stdout = result[0].decode('utf-8')
+                string = string + f'[[STDOUT]]\n{stdout}'
+                key = await self.haste_upload(string)
+                return await ctx.send(f"http://hastebin.com/{key}")
+        if len(result) >= 2:
+            if (len(result[1]) >= 1024): 
+                stdout = result[0].decode('utf-8')
+                string = string + f'[[STDERR]]\n{stdout}'
+                key = await self.haste_upload(string)
+                return await ctx.send(f"http://hastebin.com/{key}")
         embed.add_field(name="stdout", value=f'```{stdout}```' if 'stdout' in locals() else 'No output.', inline=False)
         embed.add_field(name="stderr", value=f'```{stderr}```' if 'stderr' in locals() else 'No output.', inline=False)
-        await ctx.send(embed=embed)
+        await message.edit(content='', embed=embed)
+
+    @commands.command(aliases=['game', 'status'])
+    @permissions.owner()
+    async def setgame(self, ctx, *, status : str):
+        await ctx.bot.change_presence(game=discord.Game(name=status, type=0))
+        await ctx.send(':ok_hand:')
+
+    @commands.command()
+    @permissions.owner()
+    async def maintenance(self, ctx, state : str = None):
+        bools = False
+        if state is not None:
+            if state in ['true', 'false', 'on', 'off']:
+                bools = state in ['on', 'true']
+        
+        if bools == True:
+            prompt = await ctx.send('```Are you sure you want to do this? This will make the bot stop responding to anyone but you!\n\n[y]: Enter Maintenance mode\n[n]: Exit prompt```')
+            msg = await self.bot.wait_for('message', check=lambda m: m.author == ctx.author and m.channel == ctx.channel)
+            if msg.content == 'y':
+                await prompt.delete()
+                await self.bot.change_presence(status=discord.Status.dnd, game=discord.Game(name='Bot is currently being maintained. Please check back later.'))
+                self.bot.maintenance = True
+                await ctx.send(':white_check_mark: Bot now in maintenance mode.')
+                return
+            else:
+                await prompt.delete()
+                await ctx.send('Prompt exited.')
+        elif bools == False:
+            self.bot.maintenance = False
+            await self.bot.change_presence(status=discord.Status.online, game=None)
+            await ctx.send(':white_check_mark: Bot not in maintenance mode anymore.')
+
 
 
 

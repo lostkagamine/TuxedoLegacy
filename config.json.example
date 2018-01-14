@@ -1,0 +1,23 @@
+{
+    "VERSION": "1.2",
+    "BOT_TOKEN": "[BOT TOKEN HERE]",
+    "BOT_PREFIX": ["your", "prefixes", "here"],
+    "LAVALINK": {
+        "PASSWORD": "[INSERT YOUR PASSWORD]",
+        "HOST": "[YOUR HOST]",
+        "PORT": [PORT AS NUMBER *WITHOUT* QUOTES]
+    },
+    "OWNERS": ["your ID here **AS A STRING**"],    
+    "DBOTS_TOKEN": "[BOTS.PW TOKEN HERE]",
+    "DBL_TOKEN": "[DISCORDBOTS.ORG TOKEN HERE]",
+    "GBANS_TOKEN": "Don't worry about this one. Tokens for this API are very hard to get. I wouldn't recommend pursuing one.",
+    "BLOCKED": [],
+    "SENTRY": "[SENTRY URL HERE]",
+    "RETHINKDB": {
+	"DB": "tuxedo",
+	"USERNAME": "admin",
+	"PASSWORD": "",
+	"HOST": "localhost",
+	"PORT": 28015
+    }
+}

@@ -3,6 +3,7 @@ import aiohttp
 import discord
 from discord.ext import commands
 from datetime import datetime
+from utils import randomness
 
 class HTTPException(Exception):
     # lul
@@ -12,7 +13,7 @@ async def get_stats(bot, botid):
     token = bot.config["DBOTS_TOKEN"]
     headers = {"Authorization": token}
     async with aiohttp.ClientSession() as cs:
-        async with cs.get("http://bots.discord.pw/api/bots/{}".format(str(botid)), headers=headers) as r:
+        async with cs.get("https://bots.discord.pw/api/bots/{}".format(str(botid)), headers=headers) as r:
             r = await r.json()
             err = False
             try:
@@ -48,7 +49,7 @@ class DBots:
                 return await ctx.send("This bot is not on bots.discord.pw.")
             embed = discord.Embed(
                 title="Bot information for {}".format(a["name"]),
-                color=0x00FF00
+                color=randomness.random_colour()
             )
             owner_ids = a["owner_ids"]
             embed.add_field(name="Library", value=a["library"])
@@ -73,7 +74,6 @@ class DBots:
             embed.set_footer(text="Tuxedo Discord Bot Lookup | Generated at {}".format(datetime.utcnow()))
 
             await ctx.send(embed=embed)
-
 
 
 

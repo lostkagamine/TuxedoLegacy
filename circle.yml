@@ -1,0 +1,23 @@
+# Tuxedo - CircleCI File for CI
+version: 2
+jobs:
+  build:
+    docker:
+     # we'll be using the Amethyst image 
+      - image: chinodesuuu/ci-amethyst
+    working_directory: ./Tuxedo
+    steps:
+      - checkout
+      - run:
+          command: |
+           set -x 
+           git clone https://github.com/Rapptz/discord.py --branch rewrite 
+           mv discord.py/discord discord
+      - run:
+          command: |
+           python3 --version
+           cloc --exclude-dir=discord --exclude-dir=discord.py .           
+           python3 -m compileall -x discord.* .
+notify:
+  webhooks:
+    - url: https://claraio-circledisc.herokuapp.com/hooks/circleci

@@ -8,6 +8,7 @@ import math
 import random
 import re
 from utils import randomness
+from utils import permissions
 
 class Lul:
     def __init__(self, bot):
@@ -33,8 +34,8 @@ class Lul:
         with ctx.channel.typing():
             with aiohttp.ClientSession() as session:
                 async with session.get("http://random.cat/meow") as r:
-                    r = await r.read()
-                    url = json.JSONDecoder().decode(r.decode("utf-8"))["file"]
+                    r = await r.json()
+                    url = r["file"]
                     await ctx.send(embed=discord.Embed(title="Random Cat").set_image(url=url).set_footer(text="Powered by random.cat"))
 
     @commands.command()
@@ -42,9 +43,17 @@ class Lul:
         with ctx.channel.typing():
             with aiohttp.ClientSession() as session:
                 async with session.get("http://random.dog/woof.json") as r:
-                    r = await r.read()
-                    url = json.JSONDecoder().decode(r.decode("utf-8"))["url"]
+                    r = await r.json()
+                    url = r["url"]
                     await ctx.send(embed=discord.Embed(title="Random Dog").set_image(url=url).set_footer(text="Powered by random.dog"))
+
+    @commands.command(aliases=['catgirl'])
+    async def neko(self, ctx):
+        with ctx.channel.typing():
+            with aiohttp.ClientSession() as session:
+                async with session.get('http://nekos.life/api/neko') as r:
+                    r = await r.json()
+                    await ctx.send(embed=discord.Embed(title='Random Neko').set_image(url=r['neko']).set_footer(text='Powered by nekos.life'))
     
     @commands.command()
     @commands.cooldown(10, 1, commands.BucketType.user)
@@ -79,15 +88,12 @@ class Lul:
         """ Number suffixes are fun. """
         numbers = ["fir", "seco", "thi", "four", "fif", "six", "seven", "eig", "nin", "ten"]
         suffix = ["st", "nd", "rd", "th"]
-        correctlist = ["first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eigth", "ninth", "tenth"]
+        correctlist = [v + self.gensuffix(i + 1) for i, v in enumerate(numbers)] # whee
         finished = []
-        correct = []
-        correctsuffixes = []
-        for i in range(len(numbers)):
-            correctsuffixes.append(self.gensuffix(i + 1))
+        correctsuffixes = [self.gensuffix(i + 1) for i in range(len(numbers))]
         for i, v in enumerate(numbers):
             finished.append(v + random.choice(suffix))
-
+        correct = [i for i,v in enumerate(finished) if correctlist[i] == v]
         for ind, val in enumerate(finished):
             if correctlist[ind] == val:
                 correct.append(val)
@@ -111,9 +117,12 @@ class Lul:
         await ctx.send(f'Your new bot name is `Discord {random.choice(nouns).title()}`')
 
     @commands.command(description='Set the bot\'s nick to something.')
-    async def bnick(self, ctx, *, nick : str):
+    async def bnick(self, ctx, *, nick : str = None):
         'Set the bot\'s nick to something.'
         if not ctx.me.permissions_in(ctx.channel).change_nickname: return await ctx.send(':x: Give me Change Nickname before doing this.')
+        if nick == None:
+            await ctx.me.edit(nick=None)
+            return await ctx.send(':ok_hand:')
         if len(nick) > 32: return await ctx.send(':x: Give me a shorter nickname. (Limit: 32 characters)')
         await ctx.me.edit(nick=nick)
         await ctx.send(':ok_hand:')
@@ -135,9 +144,21 @@ class Lul:
         total = 0
         for i in roll: total = total + i
         await ctx.send(f'`{res} (Total: {total})`')
-        
     
-# reeeeEEE you make a comment
+    @commands.command()
+    async def ship(self, ctx, member1:discord.Member, member2:discord.Member):
+        name1 = member1.display_name[0:round(len(member1.display_name)/2)]
+        name2 = member2.display_name[round(len(member2.display_name)/2):0:-1][::-1]
+        return await ctx.send(f'Your ship name is {f"{name1}{name2}" if random.random() >= 0.5 else f"{name2}{name1}"}')
+
+    @commands.command(aliases=['eggtimer', 'えぐ']) # egu
+    async def egg(self, ctx, time:int=180, emote:str='🥚⏲'):
+        if time > 300 or time < 5:
+            return await ctx.send('Maximum time allowed is 5 minutes (300 seconds). Minimum time allowed is 5 seconds.')
+        await ctx.send(emote)
+        await asyncio.sleep(time)
+        m = await ctx.send(ctx.author.mention)
+        await m.edit(content=emote)
 
 
 def setup(bot):

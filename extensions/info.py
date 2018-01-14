@@ -32,32 +32,63 @@ class Info:
         elif TB <= B:
             return '{0:.2f} TB'.format(B/TB)
 
-    @commands.command(aliases=["stats"])
-    @commands.cooldown(1, 5, commands.BucketType.user)
-    async def info(self, ctx):
-        """Information!"""
-        percent = psutil.cpu_percent(interval=1)
-        mem = psutil.virtual_memory()
-        currproc = psutil.Process(os.getpid())
-        print(mem)
-        total_ram = self.humanbytes(mem[0])
-        available_ram = self.humanbytes(mem[1])
-        usage = self.humanbytes(currproc.memory_info().rss)
-        cpu_info = cpuinfo.get_cpu_info()
-        e = discord.Embed(title="Statistics")
-        e.add_field(name="CPU Usage", value=f"**{math.floor(percent)}**%")
-        e.add_field(name="RAM Usage", value=f"Total: **{total_ram}**\nAvailable: **{available_ram}**\nUsed by bot: **{usage}**")
-        e.add_field(name="Guilds", value=f"{len(self.bot.guilds)}")
-        await ctx.send(embed=e)
-
-    @commands.command(aliases=["support", "guild"])
-    async def server(self, ctx):
-        text = "**Support Server**\n\nIf you're encountering a problem with Tuxedo, or just wanna drop by, use this Discord link to join the official Tuxedo server.\n\nLink => https://discord.gg/KEcme4H"
+    @commands.command(aliases=['add'])
+    async def invite(self, ctx):
+        text = f'**Add Tuxedo**\n\nAdd Tuxedo with this link: <{self.bot.invite_url}>'
         try:
             await ctx.author.send(text)
             await ctx.send(":mailbox_with_mail: Check your DMs.")
         except discord.Forbidden:
             await ctx.send(text)
+        
+    @commands.command()
+    async def stats(self, ctx):
+        mem = psutil.virtual_memory()
+        currproc = psutil.Process(os.getpid())
+        total_ram = self.humanbytes(mem[0])
+        available_ram = self.humanbytes(mem[1])
+        usage = self.humanbytes(currproc.memory_info().rss)
+        streams = await ctx.bot.cogs['Music'].lavalink.get_playing()
+        text=f"""
+```
+Total RAM: {total_ram}
+Available RAM: {available_ram}
+RAM used by bot: {usage}
+Number of bot commands: {len(ctx.bot.commands)}
+Number of extensions present: {len(ctx.bot.cogs)}
+Number of guilds: {len(ctx.bot.guilds)}
+Number of users: {len(ctx.bot.users)}
+Number of current music streams: {streams}
+```
+"""
+        await ctx.send(text)
+
+    @commands.command(aliases=['info'])
+    async def about(self, ctx):
+        text = f"""
+```ini
+[ Tuxedo ]
+An open-source moderation bot for Discord
+Made by ry00001 in Python 3.6 using Discord.py
+Source code freely available at https://github.com/ry00000/Tuxedo
+
+[ Credits ]
+HexadecimalPython: Original core
+Liara: eval
+Devoxin/Kromatic: Hosting and rewritten core, Lavalink.py that powers music!
+
+[ Special thanks ]
+The people that made pull requests and contributed to the bot
+The entirety of Discord Bots
+LewisTehMinerz, for being awesome and hosting
+Liara, for being awesome in general
+Liz, for being a human rubber ducky for tempbans. (Rubber ducky debugging helps.)
+Ged, for also being awesome and hosting
+All my awesome users!
+```
+        """
+
+        await ctx.send(text)
 
 def setup(bot):
     bot.add_cog(Info(bot))

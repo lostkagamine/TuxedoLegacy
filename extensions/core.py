@@ -95,10 +95,11 @@ class Core:
         await pong.edit(content="`PING discordapp.com {}ms`".format(int(ping)))
 
     @commands.command(description="Manage those prefixes.")
-    @permissions.owner()
     async def prefix(self, ctx, method: str, *, prefix: str=None): # ported from rybot
         if method == "add":
+            if not permissions.is_owner_check(ctx): return await ctx.send(':no_entry_sign: You do not have permission to use this command.')
             prefix = prefix.strip("\"")
+            prefix = prefix.strip('\'')
             if prefix == None:
                 return await ctx.send("Specify a prefix to add.")
             if prefix in self.bot.prefix:
@@ -106,7 +107,9 @@ class Core:
             self.bot.prefix.append(prefix)
             await ctx.send("Added prefix `" + prefix + "`")
         elif method == "remove":
+            if not permissions.is_owner_check(ctx): return await ctx.send(':no_entry_sign: You do not have permission to use this command.')
             prefix = prefix.strip("\"")
+            prefix = prefix.strip('\'')
             if prefix == None:
                 return await ctx.send("Specify a prefix to remove.")
             if not prefix in self.bot.prefix:
@@ -116,20 +119,28 @@ class Core:
         elif method == "list": # Tuxedo Exclusive Feature™
             prefixes = "\n".join(self.bot.prefix)
             await ctx.send(f"```\n{prefixes}```")
-        elif method == 'reset':
-            self.bot.prefix = self.bot.config.get('BOT_PREFIX')
-            await ctx.send('Bot prefixes reset.')
         else:
-            await ctx.send('Method needs to be `add`, `remove`, `list` or `reset`')
+            await ctx.send('Method needs to be `add`, `remove`, `list`.')
 
     @commands.command()
     @permissions.owner()
     async def error(self, ctx):
         3/0
 
-
-
-
+    @commands.command()
+    @permissions.owner()
+    async def alias(self, ctx, _from, to):
+        _from = _from.replace('\'', '').replace('"', '')
+        to = to.replace('\'', '').replace('"', '')
+        fromcmd = self.bot.get_command(_from)
+        if _from == to:
+            return await ctx.send(':x: You cannot register an alias with the same name as the command.')
+        if fromcmd == None:
+            return await ctx.send(':x: The command that needs to be registered is invalid.')
+        if to in self.bot.all_commands:
+            return await ctx.send(':x: The command to register is already a thing.')
+        self.bot.all_commands[to] = fromcmd
+        await ctx.send(':ok_hand: Registered. Or at least I hope. This command is in beta and probably buggy. It may not work.')
 
 
 def setup(bot):
