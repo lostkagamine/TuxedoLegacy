@@ -28,11 +28,12 @@ class Starboard:
             return # no more starboard channel, and we don't wanna throw an exception now do we
         if name == sb_name and count >= min_count:
             e = discord.Embed(colour=randomness.random_colour())
-            e.set_author(name=str(r.message.author), icon_url=r.message.author.avatar_url_as(format='png'))
+            e.set_author(name=str(r.message.author), icon_url=r.message.author.avatar_url_as(format=None))
             e.description = r.message.content
             e.timestamp = datetime.datetime.utcnow()
-            e.title = f'{random.choice([':star:', ':star2:', ':dizzy:'])} **{count}** <#{r.message.channel.id}>'
-            await channel.send(embed=e)
+            hec = random.choice([':star:', ':star2:', ':dizzy:'])
+            mmm = f'{hec} **{count}** <#{r.message.channel.id}>'
+            await channel.send(mmm, embed=e)
 
 def setup(bot):
     bot.add_cog(Starboard(bot))
