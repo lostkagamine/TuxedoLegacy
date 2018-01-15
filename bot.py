@@ -26,7 +26,7 @@ class Bot(commands.Bot):
         self.remove_command("help")
         self.init_raven()
         self.rdb = self.config['RETHINKDB']['DB']
-        self.rtables = ['gbans', 'settings', 'modlog', 'tempbans']
+        self.rtables = ['gbans', 'settings', 'modlog', 'tempbans', 'starboard', 'warnings']
         self.init_rethinkdb()
         print('Pre-run tasks complete.')
 

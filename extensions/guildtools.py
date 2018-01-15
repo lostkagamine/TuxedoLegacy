@@ -3,6 +3,7 @@ from discord.ext import commands
 from utils import permissions, randomness
 import aiohttp
 import math
+import json
 
 verlevels = {discord.VerificationLevel.high: '(╯°□°）╯︵ ┻━┻ (High)',
              discord.VerificationLevel.low: 'Low',
