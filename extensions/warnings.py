@@ -166,6 +166,14 @@ class Warnings:
 
     @commands.command(aliases=['w'])
     async def warn(self, ctx, *args):
+        selfperms = ctx.author.permissions_in(ctx.channel)
+        hasperm = (
+            selfperms.kick_members or
+            selfperms.ban_members or
+            selfperms.manage_roles
+        )
+        if not hasperm:
+            return await ctx.send(':no_entry_sign: Invalid permissions.')
         parser = argparse.DiscordFriendlyArgparse(prog=ctx.invoked_with, add_help=True)
         parser.add_argument('-u', '--users', nargs='+', required=True, metavar='@user', help='List of users to warn.')
         parser.add_argument('-r', '--reason', required=True, metavar='reason', help='Reason for the warn.')
@@ -189,6 +197,14 @@ class Warnings:
     
     @commands.command(aliases=['uw', 'unwarn'])
     async def pardon(self, ctx, *args):
+        selfperms = ctx.author.permissions_in(ctx.channel)
+        hasperm = (
+            selfperms.kick_members or
+            selfperms.ban_members or
+            selfperms.manage_roles
+        )
+        if not hasperm:
+            return await ctx.send(':no_entry_sign: Invalid permissions.')
         parser = argparse.DiscordFriendlyArgparse(prog=ctx.invoked_with, add_help=True)
         parser.add_argument('-u', '--users', nargs='+', required=True, metavar='@user', help='List of users to warn.')
         parser.add_argument('-r', '--reason', required=True, metavar='reason', help='Reason for the pardon.')
