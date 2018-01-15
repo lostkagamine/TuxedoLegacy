@@ -184,6 +184,8 @@ class Warnings:
             return await ctx.send(e)
         people = []
         count = args.count or 1
+        if count > 50:
+            return await ctx.send(':x: Maximum warn weight for a single warning is 50.')
         for i in args.users:
             try:
                 m = await commands.MemberConverter().convert(ctx, i)
@@ -228,6 +230,34 @@ class Warnings:
                 return await ctx.send(':x: You cannot pardon a user with no warnings.')
         await self._send_pardon_embed(ctx, people, args.reason, count)
         await ctx.send(':ok_hand: Pardoned.')
+
+    @commands.command(aliases=['ezw'])
+    async def ezwarn(self, ctx, user:discord.Member, reason):
+        selfperms = ctx.author.permissions_in(ctx.channel)
+        hasperm = (
+            selfperms.kick_members or
+            selfperms.ban_members or
+            selfperms.manage_roles
+        )
+        if not hasperm:
+            return await ctx.send(':no_entry_sign: Invalid permissions.')
+        self._add_warning(ctx, user, reason)
+        await self._send_warn_embed(ctx, [user], reason, 1)
+        await ctx.send(':ok_hand: User warned.')
+
+    @commands.command(aliases=['ezp', 'ezuw'])
+    async def ezpardon(self, ctx, user:discord.Member, count:int, reason):
+        selfperms = ctx.author.permissions_in(ctx.channel)
+        hasperm = (
+            selfperms.kick_members or
+            selfperms.ban_members or
+            selfperms.manage_roles
+        )
+        if not hasperm:
+            return await ctx.send(':no_entry_sign: Invalid permissions.')
+        self._remove_warnings(ctx, user, reason)
+        await self._send_warn_embed(ctx, [user], reason, count)
+        await ctx.send(':ok_hand: User pardoned.')
 
     async def get_user(self, uid: int):
         user = None  # database fetch
