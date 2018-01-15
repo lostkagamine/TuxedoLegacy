@@ -186,6 +186,8 @@ class Warnings:
         count = args.count or 1
         if count > 50:
             return await ctx.send(':x: Maximum warn weight for a single warning is 50.')
+        if count <= 0:
+            return await ctx.send(':x: Count must be 1 or above.')
         for i in args.users:
             try:
                 m = await commands.MemberConverter().convert(ctx, i)
@@ -217,7 +219,8 @@ class Warnings:
             return await ctx.send(e)
         people = []
         count = args.count or 1
-        print(count)
+        if count <= 0:
+            return await ctx.send(':x: Count must be 1 or above.')
         for i in args.users:
             try:
                 m = await commands.MemberConverter().convert(ctx, i)
@@ -255,6 +258,8 @@ class Warnings:
         )
         if not hasperm:
             return await ctx.send(':no_entry_sign: Invalid permissions.')
+        if count <= 0:
+            return await ctx.send(':x: Count must be 1 or above.')
         self._remove_warnings(ctx, user, reason)
         await self._send_warn_embed(ctx, [user], reason, count)
         await ctx.send(':ok_hand: User pardoned.')
