@@ -287,7 +287,7 @@ class Warnings:
         user = member if hasperm and member else ctx.author
         warns = self.get_warnings(user, ctx.guild)
         embed = discord.Embed()
-        if warns is None:
+        if warns is None or len(warns) == 0:
             embed.description = 'You have no warnings.'
             embed.colour = 0x2C2F33
             return await ctx.send(embed=embed)
