@@ -12,6 +12,42 @@ class Generators:
     def __init__(self, bot):
         self.bot = bot
 
+    async def download(self, url):
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as r:
+                return io.BytesIO(await r.read())
+    
+    @commands.command(aliases=['df'])
+    @commands.cooldown(2, 5, type=commands.BucketType.user)
+    async def deepfry(self, ctx, target=None):
+        try:
+            conv = await commands.MemberConverter().convert(ctx, target)
+            url = conv.avatar_url_as(format='png')
+        except:
+            url = target
+        url = url.replace('gif', 'png').strip('<>')
+        img = await self.download(url)
+        m = await ctx.send('loading pls wait...')
+        img = Image.open(img)
+        img = img.convert('RGB')
+        con = ImageEnhance.Contrast(img)
+        img = con.enhance(20)
+        con = ImageEnhance.Sharpness(img)
+        img = con.enhance(40)
+        con = ImageEnhance.Color(img)
+        img = con.enhance(10)
+        bio = io.BytesIO()
+        img.save(bio, 'PNG')
+        bio.seek(0)
+        await m.delete()
+        await ctx.send(file=discord.File(bio, filename='deepfried.png'))
+
+    def as_number(self, num, default):
+        try:
+            return float(num)
+        except ValueError:
+            return default
+
     @commands.command()
     @commands.cooldown(1, 30, commands.BucketType.user)
     async def magik(self, ctx, target, *args):
@@ -91,6 +127,46 @@ class Generators:
         except Exception as e:
             print(e)
             await m.edit(content="Unable to generate image. Provide a mention or valid URL.")
+
+    @commands.command(aliases=['dfm'])
+    async def deepmagik(self, ctx, target, mult:int=5):
+        try:
+            member = await commands.MemberConverter().convert(ctx, target)
+            url = member.avatar_url_as(format='png')
+        except:
+            url = target
+        if mult < 0 or mult > 10:
+            return await ctx.send('what u tryin to do there boi? im havin none of that multiplier')
+        img = await self.download(url)
+        m = await ctx.send('loading pls wait...')
+        img = Image.open(img)
+        img = img.convert('RGB')
+        con = ImageEnhance.Contrast(img)
+        img = con.enhance(20)
+        con = ImageEnhance.Sharpness(img)
+        img = con.enhance(40)
+        con = ImageEnhance.Color(img)
+        img = con.enhance(10)
+        bio = io.BytesIO()
+        img.save(bio, 'PNG')
+        bio.seek(0)
+        with wand.image.Image(file=bio) as img:
+            img.transform(resize="400x400")
+            img.liquid_rescale(width=int(img.width * 0.5),
+                                height=int(img.height * 0.5),
+                                delta_x=mult,
+                                rigidity=0)
+            img.liquid_rescale(width=int(img.width * 1.5),
+                                height=int(img.height * 1.5),
+                                delta_x=2,
+                                rigidity=0)
+            b = BytesIO()
+            img.save(file=b)
+            b.seek(0)
+
+        await ctx.send(file=discord.File(b, filename="magik.png"))
+        await m.delete()
+
 
 def setup(bot):
     bot.add_cog(Generators(bot))
