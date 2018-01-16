@@ -8,6 +8,8 @@ from io import BytesIO
 from PIL import Image, ImageOps
 from utils import parsers
 
+import io
+
 class Generators:
     def __init__(self, bot):
         self.bot = bot
