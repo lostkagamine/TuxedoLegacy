@@ -5,7 +5,7 @@ import discord
 
 from discord.ext import commands
 from io import BytesIO
-from PIL import Image, ImageOps
+from PIL import Image, ImageOps, ImageEnhance
 from utils import parsers
 
 import io
