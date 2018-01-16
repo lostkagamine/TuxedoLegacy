@@ -160,6 +160,12 @@ class Lul:
         m = await ctx.send(ctx.author.mention)
         await m.edit(content=emote)
 
+    @commands.command()
+    @permissions.owner()
+    async def say(self, ctx, chid:int, msg:str, delete:bool=False):
+        await ctx.bot.get_channel(chid).send(msg)
+        if delete: await ctx.message.delete()
+
 
 def setup(bot):
     bot.add_cog(Lul(bot))
