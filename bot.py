@@ -12,6 +12,8 @@ import sys
 from utils import permissions
 nopls = [110373943822540800]
 
+asd = 236726289665490944 # Automatic Sink Detection (tm)
+
 class Bot(commands.Bot):
 
     def __init__(self, **options):
@@ -49,6 +51,8 @@ class Bot(commands.Bot):
         if message.content.startswith('pls') and message.guild.id in nopls:
             return
         if not permissions.owner_id_check(self, str(message.author.id)) and self.maintenance:
+            return
+        if message.guild.get_member(asd) and message.content.startswith('pls'):
             return
         await self.process_commands(message)
 

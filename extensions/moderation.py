@@ -583,7 +583,24 @@ The original ban was placed for reason `{i['reason']}` on date `{hecc}`.
 {icons['offline']} **Offline:** {' | '.join(offline) if offline != [] else 'None'}
 '''
         await ctx.send(msg)
-        
+
+    @commands.command(aliases=['vck'])
+    async def vckick(self, ctx, member:discord.Member):
+        if not member.voice or not member.voice.channel:
+            return await ctx.send(':x: | This member is not in a voice channel.')
+        i = ctx.author # memes
+        if not (i.permissions_in(ctx.channel).kick_members or i.permissions_in(ctx.channel).ban_members or i.permissions_in(ctx.channel).manage_roles):
+            return await ctx.send(':x: | You need Kick Members, Ban Members or Manage Roles.')
+        channel = await ctx.guild.create_voice_channel(''.join([str(random.randrange(1,9)) for i in range(5)]), reason=f'Voice-kick by {ctx.author}')
+        try:
+            await member.move_to(channel, reason=f'Voice-kick by {ctx.author}')
+            await channel.delete(reason=f'Voice-kick by {ctx.author}')
+            await ctx.send(':ok_hand:')
+        except discord.Forbidden:
+            return await ctx.send(':x: | Give me Manage Channels and Move Members before doing this.')
+        except discord.HTTPException as e:
+            return await ctx.send(f':x: | An unknown error has occurred while doing this. Please report this to my owner, ry00001#3487.\n**Error info:**```{type(e).__name__}: {e}```')
+
         
 def setup(bot):
     bot.add_cog(Moderation(bot))
