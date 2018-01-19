@@ -48,6 +48,8 @@ class Starboard:
             self.conn, r.message.guild, 'starboard_channel')
         channel = r.message.guild.get_channel(
             int(channel))  # get proper channel
+        if r.message.channel == channel:
+            return
 
         star_entry = list(
             rethink.table("starboard")

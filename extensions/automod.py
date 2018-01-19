@@ -26,6 +26,8 @@ class Automod:
         ): return # make staff immune to automod
         invite = re.search(irg, msg.content)
         if invite and database.check_setting(self.conn, msg.guild, 'invite_automod'): # is an invite *and* the guild has invite killing enabled
+            i = await self.bot.get_invite(invite[6])
+            if i.revoked: return
             self._add_warning(msg.author.id)
             if self._get_warnings(msg.author.id) > 3:
                 await msg.delete()
