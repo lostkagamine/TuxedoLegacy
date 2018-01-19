@@ -8,7 +8,7 @@ import shlex, re
 settings = {'modlog_channel': 'channel', 'staff_channel': 'channel', 
             'tracked_roles': 'rolelist','rolebanned_role': 'role', 'auto_dehoist': 'bool', 'auto_decancer': 'bool',
             'global_bans': 'bool', 'muted_roles': 'rolelist', 'gban_alerts': 'channel', 'no_animated_emojis': 'bool',
-            'starboard_min_count': 'number', 'starboard_channel': 'channel', 'starboard_emote': 'emote'}
+            'starboard_min_count': 'number', 'starboard_channel': 'channel', 'starboard_emote': 'emote', 'invite_automod': 'bool'}
 
 templates = {'ban': '**Ban** | Case {id}\n**Target:** {user}\n**Reason:** {rsn}\n**Responsible moderator:** {mod}',
              'kick': '**Kick** | Case {id}\n**Target:** {user}\n**Reason:** {rsn}\n**Responsible moderator:** {mod}',
