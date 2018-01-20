@@ -352,6 +352,8 @@ The original ban was placed for reason `{i['reason']}` on date `{hecc}`.
                 member = await commands.MemberConverter().convert(ctx, i)
             except commands.errors.BadArgument as e:
                 return await ctx.send(f':x: | {e}')
+            if member == ctx.guild.me:
+                return await ctx.send('You can\'t ban me with myself. That\'s not how it works.')
             if ctx.author == member:
                 return await ctx.send('Don\'t ban yourself, please.')
             if not ctx.author.permissions_in(ctx.channel).ban_members:
@@ -420,6 +422,8 @@ The original ban was placed for reason `{i['reason']}` on date `{hecc}`.
                 member = await commands.MemberConverter().convert(ctx, i)
             except commands.errors.BadArgument as e:
                 return await ctx.send(f':x: | {e}')
+            if member == ctx.guild.me:
+                return await ctx.send('You can\'t kick me with myself. That\'s not how it works.')
             if ctx.author == member:
                 return await ctx.send('Don\'t kick yourself, please.')
             if not ctx.author.permissions_in(ctx.channel).kick_members:
