@@ -99,7 +99,7 @@ class Generators:
         """ Ever wanted to see the stuff of nightmares? """
         try:
             member = await commands.MemberConverter().convert(ctx, target)
-            url = member.avatar_url
+            url = member.avatar_url_as(format='png')
         except:
             url = target
         
