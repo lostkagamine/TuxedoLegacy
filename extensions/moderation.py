@@ -605,6 +605,33 @@ The original ban was placed for reason `{i['reason']}` on date `{hecc}`.
         except discord.HTTPException as e:
             return await ctx.send(f':x: | An unknown error has occurred while doing this. Please report this to my owner, ry00001#3487.\n**Error info:**```{type(e).__name__}: {e}```')
 
+    @commands.command(aliases=['ld'])
+    async def lockdown(self, ctx, channel:discord.TextChannel=None):
+        'Locks down a channel and doesn\'t make @everyone be able to send to it.'
+        if not channel:
+            channel = ctx.channel
+        perms = ctx.author.permissions_in(ctx.channel)
+        if not (perms.ban_members or perms.kick_members or perms.manage_roles or perms.manage_channels):
+            return await ctx.send(':no_entry_sign: | Insufficient permissions. You need Ban Members, Kick Members, Manage Roles or Manage Channels.')
+        try:
+            await channel.set_permissions(ctx.guild.default_role, send_messages=False)
+        except discord.Forbidden:
+            await ctx.send(':x: | I don\'t have enough permissions. Give me Manage Channels.')
+        await ctx.send(':lock: | Lockdown successful.')
+
+    @commands.command(aliases=['uld'])
+    async def unlockdown(self, ctx, channel:discord.TextChannel=None):
+        'Unlocks a channel, making @everyone be able to speak.'
+        if not channel:
+            channel = ctx.channel
+        perms = ctx.author.permissions_in(ctx.channel)
+        if not (perms.ban_members or perms.kick_members or perms.manage_roles or perms.manage_channels):
+            return await ctx.send(':no_entry_sign: | Insufficient permissions. You need Ban Members, Kick Members, Manage Roles or Manage Channels.')
+        try:
+            await channel.set_permissions(ctx.guild.default_role, overwrite=None)
+        except discord.Forbidden:
+            await ctx.send(':x: | I don\'t have enough permissions. Give me Manage Channels.')
+        await ctx.send(':unlock: | Unlockdown successful.')
         
 def setup(bot):
     bot.add_cog(Moderation(bot))
