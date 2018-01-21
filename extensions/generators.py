@@ -29,7 +29,7 @@ class Generators:
             url = target
         url = url.replace('gif', 'png').strip('<>')
         img = await self.download(url)
-        m = await ctx.send('loading pls wait...')
+        m = await ctx.send('<a:typing:393848431413559296> Processing...')
         img = Image.open(img)
         img = img.convert('RGB')
         con = ImageEnhance.Contrast(img)
@@ -70,7 +70,7 @@ class Generators:
         if multi > 10 or multi < 1:
             return await ctx.send('Maximum multiplier is 10, minimum multiplier is 1')
 
-        m = await ctx.send("pls wait am generating")
+        m = await ctx.send("<a:typing:393848431413559296> Processing...")
         try:
             b = BytesIO()
             async with aiohttp.ClientSession() as session:
@@ -104,7 +104,7 @@ class Generators:
             url = target
         
         url = url.replace("gif", "png").strip("<>")
-        m = await ctx.send("pls wait am generating")
+        m = await ctx.send("<a:typing:393848431413559296> Processing...")
 
         try:
             b = BytesIO()
@@ -137,10 +137,10 @@ class Generators:
             url = member.avatar_url_as(format='png')
         except:
             url = target
-        if mult < 0 or mult > 10:
+        if mult < 1 or mult > 10:
             return await ctx.send('what u tryin to do there boi? im havin none of that multiplier')
         img = await self.download(url)
-        m = await ctx.send('loading pls wait...')
+        m = await ctx.send('<a:typing:393848431413559296> Processing...')
         img = Image.open(img)
         img = img.convert('RGB')
         con = ImageEnhance.Contrast(img)
