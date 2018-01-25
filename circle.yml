@@ -15,7 +15,7 @@ jobs:
            mv discord.py/discord discord
       - run:
           command: |
-           pip3 install snekchek
+           python3.6 -m pip install snekchek
       - run:
           command: |
            python3 --version
