@@ -1,8 +1,4 @@
 # Tuxedo - CircleCI File for CI
-dependencies:
-  pre:
-    - pip install snekchek
-
 version: 2
 jobs:
   build:
@@ -12,6 +8,9 @@ jobs:
     working_directory: ./Tuxedo
     steps:
       - checkout
+      - run:
+          command: |
+            python3 -m pip install snekchek
       - run:
           command: |
            set -x 
