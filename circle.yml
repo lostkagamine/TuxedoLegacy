@@ -1,4 +1,8 @@
 # Tuxedo - CircleCI File for CI
+dependencies:
+  pre:
+    - pip install snekchek
+
 version: 2
 jobs:
   build:
@@ -13,9 +17,6 @@ jobs:
            set -x 
            git clone https://github.com/Rapptz/discord.py --branch rewrite 
            mv discord.py/discord discord
-      - run:
-          command: |
-           python3.6 -m pip install snekchek
       - run:
           command: |
            python3 --version
