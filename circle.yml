@@ -1,7 +1,4 @@
-# Tuxedo - CircleCI File for CI
-machine:
-  environment:
-    LC_ALL: "en_US.UTF-8"
+# Tuxedo - CircleCI File for Tux
 
 version: 2
 jobs:
@@ -14,7 +11,7 @@ jobs:
       - checkout
       - run:
           command: |
-            python3 -m pip install snekchek
+            python3 -m pip install snekchek pylint flake8 isort yapf flake8-bandit safety dodgy vulture flake8-string-format flake8-bugbear flake8-todo
       - run:
           command: |
            set -x 
