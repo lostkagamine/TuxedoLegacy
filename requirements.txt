@@ -10,3 +10,5 @@ unidecode
 editdistance
 lavalink
 isodate
+requests
+beautifulsoup4
