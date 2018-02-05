@@ -9,6 +9,11 @@ class Garfield:
 
     @commands.command(aliases=['GC', "Gc", "garfield", "Garfield"])
     async def gc(self, ctx, year:int=None, month:int=None, day:int=None):
+        f"""Module for Garfield Comics
+        usage:
+        {ctx.prefix}garfield (to get random comic)
+        {ctx.prefix}garfield [year] [month] [day] (for specific day)
+        """
         if year is None:
             fake = faker.Faker()
             # Garfield Started on 19th June, 1978
