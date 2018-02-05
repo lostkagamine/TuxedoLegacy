@@ -30,18 +30,18 @@ class ServerCounts:
         async with self.bot.session.post(url, data=dbots_count, headers=headers) as resp:
             log.info(
                 f'DBL: posting {dbots_count} count with status {resp.status}')
+            
+#########################################################################################################################
 
         dbl_counts = json.dumps({
             'server_count': guild_count
         })
-        token = self.bot.config.get("dbl", None)
+        token = bot.config.get('DBL_TOKEN', None)
 
         headers = {
             'authorization': token,
             'content-type': 'application/json'
         }
-
-######################################################################################################
 
         url1 = f'{DBL_API}/bots/{self.bot.user.id}/stats'
         async with self.bot.session.post(url1, data=dbl_counts, headers=headers) as resp:
