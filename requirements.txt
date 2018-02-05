@@ -12,3 +12,4 @@ lavalink
 isodate
 requests
 beautifulsoup4
+faker
