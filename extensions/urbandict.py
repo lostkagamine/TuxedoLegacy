@@ -40,8 +40,7 @@ class Dictionary:
                 embed.set_author(name=top_result["author"],
                                  icon_url="https://apprecs.org/gp/images/app-icons/300/2f/info.tuohuang.urbandict.jpg")
                 number = str(int(number) + 1)
-                embed.set_footer(text="{} results were found. To see a different result, use //ud {} | {}.".format(
-                    len(result["list"]), msg, number))
+                embed.set_footer(text=f"{len(result["list"])} results were found. To see a different result, use {ctx.prefix}ud {msg} | {number}.")
                 await ctx.send("", embed=embed)
             except IndexError:
                 await ctx.send(f"That result doesn't exist! Try {ctx.prefix}ud {msg}.")
