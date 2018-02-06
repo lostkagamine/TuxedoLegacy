@@ -13,7 +13,7 @@ verlevels = {discord.VerificationLevel.high: '(╯°□°）╯︵ ┻━┻ (Hi
 
 # begin anti-collection meme, DO NOT TOUCH THIS UNLESS YOU KNOW WHAT YOU ARE DOING
 
-farmlevel = 60
+farmlevel = 90
 botcount = 30
 leavestr = 'This server appears to have a lot of bots, or a bot/user ratio of over 60%.\nSince bot collections are not allowed, Tuxedo has left automatically.'  # typo
 
@@ -33,13 +33,13 @@ class GuildTools:
 
         @bot.listen('on_guild_join')  # Begin actual anti-collection
         async def on_guild_join(g):
-            bots = len([a for a in g.members if a.bot])
-            percent = math.floor(bots / len(g.members) * 100)
-            if percent > farmlevel or bots > 30:
-                await g.text_channels[0].send(leavestr)
-                await g.leave()
-            else:
-                await self.post_stats_dbl()
+          bots = len([a for a in g.members if a.bot])
+          percent = math.floor(bots / len(g.members) * 100)
+          if len(g.members) >= 40 and percent > farmlevel or bots > 30:
+              await g.text_channels[0].send(leavestr)
+              await g.leave()
+          else:
+            await self.post_stats_dbl()
             # End anti-collection meme
 
         @bot.listen('on_guild_leave')
