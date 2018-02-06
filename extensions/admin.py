@@ -23,6 +23,7 @@ class Admin:
             
     @permissions.owner()
     async def set_avy(self, ctx, *, avy : str):
+        'Avatar setter'
         async with aiohttp.ClientSession() as sesh:
             async with sesh.get(avy) as r:
                 await self.bot.user.edit(avatar=await r.read())
@@ -153,12 +154,14 @@ class Admin:
     @commands.command(aliases=['game', 'status'])
     @permissions.owner()
     async def setgame(self, ctx, *, status : str):
+        'Set game'
         await ctx.bot.change_presence(game=discord.Game(name=status, type=0))
         await ctx.send(':ok_hand:')
 
     @commands.command()
     @permissions.owner()
     async def maintenance(self, ctx, state : str = None):
+        'Put the bot into maintenance mode or back'
         bools = False
         if state is not None:
             if state in ['true', 'false', 'on', 'off']:

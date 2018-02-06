@@ -497,24 +497,14 @@ The original ban was placed for reason `{i['reason']}` on date `{hecc}`.
             await asyncio.sleep(3)
             return await uwu.delete()
 
-    @commands.command(description="Purge messages in the channel.", aliases=["prune"])
-    async def purge(self, ctx, amount : int=50, *flags):
+    @commands.group(invoke_without_command=True, aliases=['prune'])
+    async def purge(self, ctx):
+        raise commands.errors.MissingRequiredArgument()
+
+    @purge.group(name='all')
+    async def _purge_all(self, ctx, count:int=50):
         if not ctx.author.permissions_in(ctx.channel).manage_messages:
-            return await ctx.send(":x: Not enough permissions.")
-
-        if not ctx.me.permissions_in(ctx.channel).manage_messages:
-            return await ctx.send(":x: I don't have enough permissions.")
-        
-        meme = switches.parse(' '.join(flags))
-        bots = (lambda: 'bots' in meme[0].keys())()
-
-        if not bots:
-            await ctx.message.delete()
-
-        delet = await ctx.channel.purge(limit=amount, check=lambda a: a.author.bot if bots else True, bulk=True) # why is it bugged  
-        eee = await ctx.send(self.pruneformat(len(delet)))
-        await asyncio.sleep(3)
-        return await eee.delete()
+            return await ctx.send(':no_entry_sign: You don\'t have enough permissions. You need Manage Messages.')
 
     @commands.command(description="Ban a user, even when not in the server.", aliases=['shadowban', 'hban'])
     async def hackban(self, ctx, user : int, *, reason : str = None):
