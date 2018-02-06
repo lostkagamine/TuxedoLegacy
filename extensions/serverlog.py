@@ -22,7 +22,7 @@ class serverlog:
         embed.add_field(name="Voice channels", value=len(guild.voice_channels))
         embed.add_field(name="Region", value=str(guild.region))
 
-        await self.bot.get_guild(403967731025707009).get_channel(410458514310561792).send(embed=embed)
+        await self.bot.get_guild(self.bot.config.get('HOME_GUILD')).get_channel(self.bot.config.get('HOME_CHANNEL')).send(embed=embed)
 
 
 
@@ -40,7 +40,7 @@ class serverlog:
         embed.add_field(name="Voice channels", value=len(guild.voice_channels))
         embed.add_field(name="Region", value=str(guild.region))
 
-        await self.bot.get_guild(403967731025707009).get_channel(410458514310561792).send(embed=embed)
+        await self.bot.get_guild(self.bot.config.get('HOME_GUILD')).get_channel(self.bot.config.get('HOME_CHANNEL')).send(embed=embed)
 
 def setup(bot):
     bot.add_cog(serverlog(bot))
