@@ -5,7 +5,7 @@ from utils import database
 import re
 
 irg = r'(?:https?:\/\/)?discord(?:app)?\.(?:com|gg)+\/(?:invite\/)*([A-Za-z_0-9]+)'
-irg = re.compile(irg, re.M)
+irg = re.compile(irg, re.M) # lol
 
 # WHEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 # Tuxedo automod cog, this won't work in other bots
