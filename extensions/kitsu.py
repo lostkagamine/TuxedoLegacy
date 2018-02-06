@@ -35,8 +35,9 @@ class Kitsu:
             embed.add_field(name="Age Rating",
                             value=anime["attributes"]["ageRating"])
             embed.add_field(name="Status", value=anime["attributes"]["status"])
+            thing = '' if not anime['attributes']['endDate'] else f' to {anime["attributes"]["endDate"]}'
             embed.add_field(
-                name="Aired", value=f"{anime['attributes']['startDate']} to {anime['attributes']['endDate']}")
+                name="Aired", value=f"{anime['attributes']['startDate']}{thing}")
             embed.add_field(name="Episodes",
                             value=anime['attributes']["episodeCount"])
             embed.add_field(name="Type", value=anime['attributes']["showType"])
@@ -67,17 +68,21 @@ class Kitsu:
 
             embed = discord.Embed(title=f"{title}", color=0xFFD54F, url=url)
             embed.description = manga["attributes"]["synopsis"][0:425] + "..."
-            embed.add_field(name="Average Rating",
-                            value=manga["attributes"]["averageRating"])
+            if manga["attributes"]["averageRating"]:
+                embed.add_field(name="Average Rating",
+                                value=manga["attributes"]["averageRating"])
             embed.add_field(name="Popularity Rank",
                             value=manga["attributes"]["popularityRank"])
-            embed.add_field(name="Age Rating",
-                            value=manga["attributes"]["ageRating"])
+            if manga["attributes"]["ageRating"]:
+                embed.add_field(name="Age Rating",
+                                value=manga["attributes"]["ageRating"])
             embed.add_field(name="Status", value=manga["attributes"]["status"])
+            thing = '' if not manga['attributes']['endDate'] else f' to {manga["attributes"]["endDate"]}'
             embed.add_field(
-                name="Aired", value=f"{manga['attributes']['startDate']} to {manga['attributes']['endDate']}")
-            embed.add_field(name="Chapters",
-                            value=manga['attributes']["chapterCount"])
+                name="Published", value=f"{manga['attributes']['startDate']}{thing}")
+            if manga['attributes']['chapterCount']:
+                embed.add_field(name="Chapters",
+                                value=manga['attributes']["chapterCount"])
             embed.add_field(
                 name="Type", value=manga['attributes']["mangaType"])
             embed.set_thumbnail(

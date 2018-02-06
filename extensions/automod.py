@@ -28,13 +28,15 @@ class Automod:
                 perms.ban_members or
                 perms.manage_roles
             ): return # make staff immune to automod
+            ak = database.check_setting(self.conn, msg.guild, 'automod_kick') or 2
+            ab = database.check_setting(self.conn, msg.guild, 'automod_ban') or 3
             self._add_warning(msg.author.id, msg.guild.id)
-            if self._get_warnings(msg.author.id, msg.guild.id) >= 3: # one equals boi
+            if self._get_warnings(msg.author.id, msg.guild.id) >= ab: # one equals boi
                 await msg.delete()
                 await msg.guild.ban(msg.author, reason='[Automatic - advertising too much]')
                 await msg.channel.send(f':hammer: | {msg.author} has been **banned** automatically for advertising.')
                 self.warnings[msg.author.id] = 0
-            elif self._get_warnings(msg.author.id, msg.guild.id) == 2:
+            elif self._get_warnings(msg.author.id, msg.guild.id) == ak:
                 await msg.delete()
                 await msg.guild.kick(msg.author, reason='[Automatic - advertising too much]')
                 await msg.channel.send(f':hammer: | {msg.author} has been **kicked** automatically for advertising.')

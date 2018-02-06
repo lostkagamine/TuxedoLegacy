@@ -8,7 +8,8 @@ import shlex, re
 settings = {'modlog_channel': 'channel', 'staff_channel': 'channel', 
             'tracked_roles': 'rolelist','rolebanned_role': 'role', 'auto_dehoist': 'bool', 'auto_decancer': 'bool',
             'global_bans': 'bool', 'muted_roles': 'rolelist', 'gban_alerts': 'channel', 'no_animated_emojis': 'bool',
-            'starboard_min_count': 'number', 'starboard_channel': 'channel', 'starboard_emote': 'emote', 'invite_automod': 'bool'}
+            'starboard_min_count': 'number', 'starboard_channel': 'channel', 'starboard_emote': 'emote', 'invite_automod': 'bool',
+            'automod_kick': 'number', 'automod_ban': 'number'}
 
 templates = {'ban': '**Ban** | Case {id}\n**Target:** {user}\n**Reason:** {rsn}\n**Responsible moderator:** {mod}',
              'kick': '**Kick** | Case {id}\n**Target:** {user}\n**Reason:** {rsn}\n**Responsible moderator:** {mod}',
@@ -26,7 +27,7 @@ categories = {'ban': discord.AuditLogAction.ban,
 default_rsn = 'Unknown. Responsible moderator, do {prefix}reason latest <your reason> to set a reason.'
 
 emote_regex = r':([A-Za-z0-9_\-~]+):'
-emote_regex_2 = r'<:([A-Za-z0-9_\-~]+):([0-9]+)>'
+emote_regex_2 = r'<(?:a)?:([A-Za-z0-9_\-~]+):([0-9]+)>'
 
 class ModLogs:
     async def log_entry(self, _type, guild, target, mod, reason, msgid, role='N/A'):
