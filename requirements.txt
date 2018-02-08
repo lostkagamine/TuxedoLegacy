@@ -1,5 +1,14 @@
 https://github.com/rapptz/discord.py/archive/rewrite.zip
 snekchek
+flake8-bandit
+vulture
+dodgy
+safety
+yapf
+flake8
+flake8-bugbear
+pylint
+isort
 aiohttp
 pillow
 wand
