@@ -1,4 +1,5 @@
 https://github.com/rapptz/discord.py/archive/rewrite.zip
+https://github.com/IzunaDevs/SnekChek
 aiohttp
 pillow
 wand

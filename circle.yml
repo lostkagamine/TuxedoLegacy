@@ -9,7 +9,7 @@ machine:
    python:
      version: 3.6.3
    dependencies:
-     override:
+     pre:
       - pip install snekchek
       - pip install -r requirements.txt
       
