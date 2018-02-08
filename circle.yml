@@ -4,6 +4,8 @@ version: 1
 general:
    build_dir: ./
 machine:
+   post:
+     - pyenv global 3.6.3
    python:
      version: 3.6.3
    dependencies:
