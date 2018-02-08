@@ -15,7 +15,7 @@ machine:
       
 test:
    post:
-     - snekchek
+     - python3 -m snekchek 
       
 notify:
   webhooks:
