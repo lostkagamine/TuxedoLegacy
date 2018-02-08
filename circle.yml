@@ -1,15 +1,18 @@
 # Tuxedo - CircleCI File for Tux
 
 version: 1
+general:
+   build_dir: ./
 machine:
    python:
-    version: pypy-3.6.3
-  dependencies:
-    pre:
-     - pip install snekchek
-  test:
+     version: pypy-3.6.3
+   dependencies:
+     pre:
+      - pip install snekchek
+   test:
     override:
-     - snekchek
+      - snekchek
+      
 notify:
   webhooks:
     - url: https://claraio-circledisc.herokuapp.com/hooks/circleci
