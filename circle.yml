@@ -7,11 +7,13 @@ machine:
    python:
      version: 3.6.3
    dependencies:
-     pre:
+     post:
       - pip install snekchek
-   test:
-    post:
-      - snekchek
+      - pip install -r requirements.txt
+      
+test:
+   post:
+     - snekchek
       
 notify:
   webhooks:
