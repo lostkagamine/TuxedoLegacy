@@ -10,7 +10,7 @@ machine:
      pre:
       - pip install snekchek
    test:
-    override:
+    post:
       - snekchek
       
 notify:
