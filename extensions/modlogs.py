@@ -240,6 +240,7 @@ class ModLogs:
 
     @commands.command(name='set', aliases=['settings', 'setup', 'setting'])
     async def _set(self, ctx, *args):
+        """Set a config option"""
         settings_str = ', '.join(settings)
         if len(args) <= 0:
             return await ctx.send(':x: Please specify a value to set.')
@@ -269,6 +270,7 @@ class ModLogs:
 
     @commands.command(aliases=['cfg'])
     async def view_config(self, ctx):
+        """View the current config"""
         exists = (lambda: list(r.table('settings').filter(
             lambda a: a['guild'] == str(ctx.guild.id)).run(self.conn)) != [])()
         if not exists:
@@ -280,6 +282,7 @@ class ModLogs:
 
     @commands.command(aliases=['delcfg'])
     async def delete_config(self, ctx):
+        """Wipes your config"""
         if not self.check_perm(ctx):
             return await ctx.send(':no_entry_sign: Invalid permissions.')
         exists = (lambda: list(r.table('settings').filter(
@@ -320,6 +323,7 @@ class ModLogs:
 
     @commands.command()
     async def reason(self, ctx, caseid: str, *, reason: str):
+        """Set a reason for a modlog entry"""
         permission = ctx.author.permissions_in(ctx.channel)
         exists = (lambda: list(r.table('modlog').filter(
             lambda a: a['guild'] == str(ctx.guild.id)).run(self.conn)) != [])()

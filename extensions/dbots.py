@@ -35,7 +35,7 @@ class DBots:
     @commands.command(aliases=["botinfo", "getBot", 'dbots'])
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def getbot(self, ctx, *, id_arg : discord.Member):
-
+        """Gets information off of bots.discord.pw, if the bot is listed"""
         with ctx.channel.typing():
             if not id_arg or not ctx.guild.get_member(id_arg.id):
                 return await ctx.send("This member doesn't exist.")

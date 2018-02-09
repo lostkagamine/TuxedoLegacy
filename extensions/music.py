@@ -15,6 +15,7 @@ class Music:
 
     @commands.command(aliases=['p'])
     async def play(self, ctx, *, query):
+        """Plays a song"""
         player = await self.lavalink.get_player(guild_id=ctx.guild.id)
 
         if not ctx.author.voice or (player.is_connected() and ctx.author.voice.channel.id != int(player.channel_id)):
@@ -50,6 +51,7 @@ class Music:
 
     @commands.command(aliases=['forceskip', 'fs'])
     async def skip(self, ctx):
+        """Skips a song"""
         player = await self.lavalink.get_player(guild_id=ctx.guild.id)
 
         if not ctx.author.voice or (player.is_connected() and ctx.author.voice.channel.id != int(player.channel_id)):
@@ -63,6 +65,7 @@ class Music:
 
     @commands.command(aliases=['np', 'n'])
     async def now(self, ctx):
+        """Tells you the currently playing song"""
         player = await self.lavalink.get_player(guild_id=ctx.guild.id)
         song = 'Nothing'
         if player.current:
@@ -78,6 +81,7 @@ class Music:
 
     @commands.command(aliases=['q'])
     async def queue(self, ctx, page: str=None):
+        """List songs in the queue"""
         player = await self.lavalink.get_player(guild_id=ctx.guild.id)
 
         if not player.queue:
@@ -102,6 +106,7 @@ class Music:
 
     @commands.command(aliases=['resume'])
     async def pause(self, ctx):
+        """Pauses a song"""
         player = await self.lavalink.get_player(guild_id=ctx.guild.id)
 
         if not player.is_playing():
@@ -119,6 +124,7 @@ class Music:
 
     @commands.command(aliases=['vol'])
     async def volume(self, ctx, volume=None):
+        """Sets the volume"""
         player = await self.lavalink.get_player(guild_id=ctx.guild.id)
 
         if not volume:
@@ -138,6 +144,7 @@ class Music:
 
     @commands.command()
     async def shuffle(self, ctx):
+        """Shuffles the queue"""
         player = await self.lavalink.get_player(guild_id=ctx.guild.id)
 
         if not player.is_playing():
@@ -152,6 +159,7 @@ class Music:
 
     @commands.command()
     async def repeat(self, ctx):
+        """Repeat the queue"""
         player = await self.lavalink.get_player(guild_id=ctx.guild.id)
 
         if not player.is_playing():
@@ -166,6 +174,7 @@ class Music:
     
     @commands.command()
     async def seek(self, ctx, time):
+        """Seek to a certain point in a song"""
         player = await self.lavalink.get_player(guild_id=ctx.guild.id)
 
         if not player.is_playing():
@@ -195,6 +204,7 @@ class Music:
     
     @commands.command()
     async def stop(self, ctx):
+        """Stops the queue"""
         player = await self.lavalink.get_player(guild_id=ctx.guild.id)
 
         if not player.is_playing():
@@ -210,6 +220,7 @@ class Music:
 
     @commands.command(aliases=['dc'])
     async def disconnect(self, ctx):
+        """Disconnects from the voice channel"""
         player = await self.lavalink.get_player(guild_id=ctx.guild.id)
 
         if not ctx.author.voice or (player.is_connected() and ctx.author.voice.channel.id != int(player.channel_id)):

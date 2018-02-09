@@ -11,10 +11,7 @@ class Youtube:
 
     @commands.command(pass_context=True, aliases=['yt', 'vid', 'video'])
     async def youtube(self, ctx, *, msg):
-        f"""Search for videos on YouTube.
-        Usage:
-        {ctx.prefix}yt (query)
-        """
+        """Search for videos on YouTube"""
         search = parse.quote(msg)
         response = requests.get(
             "https://www.youtube.com/results?search_query={}".format(search), verify=False).text

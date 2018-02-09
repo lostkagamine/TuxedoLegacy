@@ -11,6 +11,7 @@ class Projects:
 
     @commands.group(name='projects', invoke_without_command=True, aliases=['project'])
     async def projects(self, ctx, param):
+        """Project management command"""
         raise commands.errors.MissingRequiredArgument()
 
     def channelify(self, name):
@@ -27,6 +28,7 @@ class Projects:
 
     @projects.command(aliases=['new'])
     async def add(self, ctx, name:str, description:str):
+        """Creates a new project"""
         try:
             projectr = r.table('projects').filter(lambda a: a['guild'] == ctx.guild.id and a['name'] == name).run(self.conn)
             try:
@@ -66,6 +68,7 @@ class Projects:
 
     @projects.command(aliases=['rm', 'delete', 'del'])
     async def remove(self, ctx, name:str):
+        """Delete a project"""
         try:
             projectr = r.table('projects').filter(lambda a: a['guild'] == ctx.guild.id and a['name'] == name).run(self.conn)
             try:
@@ -88,6 +91,7 @@ class Projects:
 
     @projects.command(aliases=['add_m', 'new_m', 'new_member'])
     async def add_member(self, ctx, name:str, member:discord.Member):
+        """Add a member to a project"""
         try:
             projectr = r.table('projects').filter(lambda a: a['guild'] == ctx.guild.id and a['name'] == name).run(self.conn)
             try:
@@ -112,6 +116,7 @@ class Projects:
     
     @projects.command(aliases=['rm_member', 'del_member', 'rm_m', 'del_m'])
     async def remove_member(self, ctx, name:str, member:discord.Member):
+        """Remove a member from a project"""
         try:
             projectr = r.table('projects').filter(lambda a: a['guild'] == ctx.guild.id and a['name'] == name).run(self.conn)
             try:
@@ -136,6 +141,7 @@ class Projects:
 
     @projects.command(aliases=['transfer'])
     async def transfer_lead(self, ctx, name:str, member:discord.Member):
+        """Transfers the leader of a project to another member"""
         try:
             projectr = r.table('projects').filter(lambda a: a['guild'] == ctx.guild.id and a['name'] == name).run(self.conn)
             try:
@@ -161,6 +167,7 @@ class Projects:
 
     @projects.command(aliases=['complete'])
     async def finish(self, ctx, name:str):
+        """Marks the project as finished"""
         try:
             projectr = r.table('projects').filter(lambda a: a['guild'] == ctx.guild.id and a['name'] == name).run(self.conn)
             try:

@@ -29,7 +29,7 @@ class Core:
     @commands.command(aliases=["le"])
     @permissions.owner()
     async def load(self, ctx, name: str):
-        """ Load an extension into the bot """
+        """Load an extension into the bot"""
         m = await ctx.send(f'Loading {name}')
         extension_name = 'extensions.{0}'.format(name)
         if extension_name not in self.settings['extensions']:
@@ -45,7 +45,7 @@ class Core:
     @commands.command(aliases=["ule", "ul"])
     @permissions.owner()
     async def unload(self, ctx, name: str):
-        """ Unload an extension from the bot """
+        """Unload an extension from the bot"""
         m = await ctx.send(f'Unloading {name}')
         extension_name = 'extensions.{0}'.format(name)
         if extension_name in self.settings['extensions']:
@@ -58,7 +58,7 @@ class Core:
     @commands.command(aliases=["rle", "reloady", "rl"])
     @permissions.owner()
     async def reload(self, ctx, name: str):
-        """ Reload an extension into the bot """
+        """Reload an extension into the bot"""
         m = await ctx.send(f'Reloading {name}')
         extension_name = 'extensions.{0}'.format(name)
         if extension_name in self.settings['extensions']:
@@ -75,27 +75,29 @@ class Core:
     @commands.command(aliases=["restart", 'die'])
     @permissions.owner()
     async def reboot(self, ctx):
-        """ Ends the bot process """
+        """Ends the bot process"""
         await ctx.send("Rebooting...")
         sys.exit(0)
 
     @commands.command(aliases=["logout", "shutdown"])
     @permissions.owner()
     async def logoff(self, ctx):
-        """ Logs the bot off Discord """
+        """Logs the bot off Discord"""
         await ctx.send("Shutting down...")
         await self.bot.logout()
 
     @commands.command()
     async def ping(self, ctx):
+        """Throws a ping pong ball at Discord's servers"""
         before = time.monotonic()
         pong = await ctx.send("...")
         after = time.monotonic()
         ping = (after - before) * 1000
         await pong.edit(content="`PING discordapp.com {}ms`".format(int(ping)))
 
-    @commands.command(description="Manage those prefixes.")
+    @commands.command()
     async def prefix(self, ctx, method: str, *, prefix: str=None): # ported from rybot
+        """Manage them prefixes"""
         if method == "add":
             if not permissions.is_owner_check(ctx): return await ctx.send(':no_entry_sign: You do not have permission to use this command.')
             prefix = prefix.strip("\"")
@@ -125,11 +127,13 @@ class Core:
     @commands.command()
     @permissions.owner()
     async def error(self, ctx):
+        """Causes Erio to throw an error"""
         3/0
 
     @commands.command()
     @permissions.owner()
     async def alias(self, ctx, _from, to):
+        """Adds an alias to a command"""
         _from = _from.replace('\'', '').replace('"', '')
         to = to.replace('\'', '').replace('"', '')
         fromcmd = self.bot.get_command(_from)

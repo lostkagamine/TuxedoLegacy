@@ -31,6 +31,7 @@ class Lul:
 
     @commands.command()
     async def cat(self, ctx):
+        """Sends a cat"""
         with ctx.channel.typing():
             with aiohttp.ClientSession() as session:
                 async with session.get("http://random.cat/meow") as r:
@@ -40,6 +41,7 @@ class Lul:
 
     @commands.command()
     async def dog(self, ctx):
+        """Sends a dog"""
         with ctx.channel.typing():
             with aiohttp.ClientSession() as session:
                 async with session.get("http://random.dog/woof.json") as r:
@@ -49,6 +51,7 @@ class Lul:
 
     @commands.command(aliases=['catgirl'])
     async def neko(self, ctx):
+        """Sends a neko"""
         with ctx.channel.typing():
             with aiohttp.ClientSession() as session:
                 async with session.get('http://nekos.life/api/neko') as r:
@@ -58,6 +61,7 @@ class Lul:
     @commands.command()
     @commands.cooldown(10, 1, commands.BucketType.user)
     async def animalfact(self, ctx, _type : str):
+        """Sends an animal fact"""
         with ctx.channel.typing():
             sesh = aiohttp.ClientSession()
             types = []
@@ -85,7 +89,7 @@ class Lul:
 
     @commands.command(description="Number suffixes are fun.")
     async def numbermix(self, ctx):
-        """ Number suffixes are fun. """
+        """Number suffixes are fun"""
         numbers = ["fir", "seco", "thi", "four", "fif", "six", "seven", "eig", "nin", "ten"]
         suffix = ["st", "nd", "rd", "th"]
         correctlist = [v + self.gensuffix(i + 1) for i, v in enumerate(numbers)] # whee
@@ -118,7 +122,7 @@ class Lul:
 
     @commands.command(description='Set the bot\'s nick to something.')
     async def bnick(self, ctx, *, nick : str = None):
-        'Set the bot\'s nick to something.'
+        """Set the bot's nick to something"""
         if not ctx.me.permissions_in(ctx.channel).change_nickname: return await ctx.send(':x: Give me Change Nickname before doing this.')
         if nick == None:
             await ctx.me.edit(nick=None)
@@ -129,7 +133,7 @@ class Lul:
 
     @commands.command(description='Roll a dice in DnD notation. (<sides>d<number of dice>)', aliases=['dice'])
     async def roll(self, ctx, dice : str):
-        'Roll a dice in DnD notation. (<sides>d<number of dice>)'
+        """Roll a dice in DnD notation. (<sides>d<number of dice>)"""
         pat = re.match(r'(\d*)d(\d+)', dice)
         if pat == None:
             return await ctx.send(':x: Invalid notation! Format must be in `<rolls>d<limit>`!')
@@ -147,12 +151,14 @@ class Lul:
     
     @commands.command()
     async def ship(self, ctx, member1:discord.Member, member2:discord.Member):
+        """Ship two members of your Discord server"""
         name1 = member1.display_name[0:round(len(member1.display_name)/2)]
         name2 = member2.display_name[round(len(member2.display_name)/2):0:-1][::-1]
         return await ctx.send(f'Your ship name is {f"{name1}{name2}" if random.random() >= 0.5 else f"{name2}{name1}"}')
 
     @commands.command(aliases=['eggtimer', 'えぐ']) # egu
     async def egg(self, ctx, time:int=180, emote:str='🥚⏲'):
+        """Egg timer"""
         if time > 300 or time < 5:
             return await ctx.send('Maximum time allowed is 5 minutes (300 seconds). Minimum time allowed is 5 seconds.')
         await ctx.send(emote)
@@ -163,6 +169,7 @@ class Lul:
     @commands.command()
     @permissions.owner()
     async def say(self, ctx, chid:int, msg:str, delete:bool=False):
+        """Make the bot say things"""
         await ctx.bot.get_channel(chid).send(msg)
         if delete: await ctx.message.delete()
 

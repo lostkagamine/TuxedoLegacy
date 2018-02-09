@@ -56,53 +56,41 @@ class Weeb:
 
     @commands.command()
     async def cuddle(self, ctx, *, user: discord.Member):
-        """Cuddle a user!
-
-        * user - The user to be cuddled.
-        """
+        """Cuddle a user"""
         message = await message_generator(ctx, "cuddle", user)
         await weeb_maker(ctx, "cuddle", message)
 
     @commands.command()
     async def hug(self, ctx, *, user: discord.Member):
-        """Hug a user!
-
-        * user - The user to be hugged.
-        """
+        """Hug a user"""
         message = await message_generator(ctx, "hug", user)
         await weeb_maker(ctx, "hug", message)
 
     @commands.command()
     async def kiss(self, ctx, *, user: discord.Member):
-        """Kiss a user!
-
-        * user - The user to be kissed.
-        """
+        """Kiss a user"""
         message = await message_generator(ctx, "kiss", user)
         await weeb_maker(ctx, "kiss", message)
 
     @commands.command(aliases=["2lewd", "2lewd4me"])
     async def lewd(self, ctx):
-        """Lewd!"""
+        """Lewd"""
         await weeb_maker(ctx, "lewd")
 
     @commands.command()
     async def lick(self, ctx, *, user: discord.Member):
-        """Lick a user!
-
-        * user - The user to be licked.
-        """
+        """Lick a user"""
         message = await message_generator(ctx, "lick", user)
         await weeb_maker(ctx, "lick", message)
 
     @commands.command()
     async def nom(self, ctx):
-        """Nom!"""
+        """Nom"""
         await weeb_maker(ctx, "nom")
 
     @commands.command(aliases=['nya', 'meow', 'nyan'])
     async def _neko(self, ctx):
-        """Nyan!"""
+        """Nyan"""
         await weeb_maker(ctx, "neko", f"{ctx.invoked_with.capitalize()}~")
 
     @commands.command()
@@ -117,53 +105,41 @@ class Weeb:
 
     @commands.command(aliases=["headpat", "pet"])
     async def pat(self, ctx, *, user: discord.Member):
-        """Pat a user!
-
-        * user - The user to be patted.
-        """
+        """Pat a user"""
         message = await message_generator(ctx, "pat", user)
         await weeb_maker(ctx, "pat", message)
 
     @commands.command()
     async def pout(self, ctx):
-        """Pout!"""
+        """Pout"""
         await weeb_maker(ctx, "pout")
 
     @commands.command()
     async def slap(self, ctx, *, user: discord.Member):
-        """Slap a user!
-
-        * user - The user to be slapped.
-        """
+        """Slap a user"""
         message = await message_generator(ctx, "slap", user)
         await weeb_maker(ctx, "slap", message)
 
     @commands.command()
     async def smug(self, ctx):
-        """Smug!"""
+        """Smug"""
         await weeb_maker(ctx, "smug")
 
     @commands.command()
     async def stare(self, ctx, *, user: discord.Member):
-        """Stare at a user!
-
-        * user - The user to be stared at.
-        """
+        """Stare at a user"""
         message = await message_generator(ctx, "stare", user)
         await weeb_maker(ctx, "stare", message)
 
     @commands.command()
     async def tickle(self, ctx, *, user: discord.Member):
-        """Tickle a user!
-
-        * user - The user to be tickled.
-        """
+        """Tickle a user"""
         message = await message_generator(ctx, "tickle", user)
         await weeb_maker(ctx, "tickle", message)
 
     @commands.command()
     async def triggered(self, ctx):
-        """Triggered!"""
+        """Triggered"""
         await weeb_maker(ctx, "triggered")
 
     @commands.command()
@@ -173,22 +149,22 @@ class Weeb:
 
     @commands.command()
     async def bang(self, ctx):
-        """bang!"""
+        """bang"""
         await weeb_maker(ctx, "bang")
 
     @commands.command()
     async def jojo(self, ctx):
-        """jojo!"""
+        """jojo"""
         await weeb_maker(ctx, "jojo")
 
     @commands.command(aliases=["megu", "Megu"])
     async def megumin(self, ctx):
-        """Triggered!"""
+        """Triggered"""
         await weeb_maker(ctx, "megumin")
 
     @commands.command(aliases=["Rem"])
     async def rem(self, ctx):
-        """rem!"""
+        """rem"""
         await weeb_maker(ctx, "rem")
 
     @commands.command()
@@ -198,37 +174,37 @@ class Weeb:
 
     @commands.command(aliases=["waifuinsult", 'waifuin'])
     async def waifu_insult(self, ctx):
-        """insult waifuuuu!"""
+        """insult waifuuuu"""
         await weeb_maker(ctx, "waifu_insult")
 
     @commands.command()
     async def wasted(self, ctx):
-        """wasted!"""
+        """wasted"""
         await weeb_maker(ctx, "wasted")
 
     @commands.command()
     async def sumfuk(self, ctx):
-        """owowow!"""
+        """owowow"""
         await weeb_maker(ctx, "sumfuk")
 
     @commands.command()
     async def dab(self, ctx):
-        """dab!"""
+        """dab"""
         await weeb_maker(ctx, "dab")
 
     @commands.command(aliases=["dmemes", "dismemes"])
     async def discord_memes(self, ctx):
-        """memes!"""
+        """memes"""
         await weeb_maker(ctx, "discord_memes")
 
     @commands.command(aliases=["delet"])
     async def delet_this(self, ctx):
-        """jojo!"""
+        """jojo"""
         await weeb_maker(ctx, "delet_this")
 
     @commands.command()
     async def nani(self, ctx):
-        """nani?!"""
+        """nani?"""
         await weeb_maker(ctx, "nani")
 
 
