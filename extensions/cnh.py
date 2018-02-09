@@ -9,11 +9,7 @@ class Cnh:
 
     @commands.command(aliases=['cnh', 'CNH', 'calvinandhobbes'])
     async def CalvinandHobbes(self, ctx, year:int=None, month:int=None, day:int=None):
-        f"""Module for Calvin and Hobbes Comics
-        usage:
-        {ctx.prefix}garfield (to get random comic)
-        {ctx.prefix}garfield [year] [month] [day] (for specific day)
-        """
+        """Calvin and Hobbes comics."""
         if year is None:
             fake = faker.Faker()
             # Garfield Started on 19th June, 1978
