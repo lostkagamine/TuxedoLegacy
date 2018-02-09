@@ -10,11 +10,7 @@ class Kitsu:
 
     @commands.command()
     async def anime(self, ctx, query: str):
-        f"""Lookup anime on https://kitsu.io/
-        usage:
-        {ctx.prefix}anime [query]
-        here, query = anime you want to lookup
-        """
+        """Look up anime"""
         with requests.get(API_URL + "anime", params={"filter[text]": query}) as resp:
             resp = resp.json()["data"]
 
@@ -50,11 +46,7 @@ class Kitsu:
 
     @commands.command()
     async def manga(self, ctx, query: str):
-        f"""Lookup manga on https://kitsu.io/
-        usage:
-        {ctx.prefix}manga [query]
-        here, query = manga you want to lookup
-        """
+        """Look up manga"""
         with requests.get(API_URL + "manga", params={"filter[text]": query}) as resp:
             resp = resp.json()["data"]
 
