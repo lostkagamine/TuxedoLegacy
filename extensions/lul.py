@@ -89,7 +89,7 @@ class Lul:
 
     @commands.command(description="Number suffixes are fun.")
     async def numbermix(self, ctx):
-        """Number suffixes are fun."""
+        """Number suffixes are fun"""
         numbers = ["fir", "seco", "thi", "four", "fif", "six", "seven", "eig", "nin", "ten"]
         suffix = ["st", "nd", "rd", "th"]
         correctlist = [v + self.gensuffix(i + 1) for i, v in enumerate(numbers)] # whee
@@ -122,7 +122,7 @@ class Lul:
 
     @commands.command(description='Set the bot\'s nick to something.')
     async def bnick(self, ctx, *, nick : str = None):
-        """Set the bot's nick to something."""
+        """Set the bot's nick to something"""
         if not ctx.me.permissions_in(ctx.channel).change_nickname: return await ctx.send(':x: Give me Change Nickname before doing this.')
         if nick == None:
             await ctx.me.edit(nick=None)
