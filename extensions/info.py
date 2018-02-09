@@ -34,7 +34,8 @@ class Info:
 
     @commands.command(aliases=['add'])
     async def invite(self, ctx):
-        text = f'**Add Tuxedo**\n\nAdd Tuxedo with this link: <{self.bot.invite_url}>'
+        """Sends the invite to Erio"""
+        text = f'**Add Tuxedo**\n\nAdd Erio with this link: <{self.bot.invite_url}>'
         try:
             await ctx.author.send(text)
             await ctx.send(":mailbox_with_mail: Check your DMs.")
@@ -43,6 +44,7 @@ class Info:
         
     @commands.command()
     async def stats(self, ctx):
+        """Gets statistics about Erio"""
         mem = psutil.virtual_memory()
         currproc = psutil.Process(os.getpid())
         total_ram = self.humanbytes(mem[0])
@@ -65,6 +67,7 @@ Number of current music streams: {streams}
 
     @commands.command(aliases=['info'])
     async def about(self, ctx):
+        """Tells you about Erio"""
         text = f"""
 ```ini
 [ Erio ]
