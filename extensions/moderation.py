@@ -135,6 +135,7 @@ Please unban them! Their ban has expired on {hecc}.
 
     @commands.command(aliases=['m'])
     async def mute(self, ctx, *args):
+        """Mutes a user"""
         nosetting = f':x: The muted role list isn\'t set! Set it with `{ctx.prefix}set muted_roles \'Role 1\' \'Role 2\' \'Role 3\'`. You can have an infinite amount of roles in the list.'
         badsetting = f':x: The muted role list is incomplete! Please re-run setup with `{ctx.prefix}set muted_roles \'Role 1\' \'Role 2\' \'Role 3\'`. You can have an infinite amount of roles in the list.'
         parser = argparse.DiscordFriendlyArgparse(prog=ctx.invoked_with, add_help=True)
@@ -191,6 +192,7 @@ Please unban them! Their ban has expired on {hecc}.
 
     @commands.command(aliases=['um'])
     async def unmute(self, ctx, *args):
+        """Unmutes a user"""
         nosetting = f':x: The muted role list isn\'t set! Set it with `{ctx.prefix}set muted_roles \'Role 1\' \'Role 2\' \'Role 3\'`. You can have an infinite amount of roles in the list.'
         badsetting = f':x: The muted role list is incomplete! Please re-run setup with `{ctx.prefix}set muted_roles \'Role 1\' \'Role 2\' \'Role 3\'`. You can have an infinite amount of roles in the list.'
         parser = argparse.DiscordFriendlyArgparse(prog=ctx.invoked_with, add_help=True)
@@ -245,7 +247,7 @@ Please unban them! Their ban has expired on {hecc}.
 
     @commands.command(aliases=['b'])
     async def ban(self, ctx, *args):
-        """Bans a member. You can specify a reason."""
+        """Bans a member"""
         parser = argparse.DiscordFriendlyArgparse(prog=ctx.command.name, add_help=True)
         parser.add_argument('-u', '--users', nargs='+', metavar='@user', required=True, help='List of users to ban.')
         parser.add_argument('-r', '--reason', metavar='Reason', help='A reason for the ban.')
@@ -300,7 +302,7 @@ Please unban them! Their ban has expired on {hecc}.
 
     @commands.command(aliases=['uban', 'ub'])
     async def unban(self, ctx, *args):
-        'Unbans multiple users. You can specify a reason.'
+        """Unbans a user"""
         parser = argparse.DiscordFriendlyArgparse(prog=ctx.command.name, add_help=True)
         parser.add_argument('-u', '--users', nargs='+', metavar='<id>', required=True, help='List of users to unban.')
         parser.add_argument('-r', '--reason', metavar='Reason', help='A reason for the unban.')
@@ -318,7 +320,7 @@ Please unban them! Their ban has expired on {hecc}.
 
     @commands.command(aliases=['k'])
     async def kick(self, ctx, *args):
-        """Kicks a member. You can specify a reason."""
+        """Kicks a member"""
         parser = argparse.DiscordFriendlyArgparse(prog=ctx.command.name, add_help=True)
         parser.add_argument('-u', '--users', nargs='+', metavar='@user', required=True, help='List of users to kick.')
         parser.add_argument('-r', '--reason', metavar='Reason', help='A reason for the kick.')
@@ -353,7 +355,7 @@ Please unban them! Their ban has expired on {hecc}.
 
     @commands.command(aliases=['dh'])
     async def dehoist(self, ctx, member : discord.Member, *, flags : str = None):
-        'Remove a hoisting member\'s hoist.'
+        """Removes a hoisting user's hoist"""
         if not ctx.author.permissions_in(ctx.channel).manage_nicknames:
             return await ctx.send(':no_entry_sign: Not enough permissions. You need Manage Nicknames.')
         if not ctx.me.permissions_in(ctx.channel).manage_nicknames:
@@ -392,7 +394,7 @@ Please unban them! Their ban has expired on {hecc}.
 
     @commands.command(description="Clean up the bot's messages.")
     async def clean(self, ctx, amount : int=50):
-        """Clean up the bot's messages."""
+        """Clean up the bot's messages"""
         if ctx.channel.permissions_for(ctx.guild.me).manage_messages:
             delet = await ctx.channel.purge(limit=amount+1, check=lambda a: a.author == self.bot.user, bulk=True)
             eee = await ctx.send(self.cleanformat(len(delet)))
@@ -422,7 +424,7 @@ Please unban them! Their ban has expired on {hecc}.
 
     @commands.command(description="Ban a user, even when not in the server.", aliases=['shadowban', 'hban'])
     async def hackban(self, ctx, user : int, *, reason : str = None):
-        'Ban someone, even when not in the server.'
+        """Ban an ID"""
         if not ctx.author.permissions_in(ctx.channel).ban_members:
             return await ctx.send(':no_entry_sign: Not enough permissions. You need Ban Members.')
         if not ctx.me.permissions_in(ctx.channel).ban_members:
@@ -434,7 +436,7 @@ Please unban them! Their ban has expired on {hecc}.
 
     @commands.command(description='Ping an online moderator.', aliases=['pingmod'])
     async def pingmods(self, ctx, *, reason : str = None):
-        'Ping an online moderator.'
+        """Ban an online staff member"""
         if ctx.guild.id in pingmods_disabled:
             return await ctx.send(':x: This feature isn\'t available here.')
         mods = [i for i in ctx.guild.members if (i.permissions_in(ctx.channel).kick_members or i.permissions_in(ctx.channel).ban_members or i.permissions_in(ctx.channel).manage_roles) and
@@ -449,7 +451,7 @@ Please unban them! Their ban has expired on {hecc}.
 
     @commands.command(description='Decancer a member.')
     async def decancer(self, ctx, member : discord.Member):
-        '"Decancer" a member, or strip all the non-ASCII characters from their name. Useful to make your chat look good.'
+        """"Decancer" a member, or strip all the non-ASCII characters from their name. Useful to make your chat look good."""
         if ctx.me.permissions_in(ctx.channel).manage_nicknames and ctx.author.permissions_in(ctx.channel).manage_nicknames:
             cancer = member.display_name
             decancer = unidecode.unidecode_expect_nonascii(cancer)
@@ -468,7 +470,7 @@ Please unban them! Their ban has expired on {hecc}.
 
     @commands.command(description='View online mods.')
     async def mods(self, ctx):
-        'View online mods.'
+        """View online staff"""
         online = []
         offline = []
         idle = []
@@ -494,6 +496,7 @@ Please unban them! Their ban has expired on {hecc}.
 
     @commands.command(aliases=['vck'])
     async def vckick(self, ctx, member:discord.Member):
+        """Kicks a member out of VC"""
         if not member.voice or not member.voice.channel:
             return await ctx.send(':x: | This member is not in a voice channel.')
         i = ctx.author # memes
@@ -511,7 +514,7 @@ Please unban them! Their ban has expired on {hecc}.
 
     @commands.command(aliases=['ld'])
     async def lockdown(self, ctx, channel:discord.TextChannel=None):
-        'Locks down a channel and doesn\'t make @everyone be able to send to it.'
+        """Lock down a channel"""
         if not channel:
             channel = ctx.channel
         perms = ctx.author.permissions_in(ctx.channel)
@@ -525,7 +528,7 @@ Please unban them! Their ban has expired on {hecc}.
 
     @commands.command(aliases=['uld'])
     async def unlockdown(self, ctx, channel:discord.TextChannel=None):
-        'Unlocks a channel, making @everyone be able to speak.'
+        """Unlocks a channel that was previously on lockdown"""
         if not channel:
             channel = ctx.channel
         perms = ctx.author.permissions_in(ctx.channel)
