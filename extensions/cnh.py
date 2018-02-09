@@ -9,7 +9,7 @@ class Cnh:
 
     @commands.command(aliases=['cnh', 'CNH', 'calvinandhobbes'])
     async def CalvinandHobbes(self, ctx, year:int=None, month:int=None, day:int=None):
-        """Calvin and Hobbes comics."""
+        """Calvin and Hobbes comics"""
         if year is None:
             fake = faker.Faker()
             # Garfield Started on 19th June, 1978
