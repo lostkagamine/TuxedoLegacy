@@ -8,15 +8,10 @@ from discord.ext import commands
 
 
 class Dictionary:
-    """Urban Dictionary lookup command."""
 
     @commands.command(pass_context=True, aliases=['urban'])
     async def ud(self, ctx, *, msg):
-        f"""Pull data from Urban Dictionary. Use {ctx.prefix}help ud for more information.
-        Usage: {ctx.prefix}ud <term> - Search for a term on Urban Dictionary.
-        You can pick a specific result to use with {ctx.prefix}ud <term> | <result>.
-        If no result is specified, the first result will be used.
-        """
+        """Gets a page off of Urban Dictionary"""
         number = 1
         if " | " in msg:
             msg, number = msg.rsplit(" | ", 1)
