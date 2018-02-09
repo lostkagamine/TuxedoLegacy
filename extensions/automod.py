@@ -42,7 +42,7 @@ class Automod:
                 await msg.channel.send(f':hammer: | {msg.author} has been **kicked** automatically for advertising.')
             elif self._get_warnings(msg.author.id, msg.guild.id) == 1:
                 await msg.delete()
-                await msg.channel.send(f':no_entry_sign: | <@{msg.author.id}>, advertising isn\'t allowed in this server.')
+                await msg.channel.send(f':no_entry_sign: | Hey! <@{msg.author.id}, don\'t post links here!')
 
     def _get_warnings(self, uid:int, gid:int):
         try:

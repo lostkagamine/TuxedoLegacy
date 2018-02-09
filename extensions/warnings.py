@@ -196,7 +196,7 @@ class Warnings:
             people.append(m)
         for i in people:
             self._add_warning(ctx, i, args.reason, count)
-        await ctx.send(':ok_hand: User(s) warned.')
+        await ctx.send('Okay, warned.')
         await self._send_warn_embed(ctx, people, args.reason, count=count)
     
     @commands.command(aliases=['uw', 'unwarn'])
@@ -232,7 +232,7 @@ class Warnings:
             if not c:
                 return await ctx.send(':x: You cannot pardon a user with no warnings.')
         await self._send_pardon_embed(ctx, people, args.reason, count)
-        await ctx.send(':ok_hand: Pardoned.')
+        await ctx.send('Okay, pardoned.')
 
     @commands.command(aliases=['ezw'])
     async def ezwarn(self, ctx, user:discord.Member, reason):
@@ -246,7 +246,7 @@ class Warnings:
             return await ctx.send(':no_entry_sign: Invalid permissions.')
         self._add_warning(ctx, user, reason)
         await self._send_warn_embed(ctx, [user], reason, 1)
-        await ctx.send(':ok_hand: User warned.')
+        await ctx.send('Okay, warned.')
 
     @commands.command(aliases=['ezp', 'ezuw'])
     async def ezpardon(self, ctx, user:discord.Member, count:int, reason):
@@ -262,7 +262,7 @@ class Warnings:
             return await ctx.send(':x: Count must be 1 or above.')
         self._remove_warnings(ctx, user, reason)
         await self._send_warn_embed(ctx, [user], reason, count)
-        await ctx.send(':ok_hand: User pardoned.')
+        await ctx.send('Okay, pardoned.')
 
     async def get_user(self, uid: int):
         user = None  # database fetch

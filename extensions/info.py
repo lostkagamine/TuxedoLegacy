@@ -67,10 +67,10 @@ Number of current music streams: {streams}
     async def about(self, ctx):
         text = f"""
 ```ini
-[ Tuxedo ]
+[ Erio ]
 An open-source moderation bot for Discord
 Made by ry00001 in Python 3.6 using Discord.py
-Source code freely available at https://github.com/ry00000/Tuxedo
+Source code freely available at https://github.com/ry00001/Erio
 
 [ Credits ]
 HexadecimalPython: Original core
