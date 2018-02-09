@@ -22,6 +22,7 @@ class Generators:
     @commands.command(aliases=['df'])
     @commands.cooldown(2, 5, type=commands.BucketType.user)
     async def deepfry(self, ctx, target=None):
+        """Deepfry a user's profile picture or URL."""
         try:
             conv = await commands.MemberConverter().convert(ctx, target)
             url = conv.avatar_url_as(format='png')
