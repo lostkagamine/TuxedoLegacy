@@ -144,7 +144,7 @@ Please unban them! Their ban has expired on {hecc}.
         try:
             args = parser.parse_args(args)
         except argparse.DiscordArgparseError or argparse.DiscordArgparseMessage as e:
-            return await ctx.send(random.choice(badargs) + '\n' + e)
+            return await ctx.send(random.choice(badargs) + '\n' + str(e))
         tier = args.tier if args.tier != None else 0
         g = ctx.guild
         exists = (lambda: list(r.table('settings').filter(
@@ -199,7 +199,7 @@ Please unban them! Their ban has expired on {hecc}.
         try:
             args = parser.parse_args(args)
         except argparse.DiscordArgparseError or argparse.DiscordArgparseMessage as e:
-            return await ctx.send(random.choice(badargs) + '\n' + e)
+            return await ctx.send(random.choice(badargs) + '\n' + str(e))
         g = ctx.guild
         exists = (lambda: list(r.table('settings').filter(
             lambda a: a['guild'] == str(g.id)).run(self.conn)) != [])()
@@ -255,7 +255,7 @@ Please unban them! Their ban has expired on {hecc}.
         try:
             args = parser.parse_args(args)
         except argparse.DiscordArgparseError as e:
-            return await ctx.send(random.choice(badargs) + '\n' + e)
+            return await ctx.send(random.choice(badargs) + '\n' + str(e))
         people = []
         for i in args.users:
             try:
@@ -307,7 +307,7 @@ Please unban them! Their ban has expired on {hecc}.
         try:
             args = parser.parse_args(args)
         except argparse.DiscordArgparseError as e:
-            return await ctx.send(random.choice(badargs) + '\n' + e)
+            return await ctx.send(random.choice(badargs) + '\n' + str(e))
         for i in args.users:
             if not ctx.author.permissions_in(ctx.channel).ban_members:
                 return await ctx.send(':no_entry_sign: Not enough permissions. You need Ban Members.')
@@ -325,7 +325,7 @@ Please unban them! Their ban has expired on {hecc}.
         try:
             args = parser.parse_args(args)
         except argparse.DiscordArgparseError as e:
-            return await ctx.send(random.choice(badargs) + '\n' + e)
+            return await ctx.send(random.choice(badargs) + '\n' + str(e))
         members = []
         for i in args.users:
             try:
