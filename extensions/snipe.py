@@ -30,7 +30,7 @@ class Snipe:
 
     @commands.command(description='"Snipes" someone\'s message that\'s been edited or deleted.')
     async def snipe(self, ctx):
-        '"Snipes" someone\'s message that\'s been edited or deleted.'
+        """"Snipes" someone's message that has been edited or deleted."""
         try:
             snipe = self.snipes[ctx.channel.id]
         except KeyError:
