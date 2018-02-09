@@ -144,7 +144,7 @@ You were banned for `{details['reason']}` with proof `{details['proof']}`.
 
     @commands.group(name='gban', aliases=['gbans', 'globalbans', 'global_bans'], invoke_without_command=True)
     async def gban(self, ctx, param):
-        """Globally bans a user."""
+        """Globally bans a user"""
         raise commands.errors.MissingRequiredArgument()
 
     @gban.command(aliases=['new', 'ban'])
