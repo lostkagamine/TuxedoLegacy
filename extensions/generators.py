@@ -54,7 +54,7 @@ class Generators:
     @commands.command()
     @commands.cooldown(1, 30, commands.BucketType.user)
     async def magik(self, ctx, target, *args):
-        """ Add some magik to your boring-ass images """
+        """Add some magik to your boring-ass images"""
         try:
             member = await commands.MemberConverter().convert(ctx, target)
             url = member.avatar_url_as(format='png')
@@ -97,7 +97,7 @@ class Generators:
     @commands.command()
     @commands.cooldown(1, 25, commands.BucketType.user)
     async def invert(self, ctx, target):
-        """ Ever wanted to see the stuff of nightmares? """
+        """Ever wanted to see the stuff of nightmares?"""
         try:
             member = await commands.MemberConverter().convert(ctx, target)
             url = member.avatar_url_as(format='png')
@@ -133,6 +133,7 @@ class Generators:
 
     @commands.command(aliases=['dfm'])
     async def deepmagik(self, ctx, target, mult:int=5):
+        """Magik² - deepfrys then magiks"""
         try:
             member = await commands.MemberConverter().convert(ctx, target)
             url = member.avatar_url_as(format='png')
