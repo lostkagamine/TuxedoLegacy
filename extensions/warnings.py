@@ -166,6 +166,7 @@ class Warnings:
 
     @commands.command(aliases=['w'])
     async def warn(self, ctx, *args):
+        """Warns a user"""
         selfperms = ctx.author.permissions_in(ctx.channel)
         hasperm = (
             selfperms.kick_members or
@@ -201,6 +202,7 @@ class Warnings:
     
     @commands.command(aliases=['uw', 'unwarn'])
     async def pardon(self, ctx, *args):
+        """Removes a warning"""
         selfperms = ctx.author.permissions_in(ctx.channel)
         hasperm = (
             selfperms.kick_members or
@@ -236,6 +238,7 @@ class Warnings:
 
     @commands.command(aliases=['ezw'])
     async def ezwarn(self, ctx, user:discord.Member, reason):
+        """Warn but divided by 2"""
         selfperms = ctx.author.permissions_in(ctx.channel)
         hasperm = (
             selfperms.kick_members or
@@ -250,6 +253,7 @@ class Warnings:
 
     @commands.command(aliases=['ezp', 'ezuw'])
     async def ezpardon(self, ctx, user:discord.Member, count:int, reason):
+        """Pardon but divided by 2"""
         selfperms = ctx.author.permissions_in(ctx.channel)
         hasperm = (
             selfperms.kick_members or
@@ -283,6 +287,7 @@ class Warnings:
 
     @commands.command(aliases=['warns'])
     async def check_warnings(self, ctx, member:discord.Member=None):
+        """Check your or another user's warnings"""
         selfperms = ctx.author.permissions_in(ctx.channel)
         hasperm = (
             selfperms.kick_members or
