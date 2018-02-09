@@ -16,11 +16,7 @@ class Jisho:
 
     @commands.command(aliases=["jp"])
     async def jisho(self, ctx, query):
-        f"""Translate a word into Japanese.
-
-        Example usage:
-        {ctx.prefix}jisho test
-        """
+        """Translate a string into Japanese"""
         with requests.get(BASE_URL, params={"keyword": query}) as response:
             data = response.json()
 
