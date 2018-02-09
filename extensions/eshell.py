@@ -78,7 +78,7 @@ class EmbedShell():
                     invoke_without_command=True)
     @permissions.owner()
     async def repl(self, ctx, *, name: str=None):
-        '''Head on impact with an interactive python shell.'''
+        """Starts a REPL session"""
         # TODO Minimize local variables
         # TODO Minimize branches
 
