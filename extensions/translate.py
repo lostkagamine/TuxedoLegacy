@@ -13,11 +13,7 @@ class Translate:
 
     @commands.command()
     async def translate(self, ctx, lang_to_trans, *, msg):
-        """Translates words from one language to another. Do `tux help`translate for more information.
-        Usage:
-        `tux translate <language you wanna translate>` <words>` - Translate words from one language to another. Full language names must be used.
-        The original language will be assumed automatically.
-        """
+        """Translates words from one language to another"""
         some_var = requests.get(
             "https://cdn.discordapp.com/attachments/407783970558836740/410076802762014720/langs.json", verify=False).text
         language_codes = json.loads(some_var)
