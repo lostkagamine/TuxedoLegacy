@@ -19,6 +19,12 @@ chars = ("!", "\"", "#", "$", "%", "&", "'", "(", ")", "*", "+", ",", "-", ".", 
 # to the above char tuple: thanks road
 dehoist_char = '𛲢' # special character, to be used for dehoisting
 
+badargs = [
+    'Oh, what are "arguments"? Whatever those are, you gotta fix them.',
+    'Bad arguments! Whatever those are...',
+    'What\'s an argument? ...Okay, it doesn\'t really matter because you need to fix them.'
+]
+
 pingmods_disabled = [110373943822540800]
 
 class Moderation:
@@ -26,7 +32,7 @@ class Moderation:
     def __init__(self, bot):
         self.bot = bot
         self.conn = bot.conn
-        self.rolebans = {}
+        self.mutes = {}
         self.task = bot.loop.create_task(self.loop())
         @bot.listen('on_member_update')
         async def on_member_update(before, after):
@@ -111,9 +117,8 @@ class Moderation:
                         try:
                             hecc = datetime.datetime.fromtimestamp(float(i['timestamp']))
                             await mod.send(f'''
-Your ban for user {user} has expired, but Tuxedo could not unban them automatically.
-This is a reminder to unban said user.
-The original ban was placed for reason `{i['reason']}` on date `{hecc}`.
+Oh! It appears your ban for {user} has expired, but I couldn't unban them automatically!
+Please unban them! Their ban has expired on {hecc}.
                             ''')
                         except discord.Forbidden:
                             continue # can't dm, give up
@@ -130,8 +135,8 @@ The original ban was placed for reason `{i['reason']}` on date `{hecc}`.
 
     @commands.command(aliases=['m'])
     async def mute(self, ctx, *args):
-        nosetting = f':x: You have not set up a mute list. Set one up now with `{ctx.prefix}set muted_roles \'Role 1\' \'Role 2\' \'Role 3\'`. You can have an infinite amount of roles in the list.'
-        badsetting = f':x: The muted role list is incomplete. Did you delete a muted role? Please rerun setup with `{ctx.prefix}set muted_roles \'Role 1\' \'Role 2\' \'Role 3\'`. You can have an infinite amount of roles in the list.'
+        nosetting = f':x: The muted role list isn\'t set! Set it with `{ctx.prefix}set muted_roles \'Role 1\' \'Role 2\' \'Role 3\'`. You can have an infinite amount of roles in the list.'
+        badsetting = f':x: The muted role list is incomplete! Please re-run setup with `{ctx.prefix}set muted_roles \'Role 1\' \'Role 2\' \'Role 3\'`. You can have an infinite amount of roles in the list.'
         parser = argparse.DiscordFriendlyArgparse(prog=ctx.invoked_with, add_help=True)
         parser.add_argument('-u', '--users', nargs='+', required=True, metavar='@user', help='List of users to mute.')
         parser.add_argument('-t', '--tier', metavar='tier', type=int, help='Tier number for the type of mute.')
@@ -139,7 +144,7 @@ The original ban was placed for reason `{i['reason']}` on date `{hecc}`.
         try:
             args = parser.parse_args(args)
         except argparse.DiscordArgparseError or argparse.DiscordArgparseMessage as e:
-            return await ctx.send(e)
+            return await ctx.send(random.choice(badargs) + '\n' + e)
         tier = args.tier if args.tier != None else 0
         g = ctx.guild
         exists = (lambda: list(r.table('settings').filter(
@@ -180,20 +185,21 @@ The original ban was placed for reason `{i['reason']}` on date `{hecc}`.
                 if x in roles:
                     return await ctx.send(':x: One or more people are already muted.')
         for i in people:
+            self.rolebans[i.id][ctx.guild.id] = i.roles
             await i.add_roles(roles[tier], reason=f'[{ctx.author}] {args.reason}' if args.reason != None else f'Mute by {ctx.author}')
         await ctx.send(f':ok_hand: {", ".join([f"**{i.name}**#{i.discriminator}" for i in people])} {"has" if len(people) == 1 else "have"} been muted with tier **{tier}**, which is role {roles[tier]}.')
 
     @commands.command(aliases=['um'])
     async def unmute(self, ctx, *args):
-        nosetting = f':x: You have not set up a mute list. Set one up now with `{ctx.prefix}set muted_roles \'Role 1\' \'Role 2\' \'Role 3\'`. You can have an infinite amount of roles in the list.'
-        badsetting = f':x: The muted role list is incomplete. Did you delete a muted role? Please rerun setup with `{ctx.prefix}set muted_roles \'Role 1\' \'Role 2\' \'Role 3\'`. You can have an infinite amount of roles in the list.'
+        nosetting = f':x: The muted role list isn\'t set! Set it with `{ctx.prefix}set muted_roles \'Role 1\' \'Role 2\' \'Role 3\'`. You can have an infinite amount of roles in the list.'
+        badsetting = f':x: The muted role list is incomplete! Please re-run setup with `{ctx.prefix}set muted_roles \'Role 1\' \'Role 2\' \'Role 3\'`. You can have an infinite amount of roles in the list.'
         parser = argparse.DiscordFriendlyArgparse(prog=ctx.invoked_with, add_help=True)
         parser.add_argument('-u', '--users', nargs='+', required=True, metavar='@user', help='List of users to unmute.')
         parser.add_argument('-r', '--reason', metavar='reason', help='The reason for the unmute.')
         try:
             args = parser.parse_args(args)
         except argparse.DiscordArgparseError or argparse.DiscordArgparseMessage as e:
-            return await ctx.send(e)
+            return await ctx.send(random.choice(badargs) + '\n' + e)
         g = ctx.guild
         exists = (lambda: list(r.table('settings').filter(
             lambda a: a['guild'] == str(g.id)).run(self.conn)) != [])()
@@ -233,105 +239,9 @@ The original ban was placed for reason `{i['reason']}` on date `{hecc}`.
         if any(all(i == None for i in x) for x in a.values()):
             return await ctx.send(':x: One or more people were not muted.')
         for person in people:
+            self.rolebans[i.id][ctx.guild.id] = None
             await person.remove_roles(*a[person.id], reason=f'[{ctx.author}] {args.reason}' if args.reason != None else f'Unmute by {ctx.author}')
         await ctx.send(f':ok_hand: {", ".join([f"**{i.name}**#{i.discriminator}" for i in people])} {"has" if len(people) == 1 else "have"} been unmuted.')
-
-
-    @commands.command(aliases=['rb', 'toss'])
-    async def roleban(self, ctx, member:discord.Member, *, reason:str=None):
-        'Mutes a member. You can specify a reason.'
-        g = ctx.guild
-        perms = ctx.author.permissions_in(ctx.channel)
-        perrms = member.permissions_in(ctx.channel)
-        if perms.manage_roles or perms.kick_members or perms.ban_members:
-            exists = (lambda: list(r.table('settings').filter(
-                lambda a: a['guild'] == str(g.id)).run(self.conn)) != [])()
-            if not exists:
-                return
-            # we know the guild has an entry in the settings
-            if (perrms.manage_roles or perrms.kick_members or perrms.ban_members) or not ctx.author.top_role > member.top_role:
-                await ctx.send(':x: You can\'t roleban a mod.')
-                return
-            settings = list(r.table('settings').filter(
-                lambda a: a['guild'] == str(g.id)).run(self.conn))[0]
-            channel = None
-            if 'rolebanned_role' not in settings.keys():
-                return await ctx.send(f':x: You haven\'t set up a rolebanned role. Please use `{ctx.prefix}set rolebanned_role <role name>`')
-            if 'staff_channel' in settings.keys():
-                channel = ctx.guild.get_channel(int(settings['staff_channel']))
-            role = self.get_role(ctx.guild, int(settings['rolebanned_role']))
-            try:
-                meme = self.rolebans[member.id][ctx.guild.id]
-                if meme != [] and meme != None or role in member.roles:
-                    return await ctx.send(':x: This member is already rolebanned.')
-            except KeyError:
-                pass
-            try:
-                aa = self.rolebans[member.id]
-                if aa == None:
-                    self.rolebans[member.id] = {}
-            except KeyError:
-                self.rolebans[member.id] = {}
-            self.rolebans[member.id][ctx.guild.id] = []
-            try:
-                for i in member.roles:
-                    if i != g.default_role:
-                        self.rolebans[member.id][ctx.guild.id].append(i)
-                await member.edit(roles=[role], reason=f'[{str(ctx.author)}] {reason}' if reason != None else f'[Roleban by {str(ctx.author)}]')
-                prevroles = ', '.join([i.name for i in self.rolebans[member.id][ctx.guild.id]])
-                if prevroles == '': prevroles = 'None'
-                await ctx.send(f'**{member.name}**#{member.discriminator} ({member.id}) has been rolebanned.\nPrevious roles: {prevroles}')
-                if type(channel) == discord.TextChannel:
-                    await channel.send(f'**{member.name}**#{member.discriminator} ({member.id}) has just been rolebanned in <#{ctx.channel.id}>.\nTheir previous roles were: {prevroles}')
-            except discord.Forbidden:
-                return await ctx.send(':x: I don\'t have permission to do this. Give me Manage Roles or move my role higher.')
-        else:
-            return await ctx.send(':no_entry_sign: Not enough permissions. You need either Manage Roles, Kick Members or Ban Members.')
-
-    @commands.command(aliases=['urb', 'untoss'])
-    async def unroleban(self, ctx, member:discord.Member, *, reason : str=None):
-        'Unmutes a member. You can specify a reason.'
-        g = ctx.guild
-        perms = ctx.author.permissions_in(ctx.channel)
-        if perms.manage_roles or perms.kick_members or perms.ban_members:
-            exists = (lambda: list(r.table('settings').filter(
-                lambda a: a['guild'] == str(g.id)).run(self.conn)) != [])()
-            if not exists:
-                return
-            # we know the guild has an entry in the settings
-            settings = list(r.table('settings').filter(
-                lambda a: a['guild'] == str(g.id)).run(self.conn))[0]
-            channel = None
-            if 'rolebanned_role' not in settings.keys():
-                return await ctx.send(f':x: You haven\'t set up a rolebanned role. Please use `{ctx.prefix}set rolebanned_role <role name>`')
-            if 'staff_channel' in settings.keys():
-                channel = ctx.guild.get_channel(int(settings['staff_channel']))
-            role = self.get_role(ctx.guild, int(settings['rolebanned_role']))
-            try:
-                aa = self.rolebans[member.id]
-                meme = self.rolebans[member.id][ctx.guild.id]
-                if meme == None or meme == [] or role not in member.roles:
-                    raise KeyError('is not moot, does not compute')
-            except KeyError:
-                return await ctx.send(':x: This member wasn\'t rolebanned.')
-            try:
-                roles = []
-                for i in self.rolebans[member.id][ctx.guild.id]:
-                    if i != g.default_role:
-                        roles.append(i)
-                if roles == []: return
-                await member.edit(roles=roles)
-                await member.remove_roles(role, reason=f'[{str(ctx.author)}] {reason}' if reason != None else f'[Unroleban by {str(ctx.author)}]')
-                prevroles = ', '.join([i.name for i in roles])
-                if prevroles == '': prevroles = 'None'
-                self.rolebans[member.id][ctx.guild.id] = None
-                await ctx.send(f'**{member.name}**#{member.discriminator} ({member.id}) has been unrolebanned.\nRoles restored: {prevroles}')
-                if type(channel) == discord.TextChannel:
-                    await channel.send(f'**{member.name}**#{member.discriminator} ({member.id}) has just been unrolebanned in <#{ctx.channel.id}>.\nThe roles restored are: {prevroles}')
-            except discord.Forbidden:
-                return await ctx.send(':x: I don\'t have permission to do this. Give me Manage Roles or move my role higher.')
-        else:
-            return await ctx.send(':no_entry_sign: Not enough permissions. You need either Manage Roles, Kick Members or Ban Members.')
 
     @commands.command(aliases=['b'])
     async def ban(self, ctx, *args):
@@ -345,7 +255,7 @@ The original ban was placed for reason `{i['reason']}` on date `{hecc}`.
         try:
             args = parser.parse_args(args)
         except argparse.DiscordArgparseError as e:
-            return await ctx.send(e)
+            return await ctx.send(random.choice(badargs) + '\n' + e)
         people = []
         for i in args.users:
             try:
@@ -359,7 +269,7 @@ The original ban was placed for reason `{i['reason']}` on date `{hecc}`.
             if not ctx.author.permissions_in(ctx.channel).ban_members:
                 return await ctx.send(':no_entry_sign: Not enough permissions. You need Ban Members.')
             if not ctx.me.permissions_in(ctx.channel).ban_members:
-                return await ctx.send(':no_entry_sign: Grant the bot Ban Members before doing this.')
+                return await ctx.send(':no_entry_sign: I can\'t ban without Ban Members... Please give me that permission before doing this.')
             if ctx.author.top_role <= member.top_role:
                 return await ctx.send(':no_entry_sign: You can\'t ban someone with a higher role than you!')
             if ctx.me.top_role <= member.top_role:
@@ -384,7 +294,7 @@ The original ban was placed for reason `{i['reason']}` on date `{hecc}`.
                 }).run(self.bot.conn)
         for member in people:
             await ctx.guild.ban(member, reason=f'[{str(ctx.author)}] {args.reason}' if args.reason != None else f'Ban by {str(ctx.author)}', delete_message_days=args.days if args.days != None else 7)
-        msg = await ctx.send(':ok_hand:')
+        msg = await ctx.send(':hammer: The ban hammer has been swung!')
         await asyncio.sleep(3)
         await msg.delete()
 
@@ -397,14 +307,14 @@ The original ban was placed for reason `{i['reason']}` on date `{hecc}`.
         try:
             args = parser.parse_args(args)
         except argparse.DiscordArgparseError as e:
-            return await ctx.send(e)
+            return await ctx.send(random.choice(badargs) + '\n' + e)
         for i in args.users:
             if not ctx.author.permissions_in(ctx.channel).ban_members:
                 return await ctx.send(':no_entry_sign: Not enough permissions. You need Ban Members.')
             if not ctx.me.permissions_in(ctx.channel).ban_members:
-                return await ctx.send(':no_entry_sign: Grant the bot Ban Members before doing this.')
+                return await ctx.send(':no_entry_sign: I can\'t unban without Ban Members... Please give me that permission before doing this.')
             await ctx.guild.unban(await self.get_user(i), reason=f'[{str(ctx.author)}] {args.reason}' if args.reason != None else f'Unban by {str(ctx.author)}')
-        await ctx.send(':ok_hand:', delete_after=3)
+        await ctx.send('Okay, unbanned.', delete_after=3)
 
     @commands.command(aliases=['k'])
     async def kick(self, ctx, *args):
@@ -415,7 +325,7 @@ The original ban was placed for reason `{i['reason']}` on date `{hecc}`.
         try:
             args = parser.parse_args(args)
         except argparse.DiscordArgparseError as e:
-            return await ctx.send(e)
+            return await ctx.send(random.choice(badargs) + '\n' + e)
         members = []
         for i in args.users:
             try:
@@ -429,7 +339,7 @@ The original ban was placed for reason `{i['reason']}` on date `{hecc}`.
             if not ctx.author.permissions_in(ctx.channel).kick_members:
                 return await ctx.send(':no_entry_sign: Not enough permissions. You need Kick Members.')
             if not ctx.me.permissions_in(ctx.channel).kick_members:
-                return await ctx.send(':no_entry_sign: Grant the bot Kick Members before doing this.')
+                return await ctx.send(':no_entry_sign: I can\'t kick without Kick Members... Please give me that permission before doing this.')
             if ctx.author.top_role <= member.top_role:
                 return await ctx.send(':no_entry_sign: You can\'t kick someone with a higher role than you!')
             if ctx.me.top_role <= member.top_role:
@@ -437,7 +347,7 @@ The original ban was placed for reason `{i['reason']}` on date `{hecc}`.
             members.append(member)
         for i in members:
             await ctx.guild.kick(i, reason=f'[{str(ctx.author)}] {args.reason}' if args.reason else f'Kick by {str(ctx.author)}')
-        msg = await ctx.send(':ok_hand:')
+        msg = await ctx.send('Okay, kicked.')
         await asyncio.sleep(3)
         await msg.delete()
 
@@ -456,9 +366,9 @@ The original ban was placed for reason `{i['reason']}` on date `{hecc}`.
         try:
             await member.edit(nick=f'{dehoist_char}{name}')
         except discord.Forbidden:
-            await ctx.send('Oops. I can\'t dehoist this member because my privilege is too low. Move my role higher.')
+            await ctx.send('M-Move my role higher!')
         else:
-            await ctx.send(':ok_hand:')
+            await ctx.send('Okay, done.')
 
     def cleanformat(self, number):
         string = ""
@@ -505,6 +415,10 @@ The original ban was placed for reason `{i['reason']}` on date `{hecc}`.
     async def _purge_all(self, ctx, count:int=50):
         if not ctx.author.permissions_in(ctx.channel).manage_messages:
             return await ctx.send(':no_entry_sign: You don\'t have enough permissions. You need Manage Messages.')
+        try:
+            await ctx.channel.purge(count=count)
+        except Exception:
+            pass
 
     @commands.command(description="Ban a user, even when not in the server.", aliases=['shadowban', 'hban'])
     async def hackban(self, ctx, user : int, *, reason : str = None):
@@ -514,7 +428,7 @@ The original ban was placed for reason `{i['reason']}` on date `{hecc}`.
         if not ctx.me.permissions_in(ctx.channel).ban_members:
             return await ctx.send(':no_entry_sign: Grant the bot Ban Members before doing this.')
         await ctx.bot.http.ban(user, ctx.guild.id, 7, reason=f'[{str(ctx.author)}] {reason}' if reason else f'Hackban by {str(ctx.author)}')
-        msg = await ctx.send(':ok_hand:')
+        msg = await ctx.send(':hammer: The ban hammer has been swung!')
         await asyncio.sleep(3)
         await msg.delete()
 
