@@ -145,6 +145,10 @@ class Core:
             return await ctx.send(':x: The command to register is already a thing.')
         self.bot.all_commands[to] = fromcmd
         await ctx.send('Okay. Done.')
+    
+    @commands.command(hidden=True)
+    async def erio(self, ctx):
+        await ctx.send('Yes, that\'s me. I think.')
 
 
 def setup(bot):
