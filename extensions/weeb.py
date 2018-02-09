@@ -56,28 +56,19 @@ class Weeb:
 
     @commands.command()
     async def cuddle(self, ctx, *, user: discord.Member):
-        """Cuddle a user!
-
-        * user - The user to be cuddled.
-        """
+        """Cuddle a user!"""
         message = await message_generator(ctx, "cuddle", user)
         await weeb_maker(ctx, "cuddle", message)
 
     @commands.command()
     async def hug(self, ctx, *, user: discord.Member):
-        """Hug a user!
-
-        * user - The user to be hugged.
-        """
+        """Hug a user!"""
         message = await message_generator(ctx, "hug", user)
         await weeb_maker(ctx, "hug", message)
 
     @commands.command()
     async def kiss(self, ctx, *, user: discord.Member):
-        """Kiss a user!
-
-        * user - The user to be kissed.
-        """
+        """Kiss a user!"""
         message = await message_generator(ctx, "kiss", user)
         await weeb_maker(ctx, "kiss", message)
 
@@ -88,10 +79,7 @@ class Weeb:
 
     @commands.command()
     async def lick(self, ctx, *, user: discord.Member):
-        """Lick a user!
-
-        * user - The user to be licked.
-        """
+        """Lick a user!"""
         message = await message_generator(ctx, "lick", user)
         await weeb_maker(ctx, "lick", message)
 
@@ -117,10 +105,7 @@ class Weeb:
 
     @commands.command(aliases=["headpat", "pet"])
     async def pat(self, ctx, *, user: discord.Member):
-        """Pat a user!
-
-        * user - The user to be patted.
-        """
+        """Pat a user!"""
         message = await message_generator(ctx, "pat", user)
         await weeb_maker(ctx, "pat", message)
 
@@ -131,10 +116,7 @@ class Weeb:
 
     @commands.command()
     async def slap(self, ctx, *, user: discord.Member):
-        """Slap a user!
-
-        * user - The user to be slapped.
-        """
+        """Slap a user!"""
         message = await message_generator(ctx, "slap", user)
         await weeb_maker(ctx, "slap", message)
 
@@ -145,19 +127,13 @@ class Weeb:
 
     @commands.command()
     async def stare(self, ctx, *, user: discord.Member):
-        """Stare at a user!
-
-        * user - The user to be stared at.
-        """
+        """Stare at a user!"""
         message = await message_generator(ctx, "stare", user)
         await weeb_maker(ctx, "stare", message)
 
     @commands.command()
     async def tickle(self, ctx, *, user: discord.Member):
-        """Tickle a user!
-
-        * user - The user to be tickled.
-        """
+        """Tickle a user!"""
         message = await message_generator(ctx, "tickle", user)
         await weeb_maker(ctx, "tickle", message)
 
