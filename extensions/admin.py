@@ -118,7 +118,7 @@ class Admin:
     @commands.command(aliases=['sys', 's', 'run', 'sh'], description="Run system commands.")
     @permissions.owner()
     async def system(self, ctx, *, command : str):
-        'Run system commands.'
+        'Run system commands'
         message = await ctx.send('<a:typing:393848431413559296> Processing...')
         result = []
         try:
