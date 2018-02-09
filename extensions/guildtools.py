@@ -72,6 +72,7 @@ class GuildTools:
 
     @commands.command()
     async def ginfo(self, ctx, *, guildname: str = None):
+        """Guild info"""
         if guildname != None:
             try:
                 gid = int(guildname)
