@@ -265,7 +265,7 @@ class ModLogs:
                 ctx.guild.id)).update(data).run(self.conn)
         else:
             r.table('settings').insert(data, conflict='replace').run(self.conn)
-        await ctx.send(':ok_hand:')
+        await ctx.send('Okay.')
 
     @commands.command(aliases=['cfg'])
     async def view_config(self, ctx):
@@ -288,7 +288,7 @@ class ModLogs:
             return await ctx.send(':x: This guild has no configuration.')
         meme = r.table('settings').filter(lambda a: a['guild'] == str(
             ctx.guild.id)).delete().run(self.conn)
-        await ctx.send(':ok_hand:')
+        await ctx.send('Okay.')
 
     @commands.command(hidden=True)
     @permissions.owner()
