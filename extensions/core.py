@@ -93,7 +93,7 @@ class Core:
         pong = await ctx.send("...")
         after = time.monotonic()
         ping = (after - before) * 1000
-        await pong.edit(content="`PING discordapp.com {}ms`".format(int(ping)))
+        await pong.edit(content="P-pong! ...{}ms... I know, it's pretty slow...".format(int(ping)))
 
     @commands.command()
     async def prefix(self, ctx, method: str, *, prefix: str=None): # ported from rybot
@@ -144,7 +144,7 @@ class Core:
         if to in self.bot.all_commands:
             return await ctx.send(':x: The command to register is already a thing.')
         self.bot.all_commands[to] = fromcmd
-        await ctx.send(':ok_hand: Registered. Or at least I hope. This command is in beta and probably buggy. It may not work.')
+        await ctx.send('Okay. Done.')
 
 
 def setup(bot):
