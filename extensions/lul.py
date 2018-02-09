@@ -114,7 +114,7 @@ class Lul:
 
     @commands.command(description="Nouns.")
     async def botgen(self, ctx):
-        """Get your new bot name."""
+        """Get your new bot name"""
         with open("nouns.txt") as lol:
             nouns = lol.read().split('\n')
         
