@@ -71,6 +71,16 @@ class Moderation:
                 return
             if len(before.roles) < len(after.roles):
                 return
+            # they had a role removed from them
+            if after.roles == [after.guild.default_role]:
+                # no roles; should be after a manual untoss
+                try:
+                    if self.rolebans[after.id][after.guild.id] in [None, []]:
+                        return # they weren't rolebanned
+                    await after.edit(roles=self.rolebans[after.id][after.guild.id], reason='[Manual role restore]')
+                    self.rolebans[after.id][after.guild.id] = None
+                except KeyError or discord.Forbidden:
+                    return
 
     def __unload(self):
         self.task.cancel()
@@ -132,6 +142,7 @@ Please unban them! Their ban has expired on {hecc}.
         parser.add_argument('-u', '--users', nargs='+', required=True, metavar='@user', help='List of users to mute.')
         parser.add_argument('-t', '--tier', metavar='tier', type=int, help='Tier number for the type of mute.')
         parser.add_argument('-r', '--reason', metavar='reason', help='The reason for the mute.')
+        parser.add_argument('-s', '--strip', action='store_true', help='Brings back old roleban behaviour.')
         try:
             args = parser.parse_args(args)
         except argparse.DiscordArgparseError or argparse.DiscordArgparseMessage as e:
@@ -176,10 +187,12 @@ Please unban them! Their ban has expired on {hecc}.
                 if x in roles:
                     return await ctx.send(':x: One or more people are already muted.')
         for i in people:
-            try:
-                self.rolebans[i.id][ctx.guild.id] = i.roles
-            except KeyError:
-                pass
+            if args.strip is not None:
+                try:
+                    self.rolebans[i.id][ctx.guild.id] = i.roles
+                    await i.edit(roles=[roles[tier]], reason=f'[{ctx.author}] {args.reason}' if args.reason != None else f'Mute by {ctx.author}')
+                except KeyError:
+                    pass
             await i.add_roles(roles[tier], reason=f'[{ctx.author}] {args.reason}' if args.reason != None else f'Mute by {ctx.author}')
         await ctx.send(f':ok_hand: {", ".join([f"**{i.name}**#{i.discriminator}" for i in people])} {"has" if len(people) == 1 else "have"} been muted with tier **{tier}**, which is role {roles[tier]}.')
 
@@ -235,7 +248,9 @@ Please unban them! Their ban has expired on {hecc}.
             return await ctx.send(':x: One or more people were not muted.')
         for person in people:
             try:
-                self.rolebans[i.id][ctx.guild.id] = None
+                if self.rolebans[i.id][ctx.guild.id] is not None:
+                    await person.edit(roles=self.rolebans[i.id][ctx.guild.id], reason=f'[{ctx.author}] {args.reason}' if args.reason != None else f'Unmute by {ctx.author}')
+                    self.rolebans[i.id][ctx.guild.id] = None
             except KeyError:
                 pass
             await person.remove_roles(*a[person.id], reason=f'[{ctx.author}] {args.reason}' if args.reason != None else f'Unmute by {ctx.author}')
