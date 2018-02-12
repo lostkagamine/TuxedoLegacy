@@ -32,7 +32,7 @@ class Moderation:
     def __init__(self, bot):
         self.bot = bot
         self.conn = bot.conn
-        self.mutes = {}
+        self.rolebans = {}
         self.task = bot.loop.create_task(self.loop())
         @bot.listen('on_member_update')
         async def on_member_update(before, after):
