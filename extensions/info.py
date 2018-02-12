@@ -50,7 +50,7 @@ class Info:
         total_ram = self.humanbytes(mem[0])
         available_ram = self.humanbytes(mem[1])
         usage = self.humanbytes(currproc.memory_info().rss)
-        streams = await ctx.bot.lavalink.get_playing()
+        streams = await ctx.bot.lavalink.client.get_playing()
         text=f"""
 ```
 Total RAM: {total_ram}
