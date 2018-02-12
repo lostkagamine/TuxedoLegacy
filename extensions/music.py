@@ -26,10 +26,13 @@ class Music:
                     await c.send(embed=embed)
         elif event == 'QueueEndEvent':
             c = player.fetch('channel')
+            vc = player.connected_channel
+            if vc:
+                vc.disconnect()
             if c:
                 c = self.bot.get_channel(c)
                 if c:
-                    await c.send('Queue ended! Why not queue more songs?')
+                    await c.send('The queue ended, so I left the voice channel.')
 
     @commands.command(aliases=['p'])
     async def play(self, ctx, *, query):
