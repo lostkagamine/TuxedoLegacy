@@ -35,7 +35,7 @@ class Info:
     @commands.command(aliases=['add'])
     async def invite(self, ctx):
         """Sends the invite to Erio"""
-        text = f'**Add Tuxedo**\n\nAdd Erio with this link: <{self.bot.invite_url}>'
+        text = f'**Add Erio**\n\nAdd Erio with this link: <{self.bot.invite_url}>'
         try:
             await ctx.author.send(text)
             await ctx.send(":mailbox_with_mail: Check your DMs.")
@@ -50,7 +50,7 @@ class Info:
         total_ram = self.humanbytes(mem[0])
         available_ram = self.humanbytes(mem[1])
         usage = self.humanbytes(currproc.memory_info().rss)
-        streams = await ctx.bot.cogs['Music'].lavalink.get_playing()
+        streams = await ctx.bot.lavalink.get_playing()
         text=f"""
 ```
 Total RAM: {total_ram}
@@ -71,7 +71,7 @@ Number of current music streams: {streams}
         text = f"""
 ```ini
 [ Erio ]
-An open-source moderation bot for Discord
+An open-source multi-purpose bot for Discord
 Made by ry00001 in Python 3.6 using Discord.py
 Source code freely available at https://github.com/ry00001/Erio
 
