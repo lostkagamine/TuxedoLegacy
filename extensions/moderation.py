@@ -241,7 +241,10 @@ Please unban them! Their ban has expired on {hecc}.
         if any(all(i == None for i in x) for x in a.values()):
             return await ctx.send(':x: One or more people were not muted.')
         for person in people:
-            self.rolebans[i.id][ctx.guild.id] = None
+            try:
+                self.rolebans[i.id][ctx.guild.id] = None
+            except KeyError:
+                pass
             await person.remove_roles(*a[person.id], reason=f'[{ctx.author}] {args.reason}' if args.reason != None else f'Unmute by {ctx.author}')
         await ctx.send(f':ok_hand: {", ".join([f"**{i.name}**#{i.discriminator}" for i in people])} {"has" if len(people) == 1 else "have"} been unmuted.')
 
