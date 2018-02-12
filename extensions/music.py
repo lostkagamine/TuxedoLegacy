@@ -30,7 +30,11 @@ class Music:
             if c:
                 c = self.bot.get_channel(c)
                 if c:
-                    await c.send('The queue ended, so I left the voice channel.')
+                    await c.send(embed=discord.Embed(
+                        colour=0xFF0000,
+                        title='Queue Ended',
+                        description='I left the voice channel due to the queue ending.'
+                    ))
 
     @commands.command(aliases=['p'])
     async def play(self, ctx, *, query):
