@@ -28,7 +28,7 @@ class Music:
             c = player.fetch('channel')
             vc = player.connected_channel
             if vc:
-                vc.disconnect()
+                await vc.disconnect()
             if c:
                 c = self.bot.get_channel(c)
                 if c:
