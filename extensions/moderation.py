@@ -71,16 +71,6 @@ class Moderation:
                 return
             if len(before.roles) < len(after.roles):
                 return
-            # they had a role removed from them
-            if after.roles == [after.guild.default_role]:
-                # no roles; should be after a manual untoss
-                try:
-                    if self.rolebans[after.id][after.guild.id] in [None, []]:
-                        return # they weren't rolebanned
-                    await after.edit(roles=self.rolebans[after.id][after.guild.id], reason='[Manual role restore]')
-                    self.rolebans[after.id][after.guild.id] = None
-                except KeyError or discord.Forbidden:
-                    return
 
     def __unload(self):
         self.task.cancel()
