@@ -26,9 +26,7 @@ class Music:
                     await c.send(embed=embed)
         elif event == 'QueueEndEvent':
             c = player.fetch('channel')
-            vc = player.connected_channel
-            if vc:
-                await vc.disconnect()
+            await player.disconnect()
             if c:
                 c = self.bot.get_channel(c)
                 if c:
