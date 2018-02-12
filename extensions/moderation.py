@@ -186,7 +186,10 @@ Please unban them! Their ban has expired on {hecc}.
                 if x in roles:
                     return await ctx.send(':x: One or more people are already muted.')
         for i in people:
-            self.rolebans[i.id][ctx.guild.id] = i.roles
+            try:
+                self.rolebans[i.id][ctx.guild.id] = i.roles
+            except KeyError:
+                pass
             await i.add_roles(roles[tier], reason=f'[{ctx.author}] {args.reason}' if args.reason != None else f'Mute by {ctx.author}')
         await ctx.send(f':ok_hand: {", ".join([f"**{i.name}**#{i.discriminator}" for i in people])} {"has" if len(people) == 1 else "have"} been muted with tier **{tier}**, which is role {roles[tier]}.')
 
