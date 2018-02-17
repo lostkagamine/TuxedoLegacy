@@ -5,7 +5,6 @@ import discord
 from discord.ext import commands
 import psutil
 
-
 def propcheck(prop, d):
     return d[prop] if d[prop] else "None"
 
