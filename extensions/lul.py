@@ -30,7 +30,7 @@ class Lul:
             return "th"
     
     @commands.command()
-    async def shuffle(self, stri):
+    async def shuffle(self, ctx, *, stri):
         await ctx.send(f'```\n{randomness.bad_shuffle(stri)}```')
 
     @commands.command()
