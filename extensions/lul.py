@@ -34,6 +34,11 @@ class Lul:
         await ctx.send(f'```\n{randomness.bad_shuffle(stri)}```')
 
     @commands.command()
+    async def what(self, ctx, *, question):
+        if question == 'language are you coded in?':
+            await ctx.send('Py- er, yes.')
+
+    @commands.command()
     async def cat(self, ctx):
         """Sends a cat"""
         with ctx.channel.typing():
