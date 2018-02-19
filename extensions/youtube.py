@@ -6,6 +6,7 @@ from discord.ext import commands
 
 
 class Youtube:
+
     def __init__(self, bot):
         self.bot = bot
 
@@ -15,8 +16,8 @@ class Youtube:
         search = parse.quote(query)
         async with aiohttp.ClientSession() as session:
             response = await session.get(
-                f"https://www.youtube.com/results?search_query={search}").text
-        result = BeautifulSoup(response, "html.parser")
+                f"https://www.youtube.com/results?search_query={search}")
+        result = BeautifulSoup(await response.text(), "html.parser")
         await ctx.send("https://www.youtube.com{}".format(
             result.find_all(attrs={'class': 'yt-uix-tile-link'})[0]
                   .get('href')))
