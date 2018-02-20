@@ -8,7 +8,7 @@ from discord.ext import commands
 class Garfield:
 
     @commands.command(aliases=['GC', "Gc", "garfield", "Garfield"])
-    async def gc(self, ctx, year:int=None, month:int=None, day:int=None):
+    async def gc(self, ctx, year: int=None, month: int=None, day: int=None):
         """Gets Garfield comics"""
         if year is None:
             fake = faker.Faker()
@@ -28,7 +28,7 @@ class Garfield:
                 return
             else:
                 pass
-                
+
         else:
             return await ctx.send("please enter valid date!!")
 
