@@ -61,6 +61,7 @@ Number of extensions present: {len(ctx.bot.cogs)}
 Number of guilds: {len(ctx.bot.guilds)}
 Number of users: {len(ctx.bot.users)}
 Uptime: {humanize.naturaldelta(datetime.datetime.utcnow() - self.bot.uptime)}
+Bot started on (UTC): {self.bot.uptime}
 ```
 """
         await ctx.send(text)
