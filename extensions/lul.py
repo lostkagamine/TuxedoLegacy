@@ -31,10 +31,12 @@ class Lul:
     
     @commands.command()
     async def shuffle(self, ctx, *, stri):
+        'Shuffles a string, badly.'
         await ctx.send(f'```\n{randomness.bad_shuffle(stri)}```')
 
     @commands.command()
     async def what(self, ctx, *, question):
+        '@Erio what language are you coded in?'
         if question == 'language are you coded in?':
             await ctx.send('Py- er, yes.')
 

@@ -9,6 +9,7 @@ import asyncio
 import raven
 import rethinkdb as r
 import sys
+import datetime
 from utils import permissions
 nopls = [110373943822540800]
 
@@ -38,6 +39,7 @@ class Bot(commands.Bot):
     async def on_ready(self):
         app_info = await self.application_info()
         self.invite_url = dutils.oauth_url(app_info.id)
+        self.uptime = datetime.datetime.utcnow()
         print(
             f'Logged in as {self.user.name}\nBot invite link: {self.invite_url}')
         await self.change_presence(game=discord.Game(name=f'{self.prefix[0]}help | Version {self.version}', type=0))
