@@ -42,11 +42,6 @@ class Info:
             await ctx.send(":mailbox_with_mail: Check your DMs.")
         except discord.Forbidden:
             await ctx.send(text)
-
-    @commands.command()
-    async def uptime(self, ctx):
-        """Tells you how much time Erio's been up for."""
-        await ctx.send(f'```\nI have been up for {humanize.naturaldelta(datetime.datetime.utcnow() - self.bot.uptime)}.```')
         
     @commands.command()
     async def stats(self, ctx):
@@ -65,6 +60,7 @@ Number of bot commands: {len(ctx.bot.commands)}
 Number of extensions present: {len(ctx.bot.cogs)}
 Number of guilds: {len(ctx.bot.guilds)}
 Number of users: {len(ctx.bot.users)}
+Uptime: {humanize.naturaldelta(datetime.datetime.utcnow() - self.bot.uptime)}
 ```
 """
         await ctx.send(text)
