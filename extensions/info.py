@@ -5,6 +5,7 @@ import discord
 from discord.ext import commands
 import psutil
 import humanize
+import datetime
 
 def propcheck(prop, d):
     return d[prop] if d[prop] else "None"
