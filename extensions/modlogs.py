@@ -225,7 +225,8 @@ class ModLogs:
         elif _type == 'emote':
             r2 = re.match(emote_regex_2, value)
             if r2:
-                return r2.group(1)
+                return value
+        else:
             return value
 
     def do_list(self, ctx, stuff):
