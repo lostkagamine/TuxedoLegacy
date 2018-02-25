@@ -13,3 +13,4 @@ Do NOT host a public instance of Erio __without express permission from me, ry00
 Liara/Pandentia: Making the API used in global bans, and eval. Overall, an awesome guy.  
 Hexadecimal™/HexadecimalPython: V1 Bot core  
 Kromatic/Devoxin: Hosting & V2 Rewrite Bot core, [Lavalink.py](https://github.com/Devoxin/Lavalink.py). Without your help, Erio's music wouldn't exist. Thank you so much!
+LewisTehMinerz/IsGeorgeCurious: Hosting Erio
