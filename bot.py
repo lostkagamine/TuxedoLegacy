@@ -8,15 +8,16 @@ import random
 import asyncio
 import raven
 import rethinkdb as r
+import re
 import sys
 import datetime
+from discord.ext.commands.view import StringView
 from utils import permissions
 nopls = [110373943822540800]
 
 asd = 236726289665490944 # Automatic Sink Detection (tm)
 
 class Bot(commands.Bot):
-
     def __init__(self, **options):
         super().__init__(self.getPrefix, **options)
         print('Performing pre-run tasks...')
@@ -33,6 +34,61 @@ class Bot(commands.Bot):
         self.init_rethinkdb()
         print('Pre-run tasks complete.')
 
+    async def get_context(self, message, *, cls=discord.ext.commands.Context): # perryyyyyyyy
+        view = StringView(message.content)
+        ctx = cls(prefix=None, view=view, bot=self, message=message)
+
+        if self._skip_check(message.author.id, self.user.id):
+            return ctx
+
+        prefix = await self.get_prefix(message)
+        invoked_prefix = prefix
+
+        if isinstance(prefix, str):
+            if not view.skip_string(prefix):
+                return ctx
+        elif isinstance(prefix, list) \
+                and any([isinstance(p, list) for p in prefix]):
+            # Regex time
+            for p in prefix:
+                if isinstance(p, list):
+                    if p[1]:
+                        # regex prefix parsing
+                        reg = re.match(p[0], message.content)
+                        if reg:
+                            # Matches, this is the prefix
+                            invoked_prefix = p
+
+                            # redo the string view with the capture group
+                            view = StringView(reg.groups()[0])
+
+                            invoker = view.get_word()
+                            ctx.invoked_with = invoker
+                            ctx.prefix = invoked_prefix
+                            ctx.command = self.all_commands.get(reg.groups()[0])
+                            return ctx
+                    else:
+                        # regex has highest priority or something idk
+                        # what I'm doing help
+                        continue
+
+            # No prefix found, use the branch below
+            prefix = [p[0] for p in prefix if not p[1]]
+            invoked_prefix = discord.utils.find(view.skip_string, prefix)
+            if invoked_prefix is None:
+                return ctx
+        else:
+            invoked_prefix = discord.utils.find(view.skip_string, prefix)
+            if invoked_prefix is None:
+                return ctx
+
+        invoker = view.get_word()
+        ctx.invoked_with = invoker
+        ctx.view = view
+        ctx.prefix = invoked_prefix
+        ctx.command = self.all_commands.get(invoker)
+        return ctx
+
     async def getPrefix(self, bot, msg):
         return commands.when_mentioned_or(*self.prefix)(bot, msg)
 
@@ -42,7 +98,7 @@ class Bot(commands.Bot):
         self.uptime = datetime.datetime.utcnow()
         print(
             f'Logged in as {self.user.name}\nBot invite link: {self.invite_url}')
-        await self.change_presence(game=discord.Game(name=f'{self.prefix[0]}help | Version {self.version}', type=0))
+        await self.change_presence(game=discord.Game(name=f'{self.prefix[0][0]}help | Version {self.version}', type=0))
         self.load_extension('extensions.core')
 
     async def on_message(self, message):
