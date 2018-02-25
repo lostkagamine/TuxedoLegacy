@@ -15,7 +15,7 @@ class Translate:
     async def translate(self, ctx, lang_to_trans, *, msg):
         """Translates words from one language to another"""
         some_var = requests.get(
-           "https://hastebin.com/ucurijufoh.json", verify=False).text
+        "https://cdn.discordapp.com/attachments/417326852840095758/417326948201791489/langs.json", verify=False).text
         language_codes = json.loads(some_var)
         real_language = False
         lang_to_trans = lang_to_trans.lower()
