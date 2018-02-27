@@ -69,7 +69,6 @@ class Starboard:
                 e.timestamp = datetime.datetime.utcnow()
                 if r.message.attachments:
                     e.set_image(url=r.message.attachments[0].url)
-
                 # Set the custom star for the first 5 stars a message gets, then switch to normal behavior.
                 if sb_name is not '⭐' and count < 5:
                     fallback = f'{sb_name} **{count}** <#{r.message.channel.id}>'
