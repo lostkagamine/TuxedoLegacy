@@ -15,7 +15,8 @@ from discord.ext.commands.view import StringView
 from utils import permissions
 nopls = [110373943822540800]
 
-asd = 236726289665490944 # Automatic Sink Detection (tm)
+asd = 236726289665490944  # Automatic Sink Detection (tm)
+
 
 class Bot(commands.Bot):
     def __init__(self, **options):
@@ -30,11 +31,12 @@ class Bot(commands.Bot):
         self.remove_command("help")
         self.init_raven()
         self.rdb = self.config['RETHINKDB']['DB']
-        self.rtables = ['gbans', 'settings', 'modlog', 'tempbans', 'starboard', 'warnings']
+        self.rtables = ['gbans', 'settings', 'modlog',
+                        'tempbans', 'starboard', 'warnings']
         self.init_rethinkdb()
         print('Pre-run tasks complete.')
 
-    async def get_context(self, message, *, cls=discord.ext.commands.Context): # perryyyyyyyy
+    async def get_context(self, message, *, cls=discord.ext.commands.Context):  # perryyyyyyyy
         view = StringView(message.content)
         ctx = cls(prefix=None, view=view, bot=self, message=message)
 
@@ -65,7 +67,8 @@ class Bot(commands.Bot):
                             invoker = view.get_word()
                             ctx.invoked_with = invoker
                             ctx.prefix = invoked_prefix
-                            ctx.command = self.all_commands.get(reg.groups()[0])
+                            ctx.command = self.all_commands.get(
+                                reg.groups()[0])
                             return ctx
                     else:
                         # regex has highest priority or something idk
@@ -139,7 +142,7 @@ class Bot(commands.Bot):
             sys.exit(1)
         print('RethinkDB initialisation successful.')
 
-    def find_command(self, cmdname:str):
+    def find_command(self, cmdname: str):
         for i in self.commands:
             if i.name == cmdname:
                 return i
@@ -153,7 +156,6 @@ class Bot(commands.Bot):
         settings = list(r.table('settings').filter(
             lambda a: a['guild'] == str(g.id)).run(self.conn))[0]
         return settings
-
 
 
 async def cmd_help(ctx):
@@ -172,6 +174,12 @@ bot = Bot()
 async def on_command_error(ctx, exception):
     if isinstance(exception, commands_errors.MissingRequiredArgument):
         await cmd_help(ctx)
+
+    elif isinstance(error, permissions.WrongRole):
+        await ctx.send(
+            f"\u274C You must be a(n) {error}.",
+            delete_after=3)
+
     elif isinstance(exception, commands_errors.CommandInvokeError):
         exception = exception.original
         _traceback = traceback.format_tb(exception.__traceback__)
@@ -188,8 +196,10 @@ async def on_command_error(ctx, exception):
                         value="```py\nTraceback (most recent call last):\n{}{}: {}```".format(_traceback, type(exception).__name__, exception))
         ctx.bot.sentry.captureMessage(sentry_string)
         await ctx.send(embed=error)
+
     elif isinstance(exception, commands_errors.CommandOnCooldown):
         await ctx.send('This command is on cooldown. You can use this command in `{0:.2f}` seconds.'.format(exception.retry_after))
+
     else:
         ctx.send(exception)
 
