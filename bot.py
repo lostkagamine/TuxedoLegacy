@@ -175,9 +175,9 @@ async def on_command_error(ctx, exception):
     if isinstance(exception, commands_errors.MissingRequiredArgument):
         await cmd_help(ctx)
 
-    elif isinstance(error, permissions.WrongRole):
+    elif isinstance(exception, permissions.WrongRole):
         await ctx.send(
-            f"\u274C You must be a(n) {error}.",
+            f"\u274C You must be a(n) {exception}.",
             delete_after=3)
 
     elif isinstance(exception, commands_errors.CommandInvokeError):
