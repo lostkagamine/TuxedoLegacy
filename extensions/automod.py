@@ -4,7 +4,7 @@ import rethinkdb as r
 from utils import database
 import re
 
-irg = r'(?:https?:\/\/)?discord(?:app)?\.(?:com|gg)+\/(?:invite\/)*([A-Za-z_0-9]+)'
+irg = r'(?:https?:\/\/)(?:www\.)?discord(?:app)?\.(?:com|gg)+\/(?:invite\/)*([A-Za-z_0-9]+)'
 irg = re.compile(irg, re.M) # lol
 
 # WHEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE

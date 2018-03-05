@@ -4,6 +4,8 @@ import cpuinfo
 import discord
 from discord.ext import commands
 import psutil
+import humanize
+import datetime
 
 def propcheck(prop, d):
     return d[prop] if d[prop] else "None"
@@ -58,6 +60,8 @@ Number of bot commands: {len(ctx.bot.commands)}
 Number of extensions present: {len(ctx.bot.cogs)}
 Number of guilds: {len(ctx.bot.guilds)}
 Number of users: {len(ctx.bot.users)}
+Uptime: {humanize.naturaldelta(datetime.datetime.utcnow() - self.bot.uptime)}
+Bot started on (UTC): {self.bot.uptime.strftime('%a %d %b %Y - %I:%M:%S %p')}
 ```
 """
         await ctx.send(text)
