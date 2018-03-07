@@ -421,7 +421,7 @@ Please unban them! Their ban has expired on {hecc}.
             return await uwu.delete()
 
     @commands.has_permissions(manage_messages=True)
-    @commands.command(aliases=['p'], pass_context=True, no_pm=True)
+    @commands.command(no_pm=True)
     async def purge(self, ctx, msgs: int, *, txt=None):
         """Purge last n messages or even messages with specified words"""
         await ctx.message.delete()
