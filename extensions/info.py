@@ -89,6 +89,9 @@ Liara, for being awesome in general
 Liz, for being a human rubber ducky for tempbans. (Rubber ducky debugging helps.)
 Ged, for also being awesome and hosting
 All my awesome users!
+
+[ Support ]
+Discord Server : https://discord.gg/3wrJzZu
 ```
         """
 
