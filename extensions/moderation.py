@@ -420,18 +420,23 @@ Please unban them! Their ban has expired on {hecc}.
             await asyncio.sleep(3)
             return await uwu.delete()
 
-    @commands.group(invoke_without_command=True, aliases=['prune'])
-    async def purge(self, ctx):
-        raise commands.errors.MissingRequiredArgument()
-
-    @purge.group(name='all')
-    async def _purge_all(self, ctx, count:int=50):
-        if not ctx.author.permissions_in(ctx.channel).manage_messages:
-            return await ctx.send(':no_entry_sign: You don\'t have enough permissions. You need Manage Messages.')
-        try:
-            await ctx.channel.purge(count=count)
-        except Exception:
-            pass
+    @commands.has_permissions(manage_messages=True)
+    @commands.command(aliases=['p'], pass_context=True, no_pm=True)
+    async def purge(self, ctx, msgs: int, *, txt=None):
+        """Purge last n messages or even messages with specified words"""
+        await ctx.message.delete()
+        if msgs < 10000:
+            async for message in ctx.message.channel.history(limit=msgs):
+                try:
+                    if txt:
+                        if txt.lower() in message.content.lower():
+                            await message.delete()
+                    else:
+                        await message.delete()
+                except:
+                    pass
+        else:
+            await ctx.send('Too many messages to delete. Enter a number < 10000')
 
     @commands.command(description="Ban a user, even when not in the server.", aliases=['shadowban', 'hban'])
     async def hackban(self, ctx, user : int, *, reason : str = None):
