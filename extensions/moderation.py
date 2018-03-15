@@ -452,7 +452,7 @@ Please unban them! Their ban has expired on {hecc}.
 
     @commands.command(description='Ping an online moderator.', aliases=['pingmod'])
     async def pingmods(self, ctx, *, reason : str = None):
-        """Ban an online staff member"""
+        """Ping an online staff member"""
         if ctx.guild.id in pingmods_disabled:
             return await ctx.send(':x: This feature isn\'t available here.')
         mods = [i for i in ctx.guild.members if (i.permissions_in(ctx.channel).kick_members or i.permissions_in(ctx.channel).ban_members or i.permissions_in(ctx.channel).manage_roles) and
@@ -464,6 +464,50 @@ Please unban them! Their ban has expired on {hecc}.
         reasonless_string = f'Mod Autoping: <@{mod.id}> (by **{ctx.author.name}**#{ctx.author.discriminator})'
         reason_string = f'Mod Autoping:\n**{reason}**\n<@{mod.id}> (by **{ctx.author.name}**#{ctx.author.discriminator})'
         await ctx.send(reason_string if reason != None else reasonless_string)
+
+    @commands.command(description='Ping an online helper in Discord Bots.', aliases=['pinghelper'], hidden=True)
+    async def pinghelpers(self, ctx, *, reason : str = None):
+        """Ping an online helper in the Discord Bots server."""
+        mods = [i for i in ctx.guild.members if not i.bot and
+                "407326634819977217" in [r.id for r in i.roles] and
+                (i.status == discord.Status.online or i.status == 'online')]
+        if mods == []:
+            return await ctx.send(':x: No online helpers available! You may want to ping a moderator.')
+        mod = random.choice(mods)
+        reasonless_string = f'Helper Autoping: <@{mod.id}> (by **{ctx.author.name}**#{ctx.author.discriminator})'
+        reason_string = f'Helper Autoping:\n**{reason}**\n<@{mod.id}> (by **{ctx.author.name}**#{ctx.author.discriminator})'
+        await ctx.send(reason_string if reason != None else reasonless_string);
+
+    @commands.command(description='View online helpers in Discord Bots.')
+    async def helpers(self, ctx):
+        """View online helpers in the Discord Bots server."""
+        online = []
+        offline = []
+        idle = []
+        dnd = []
+        icons = {'online': '<:online:313956277808005120>', 'offline': '<:offline:313956277237710868>',
+                 'idle': '<:away:313956277220802560>', 'dnd': '<:dnd:313956276893646850>',
+                 'invis': '<:invisible:313956277107556352>'}  # dbots icons
+        mods = [i for i in ctx.guild.members if not i.bot and
+                "407326634819977217" in [r.id for r in i.roles]]
+        for i in mods:  # HIGHLIGHT-PROOF (tm) TECHNOLOGY
+            if i.status == discord.Status.online: online.append(
+                f'**{i.name[0:1]}\u200b{i.name[1:len(i.name)]}**#{i.discriminator}')
+            if i.status == discord.Status.offline: offline.append(
+                f'**{i.name[0:1]}\u200b{i.name[1:len(i.name)]}**#{i.discriminator}')
+            if i.status == discord.Status.idle: idle.append(
+                f'**{i.name[0:1]}\u200b{i.name[1:len(i.name)]}**#{i.discriminator}')
+            if i.status == discord.Status.dnd: dnd.append(
+                f'**{i.name[0:1]}\u200b{i.name[1:len(i.name)]}**#{i.discriminator}')
+
+        msg = f'''
+        **Helpers in {ctx.guild}**:
+        {icons['online']} **Online:** {' | '.join(online) if online != [] else 'None'}
+        {icons['idle']} **Away:** {' | '.join(idle) if idle != [] else 'None'}
+        {icons['dnd']} **DnD:** {' | '.join(dnd) if dnd != [] else 'None'}
+        {icons['offline']} **Offline:** {' | '.join(offline) if offline != [] else 'None'}
+        '''
+        await ctx.send(msg)
 
     @commands.command(description='Decancer a member.')
     async def decancer(self, ctx, member : discord.Member):
