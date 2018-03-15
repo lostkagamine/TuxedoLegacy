@@ -468,6 +468,8 @@ Please unban them! Their ban has expired on {hecc}.
     @commands.command(description='Ping an online helper in Discord Bots.', aliases=['pinghelper'], hidden=True)
     async def pinghelpers(self, ctx, *, reason : str = None):
         """Ping an online helper in the Discord Bots server."""
+        if ctx.guild.id != "110373943822540800":
+            return
         mods = [i for i in ctx.guild.members if not i.bot and
                 "407326634819977217" in [r.id for r in i.roles] and
                 (i.status == discord.Status.online or i.status == 'online')]
@@ -481,6 +483,8 @@ Please unban them! Their ban has expired on {hecc}.
     @commands.command(description='View online helpers in Discord Bots.')
     async def helpers(self, ctx):
         """View online helpers in the Discord Bots server."""
+        if ctx.guild.id != "110373943822540800":
+            return
         online = []
         offline = []
         idle = []
