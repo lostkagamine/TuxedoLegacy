@@ -7,8 +7,8 @@ from discord.ext import commands
 
 class Cnh:
 
-    @commands.command(aliases=['cnh', 'CNH', 'calvinandhobbes'])
-    async def CalvinandHobbes(self, ctx, year:int=None, month:int=None, day:int=None):
+    @commands.command(aliases=['cnh', 'CNH'])
+    async def calvinandhobbes(self, ctx, year:int=None, month:int=None, day:int=None):
         """Calvin and Hobbes comics"""
         if year is None:
             fake = faker.Faker()
