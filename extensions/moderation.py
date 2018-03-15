@@ -491,7 +491,7 @@ Please unban them! Their ban has expired on {hecc}.
         reason_string = f'Pelper Autohing:\n**{reason}**\n<@{helper.id}> (by **{ctx.author.name}**#{ctx.author.discriminator})'
         await ctx.send(reason_string if reason != None else reasonless_string);
 
-    @commands.command(description='View online helpers in Discord Bots.')
+    @commands.command(description='View online helpers in Discord Bots.', aliases=['helper'], hidden=True)
     async def helpers(self, ctx):
         """View online helpers in the Discord Bots server."""
         if ctx.guild.id != 110373943822540800:
