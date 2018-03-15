@@ -22,7 +22,6 @@ class Bot(commands.Bot):
     def __init__(self, **options):
         super().__init__(self.getPrefix, **options)
         print('Performing pre-run tasks...')
-        self.cmd_help = cmd_help
         self.maintenance = False
         with open("config.json") as f:
             self.config = json.load(f)
@@ -158,22 +157,13 @@ class Bot(commands.Bot):
         return settings
 
 
-async def cmd_help(ctx):
-    if ctx.invoked_subcommand:
-        _help = await ctx.bot.formatter.format_help_for(ctx,
-                                                        ctx.invoked_subcommand)
-    else:
-        _help = await ctx.bot.formatter.format_help_for(ctx, ctx.command)
-    for page in _help:
-        await ctx.send(page)
-
 bot = Bot()
 
 
 @bot.listen("on_command_error")
 async def on_command_error(ctx, exception):
     if isinstance(exception, commands_errors.MissingRequiredArgument):
-        await cmd_help(ctx)
+        await ctx.send("You are missing required aruments.")
 
     elif isinstance(exception, permissions.WrongRole):
         await ctx.send(
@@ -203,18 +193,5 @@ async def on_command_error(ctx, exception):
     else:
         ctx.send(exception)
 
-
-@bot.command(aliases=['man'])
-async def help(ctx, command: str = None):
-    if ctx.prefix == "pls " and ctx.invoked_with == "help":
-        return
-    cmd = ctx.bot.find_command(command)
-    helptext = await ctx.bot.formatter.format_help_for(ctx, cmd if cmd is not False else ctx.bot)
-    helptext = helptext[0]
-    try:
-        await ctx.author.send(helptext)
-        await ctx.send(":mailbox_with_mail: Check your DMs.")
-    except discord.Forbidden:
-        await ctx.send(helptext)
 
 bot.run(bot.config["BOT_TOKEN"])
