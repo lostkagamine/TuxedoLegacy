@@ -483,8 +483,8 @@ Please unban them! Their ban has expired on {hecc}.
     @commands.command(description='View online helpers in Discord Bots.')
     async def helpers(self, ctx):
         """View online helpers in the Discord Bots server."""
-        if ctx.guild.id != "110373943822540800":
-            return
+       #if ctx.guild.id != "110373943822540800":
+        #    return
         online = []
         offline = []
         idle = []
