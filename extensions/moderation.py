@@ -481,6 +481,16 @@ Please unban them! Their ban has expired on {hecc}.
         reason_string = f'Helper Autoping:\n**{reason}**\n<@{helper.id}> (by **{ctx.author.name}**#{ctx.author.discriminator})'
         await ctx.send(reason_string if reason != None else reasonless_string);
 
+    @commands.command(description='Hing an online pelper in Discord Bots.', aliases=['hingpelper'], hidden=True)
+    async def hingpelpers(self, ctx, *, reason : str = None):
+        """Hing an online pelper in the Discord Bots server."""
+        if ctx.guild.id != 110373943822540800:
+            return
+        helper = ctx.author
+        reasonless_string = f'Pelper Autohing: <@{helper.id}> (by **{ctx.author.name}**#{ctx.author.discriminator})'
+        reason_string = f'Pelper Autohing:\n**{reason}**\n<@{helper.id}> (by **{ctx.author.name}**#{ctx.author.discriminator})'
+        await ctx.send(reason_string if reason != None else reasonless_string);
+
     @commands.command(description='View online helpers in Discord Bots.')
     async def helpers(self, ctx):
         """View online helpers in the Discord Bots server."""
