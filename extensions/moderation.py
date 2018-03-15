@@ -472,7 +472,8 @@ Please unban them! Their ban has expired on {hecc}.
             return
         mods = [i for i in ctx.guild.members if not i.bot and
                 407326634819977217 in [r.id for r in i.roles] and
-                (i.status == discord.Status.online or i.status == 'online')]
+                113379036524212224 not in [r.id for r in i.roles] and
+                ((i.status == discord.Status.online or i.status == 'online') or (i.status == discord.Status.dnd or i.status == 'dnd'))]
         if mods == []:
             return await ctx.send(':x: No online helpers available! You may want to ping a moderator.')
         mod = random.choice(mods)
@@ -493,7 +494,8 @@ Please unban them! Their ban has expired on {hecc}.
                  'idle': '<:away:313956277220802560>', 'dnd': '<:dnd:313956276893646850>',
                  'invis': '<:invisible:313956277107556352>'}  # dbots icons
         helpers = [i for i in ctx.guild.members if not i.bot and
-                407326634819977217 in [r.id for r in i.roles]]
+                407326634819977217 in [r.id for r in i.roles] and
+                113379036524212224 not in [r.id for r in i.roles]]
         for i in helpers:  # HIGHLIGHT-PROOF (tm) TECHNOLOGY
             if i.status == discord.Status.online: online.append(
                 f'**{i.name[0:1]}\u200b{i.name[1:len(i.name)]}**#{i.discriminator}')
