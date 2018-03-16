@@ -5,6 +5,7 @@ from discord.ext import commands
 import rethinkdb as r
 from utils import permissions
 import aiohttp
+from utils import exc
 from utils.argparse import DiscordFriendlyArgparse, DiscordArgparseError, DiscordArgparseMessage
 
 class GbanException(Exception):
@@ -145,7 +146,7 @@ You were banned for `{details['reason']}` with proof `{details['proof']}`.
     @commands.group(name='gban', aliases=['gbans', 'globalbans', 'global_bans'], invoke_without_command=True)
     async def gban(self, ctx, param):
         """Globally bans a user"""
-        raise commands.errors.MissingRequiredArgument()
+        raise commands.errors.MissingRequiredArgument(exc.ThingWithAName())
 
     @gban.command(aliases=['new', 'ban'])
     @permissions.owner_or_gmod()

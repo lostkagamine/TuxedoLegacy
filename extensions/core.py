@@ -5,6 +5,7 @@ from discord.ext import commands
 import time
 import asyncio
 import sys
+from utils import exc
 
 class Core:
     def __init__(self, bot):
@@ -95,34 +96,19 @@ class Core:
         ping = (after - before) * 1000
         await pong.edit(content="P-pong! ...{}ms... I know, it's pretty slow...".format(int(ping)))
 
-    @commands.command()
-    async def prefix(self, ctx, method: str, *, prefix: str=None): # ported from rybot
-        """Manage them prefixes"""
-        if method == "add":
-            if not permissions.is_owner_check(ctx): return await ctx.send(':no_entry_sign: You do not have permission to use this command.')
-            prefix = prefix.strip("\"")
-            prefix = prefix.strip('\'')
-            if prefix == None:
-                return await ctx.send("Specify a prefix to add.")
-            if prefix in self.bot.prefix:
-                return await ctx.send("Duplicate prefixes are not allowed!")
-            self.bot.prefix.append(prefix)
-            await ctx.send("Added prefix `" + prefix + "`")
-        elif method == "remove":
-            if not permissions.is_owner_check(ctx): return await ctx.send(':no_entry_sign: You do not have permission to use this command.')
-            prefix = prefix.strip("\"")
-            prefix = prefix.strip('\'')
-            if prefix == None:
-                return await ctx.send("Specify a prefix to remove.")
-            if not prefix in self.bot.prefix:
-                return await ctx.send("The specified prefix is not in use.")
-            self.bot.prefix.remove(prefix)
-            await ctx.send("Removed prefix `" + prefix + "`")
-        elif method == "list": # Tuxedo Exclusive Feature™
-            prefixes = "\n".join(self.bot.prefix)
-            await ctx.send(f"```\n{prefixes}```")
-        else:
-            await ctx.send('Method needs to be `add`, `remove`, `list`.')
+    @commands.group()
+    async def prefix(self, ctx, param):
+        pass
+        
+    @prefix.command()
+    @permissions.owner()
+    async def add(self, ctx, prefix:str, regex:bool=False):
+        'add prefix'
+        if [prefix, regex] in self.bot.prefix:
+            return await ctx.send('Prefix already exists!')
+        self.bot.prefix.append([prefix, regex])
+        await ctx.send('\'k')
+
 
     @commands.command()
     @permissions.owner()

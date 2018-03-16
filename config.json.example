@@ -12,9 +12,10 @@
     "DBL_TOKEN": "[DISCORDBOTS.ORG TOKEN HERE]",
     "GBANS_TOKEN": "Don't worry about this one. Tokens for this API are very hard to get. I wouldn't recommend pursuing one.",
     "BLOCKED": [],
+    "SENTRY_ENABLED": true,
     "SENTRY": "[SENTRY URL HERE]",
     "RETHINKDB": {
-	"DB": "tuxedo",
+	"DB": "erio",
 	"USERNAME": "admin",
 	"PASSWORD": "",
 	"HOST": "localhost",

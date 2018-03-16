@@ -27,8 +27,10 @@ class Bot(commands.Bot):
             self.config = json.load(f)
             self.prefix = self.config.get('BOT_PREFIX')
             self.version = self.config.get('VERSION')
+            self.do_sentry = self.config.get('SENTRY_ENABLED')
         self.remove_command("help")
-        self.init_raven()
+        if self.do_sentry:
+            self.init_raven()
         self.rdb = self.config['RETHINKDB']['DB']
         self.rtables = ['gbans', 'settings', 'modlog',
                         'tempbans', 'starboard', 'warnings']
@@ -66,6 +68,7 @@ class Bot(commands.Bot):
                             invoker = view.get_word()
                             ctx.invoked_with = invoker
                             ctx.prefix = invoked_prefix
+                            ctx.view = view
                             ctx.command = self.all_commands.get(
                                 reg.groups()[0])
                             return ctx
@@ -100,13 +103,17 @@ class Bot(commands.Bot):
         self.uptime = datetime.datetime.utcnow()
         print(
             f'Logged in as {self.user.name}\nBot invite link: {self.invite_url}')
-        await self.change_presence(game=discord.Game(name=f'{self.prefix[0][0]}help | Version {self.version}', type=0))
+        # await self.change_presence(game=discord.Game(name=f'{self.prefix[0][0]}help | Version {self.version}', type=0))
+        # it doesn't like setting the game
         self.load_extension('extensions.core')
 
     async def on_message(self, message):
         if message.author.bot:
             return
         if message.author.id in self.config.get('BLOCKED'):
+            return
+        if re.match(r'^pls (pinghelper|pinghelpers|helpers|hingpelper|hingpelpers)', message.content) is not None:
+            await self.process_commands(message)
             return
         if message.content.startswith('pls') and message.guild.id in nopls:
             return
@@ -163,7 +170,7 @@ bot = Bot()
 @bot.listen("on_command_error")
 async def on_command_error(ctx, exception):
     if isinstance(exception, commands_errors.MissingRequiredArgument):
-        await ctx.send("You are missing required aruments.")
+        await ctx.send("You are missing required arguments.")
 
     elif isinstance(exception, permissions.WrongRole):
         await ctx.send(
@@ -184,7 +191,8 @@ async def on_command_error(ctx, exception):
         print(sentry_string)
         error.add_field(name="`{}` in command `{}`".format(type(exception).__name__, ctx.command.qualified_name),
                         value="```py\nTraceback (most recent call last):\n{}{}: {}```".format(_traceback, type(exception).__name__, exception))
-        ctx.bot.sentry.captureMessage(sentry_string)
+        if bot.do_sentry:
+            ctx.bot.sentry.captureMessage(sentry_string)
         await ctx.send(embed=error)
 
     elif isinstance(exception, commands_errors.CommandOnCooldown):
