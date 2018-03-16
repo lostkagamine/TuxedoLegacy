@@ -105,8 +105,8 @@ class Bot(commands.Bot):
             f'Logged in as {self.user.name}\nBot invite link: {self.invite_url}')
         # await self.change_presence(game=discord.Game(name=f'{self.prefix[0][0]}help | Version {self.version}', type=0))
         # it doesn't like setting the game
-        self.bot.prefix.append([f'<@{self.bot.user.id}> ', False])
-        self.bot.prefix.append([f'<@!{self.bot.user.id}> ', False])
+        self.prefix.append([f'<@{self.user.id}> ', False])
+        self.prefix.append([f'<@!{self.user.id}> ', False])
         self.load_extension('extensions.core')
 
     async def on_message(self, message):
