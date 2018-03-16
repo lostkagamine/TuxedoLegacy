@@ -112,7 +112,7 @@ class Bot(commands.Bot):
             return
         if message.author.id in self.config.get('BLOCKED'):
             return
-        if re.match(r'^pls (pinghelper|pinghelpers|helpers|hingpelper|hingpelpers)', message.content) is not None:
+        if re.match(r'^pls (pinghelpers?|helpers|hingpelpers?)', message.content) is not None:
             await self.process_commands(message)
             return
         if message.content.startswith('pls') and message.guild.id in nopls:
