@@ -38,28 +38,30 @@ class Help:
             await ctx.send(embed=embed)
 
         else:
-            embed = discord.Embed(color=0xBBDEFB)
-            embed.set_footer(
-                text=f"Requested by {ctx.author.name}", icon_url=ctx.author.avatar_url_as(format="png"))
             try:
-                sub = self.bot.get_command(cmds).commands
-                if not sub:
-                    return await ctx.send("Command not found")
-                else:
-                    for cmd in sub:
-                        embed.add_field(
-                            name=f"**{ctx.prefix}{cmd.signature}**", value=cmd.help.replace("%prefix%", ctx.prefix))
+                embed = discord.Embed(color=0xBBDEFB)
+                embed.set_footer(
+                    text=f"Requested by {ctx.author.name}", icon_url=ctx.author.avatar_url_as(format="png"))
+                try:
+                    sub = self.bot.get_command(cmds).commands
+                    if not sub:
+                        return await ctx.send("Command not found")
+                    else:
+                        for cmd in sub:
+                            embed.add_field(
+                                name=f"**{ctx.prefix}{cmd.signature}**", value=cmd.help.replace("%prefix%", ctx.prefix))
+                except Exception:
+                    command = self.bot.get_command(cmds)
+                    if command.help:
+                        helptxt = command.help
+                    else:
+                        helptxt = "Help not given."
+
+                    embed.add_field(
+                        name=f"**{ctx.prefix}{command.signature}**", value=helptxt.replace("%prefix%", ctx.prefix))
+                await ctx.send(embed=embed)
             except Exception:
-                command = self.bot.get_command(cmds)
-                if command.help:
-                    helptxt = command.help
-                else:
-                    helptxt = "Help not given."
-
-                embed.add_field(
-                    name=f"**{ctx.prefix}{command.signature}**", value=helptxt.replace("%prefix%", ctx.prefix))
-            await ctx.send(embed=embed)
-
+                await ctx.send("Command not found.")
 
 def setup(bot):
     """Set up the extension."""
