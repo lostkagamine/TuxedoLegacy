@@ -13,7 +13,7 @@ import sys
 import datetime
 from discord.ext.commands.view import StringView
 from utils import permissions
-nopls = [110373943822540800]
+nopls = [110373943822540800, 264445053596991498]
 
 asd = 236726289665490944  # Automatic Sink Detection (tm)
 
