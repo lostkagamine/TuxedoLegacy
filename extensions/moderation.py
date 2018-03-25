@@ -471,7 +471,7 @@ Please unban them! Their ban has expired on {hecc}.
         if ctx.guild.id != 110373943822540800:
             return
         helpers = [i for i in ctx.guild.members if not i.bot and
-                not ctx.author and
+                not i == ctx.author and
                 407326634819977217 in [r.id for r in i.roles] and
                 113379036524212224 not in [r.id for r in i.roles] and
                 ((i.status == discord.Status.online or i.status == 'online') or (i.status == discord.Status.dnd or i.status == 'dnd'))]
