@@ -1,6 +1,7 @@
 import aiohttp
 import discord
 from discord.ext import commands
+import json
 
 cleaner = {
     "guild_update": "updated the guild",
@@ -33,12 +34,32 @@ cleaner = {
 
 
 class AuditLogs:
+    def __init__(self, bot):
+        self.bot = bot
+    
+    #If you want to use hastebin,
+    # async def haste_get(self, output):
+    #     with aiohttp.ClientSession() as sess:
+    #         async with sess.post("https://hastebin.com/documents/", data=output, headers={"Content-Type": "text/plain"}) as r:
+    #             r = await r.json()
+    #             return (f"https://hastebin.com/{r['key']}")
 
-    async def haste_get(self, output):
+    async def gist_get(self, ctx, output):
+        headers = {"Authorization": f"token {self.bot.config['gists_token']}"}
+        payload = {
+            "description": f"Audit log",
+            "public": True,
+            "files": {
+                "audit.txt": {
+                    "content": output
+                }
+            }
+        }
+
         with aiohttp.ClientSession() as sess:
-            async with sess.post("https://hastebin.com/documents/", data=output, headers={"Content-Type": "text/plain"}) as r:
+            async with sess.post("https://api.github.com/gists", headers=headers, data=json.dumps(payload)) as r:
                 r = await r.json()
-                return (f"https://hastebin.com/{r['key']}")
+                return r["files"]["audit.txt"]["raw_url"]
 
     @commands.has_permissions(view_audit_log=True)
     @commands.command()
@@ -51,7 +72,7 @@ class AuditLogs:
             embed.set_footer(
                 text=f"Requested by {ctx.author.name}", icon_url=ctx.author.avatar_url_as(format="png"))
             embed.set_thumbnail(url=ctx.guild.icon_url)
-            
+
             async for entry in ctx.guild.audit_logs(limit=10):
                 reason = entry.reason
                 if reason:
@@ -70,9 +91,9 @@ class AuditLogs:
                     reason = "Not provided"
 
                 message.append(
-                    f"User: {entry.user}\nAction: " + cleaner[f'{entry.action.name}'] +f".\nTarget: {entry.target}"+ f"\nReason: {reason}\n\n")
+                    f"User: {entry.user}\nAction: " + cleaner[f'{entry.action.name}'] + f".\nTarget: {entry.target}" + f"\nReason: {reason}\n\n")
             output = "".join(message)
-            url = await self.haste_get(output)
+            url = await self.gist_get(ctx, output)
             embed.description = f"[See more of the audit log here.]({url})"
             await ctx.send(embed=embed)
         except Exception:
@@ -81,4 +102,4 @@ class AuditLogs:
 
 def setup(bot):
     """Set up the extension."""
-    bot.add_cog(AuditLogs())
+    bot.add_cog(AuditLogs(bot))
