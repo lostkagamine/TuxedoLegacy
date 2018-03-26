@@ -47,7 +47,7 @@ class AuditLogs:
     async def gist_get(self, ctx, output):
         headers = {"Authorization": f"token {self.bot.config['gists_token']}"}
         payload = {
-            "description": f"Audit log",
+            "description": f"Audit log for {ctx.guild.name}",
             "public": True,
             "files": {
                 "audit.txt": {
