@@ -5,9 +5,15 @@
 Erio Discord bot!
 
 ## Terms of use
-Please do not add the cogs from this bot to your own bot. They probably won't work anyways, but I'd appreciate if you'd [add Erio](https://discordapp.com/oauth2/authorize?client_id=338695256759599117&scope=bot) instead.  
-Please do self-host this bot! It's open-source for a reason. I'm fine with self-hosting __just as long as your instance isn't public.__  
-Do NOT host a public instance of Erio __without express permission from me, ry00001#3487.__
+Please do not add the cogs from this bot to your own bot. They probably won't work anyways, but I'd appreciate if you'd [add Erio](https://discordapp.com/oauth2/authorize?client_id=338695256759599117&scope=bot) instead.
+
+While this project is open source, this doesn't give you an open invitation to host a public instance of Erio yourself. We will allow you to host your own instance of Erio for private use only, but do not make it public **without express permission from ry00001#3487.**
+
+## Why open source?
+If we make Erio open source, we can have the community hack on the source code for it and create new and improved features, fix bugs, etc. which isn't possible with the small amount of maintainers the project currently has since we're all tied up in keeping the bot running and fixing major bugs. If you want to contribute a cog, or are just interested in poking around the source code, `git clone` it!
+
+## Cog Contribution
+If you have written an Erio-compatible cog and you want to add it to the official release of Erio, create a pull request and we'll review it. You may make it into the mainstream version of Erio!
 
 ## Credits
 Liara/Pandentia: Making the API used in global bans, and eval. Overall, an awesome guy.  
