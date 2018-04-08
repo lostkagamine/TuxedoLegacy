@@ -10,15 +10,15 @@ import datetime
 def propcheck(prop, d):
     return d[prop] if d[prop] else "None"
 
-class Info:
-    def __init__(self, bot):
-        self.bot = bot
-
-    def sf2dt_discord(sf):
+def sf2dt_discord(sf):
         return datetime.datetime.utcfromtimestamp(((sf >> 22) + 1420070400000) / 1000.0)
 		
     def sf2dt_twitter(sf):
         return datetime.datetime.utcfromtimestamp(((sf >> 22) + 1288834974657) / 1000.0)
+
+class Info:
+    def __init__(self, bot):
+        self.bot = bot
 		
     def humanbytes(self, B): # function lifted from StackOverflow :mmLol:
         'Return the given bytes as a human friendly KB, MB, GB, or TB string'
@@ -44,8 +44,8 @@ class Info:
     async def snowflake(self, ctx, snowflake: int):
         """Calculates a snowflake's creation time"""
         await ctx.send(f"""The snowflake was created on: 
-{self.sf2dt_discord(snowflake)} (Discord Epoch)
-{self.sf2dt_twitter(snowflake)} (Twitter Epoch)
+{sf2dt_discord(snowflake)} (Discord Epoch)
+{sf2dt_twitter(snowflake)} (Twitter Epoch)
 """)
 	
     @commands.command(aliases=['add'])
