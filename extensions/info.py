@@ -14,6 +14,12 @@ class Info:
     def __init__(self, bot):
         self.bot = bot
 
+	def sf2dt_discord(sf):
+        return datetime.datetime.utcfromtimestamp(((sf >> 22) + 1420070400000) / 1000.0)
+		
+	def sf2dt_twitter(sf):
+        return datetime.datetime.utcfromtimestamp(((sf >> 22) + 1288834974657) / 1000.0)
+		
     def humanbytes(self, B): # function lifted from StackOverflow :mmLol:
         'Return the given bytes as a human friendly KB, MB, GB, or TB string'
         B = float(B)
@@ -33,6 +39,15 @@ class Info:
         elif TB <= B:
             return '{0:.2f} TB'.format(B/TB)
 
+			
+    @commands.command()
+    async def snowflake(self, ctx, snowflake: int):
+        """Calculates a snowflake's creation time"""
+        await ctx.send(f"""The snowflake was created on: 
+{sf2dt_discord(snowflake)} (Discord Epoch)
+{sf2dt_twitter(snowflake)} (Twitter Epoch)
+""")
+	
     @commands.command(aliases=['add'])
     async def invite(self, ctx):
         """Sends the invite to Erio"""
