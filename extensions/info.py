@@ -11,10 +11,10 @@ def propcheck(prop, d):
     return d[prop] if d[prop] else "None"
 
 def sf2dt_discord(sf):
-        return datetime.datetime.utcfromtimestamp(((sf >> 22) + 1420070400000) / 1000.0)
-		
-    def sf2dt_twitter(sf):
-        return datetime.datetime.utcfromtimestamp(((sf >> 22) + 1288834974657) / 1000.0)
+    return datetime.datetime.utcfromtimestamp(((sf >> 22) + 1420070400000) / 1000.0)
+
+def sf2dt_twitter(sf):
+    return datetime.datetime.utcfromtimestamp(((sf >> 22) + 1288834974657) / 1000.0)
 
 class Info:
     def __init__(self, bot):
