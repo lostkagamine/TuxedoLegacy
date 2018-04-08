@@ -136,6 +136,5 @@ class Core:
     async def erio(self, ctx):
         await ctx.send('Yes, that\'s me. I think.')
 
-
 def setup(bot):
     bot.add_cog(Core(bot))
