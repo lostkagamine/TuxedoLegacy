@@ -44,8 +44,8 @@ class Info:
     async def snowflake(self, ctx, snowflake: int):
         """Calculates a snowflake's creation time"""
         await ctx.send(f"""The snowflake was created on: 
-{sf2dt_discord(snowflake)} (Discord Epoch)
-{sf2dt_twitter(snowflake)} (Twitter Epoch)
+{self.sf2dt_discord(snowflake)} (Discord Epoch)
+{self.sf2dt_twitter(snowflake)} (Twitter Epoch)
 """)
 	
     @commands.command(aliases=['add'])
