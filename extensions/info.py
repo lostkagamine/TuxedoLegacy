@@ -17,7 +17,7 @@ class Info:
     def sf2dt_discord(sf):
         return datetime.datetime.utcfromtimestamp(((sf >> 22) + 1420070400000) / 1000.0)
 		
-	def sf2dt_twitter(sf):
+    def sf2dt_twitter(sf):
         return datetime.datetime.utcfromtimestamp(((sf >> 22) + 1288834974657) / 1000.0)
 		
     def humanbytes(self, B): # function lifted from StackOverflow :mmLol:
