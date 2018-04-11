@@ -470,14 +470,23 @@ Please unban them! Their ban has expired on {hecc}.
         """Ping an online helper in the Discord Bots server."""
         if ctx.guild.id != 110373943822540800:
             return
-        helpers = [i for i in ctx.guild.members if not i.bot and
+        helpers_priority = [i for i in ctx.guild.members if not i.bot and
                 not i == ctx.author and
                 407326634819977217 in [r.id for r in i.roles] and
                 113379036524212224 not in [r.id for r in i.roles] and
-                ((i.status == discord.Status.online or i.status == 'online') or (i.status == discord.Status.dnd or i.status == 'dnd'))]
-        if helpers == []:
+                (i.status == discord.Status.online or i.status == 'online')]
+        helpers_dnd = helpers = [i for i in ctx.guild.members if not i.bot and
+                not i == ctx.author and
+                407326634819977217 in [r.id for r in i.roles] and
+                113379036524212224 not in [r.id for r in i.roles] and
+                (i.status == discord.Status.dnd or i.status == 'dnd')]
+        if helpers_priority == [] and helpers_dnd == []:
             return await ctx.send(':x: No online helpers available! You may want to ping a moderator.')
-        helper = random.choice(helpers)
+        helper = None
+        if helpers_priority != []:
+            helper = random.choice(helpers_priority)
+        else:
+            helper = random.choice(helpers_dnd)
         reasonless_string = f'Helper Autoping: <@{helper.id}> (by **{ctx.author.name}**#{ctx.author.discriminator})'
         reason_string = f'Helper Autoping:\n**{reason}**\n<@{helper.id}> (by **{ctx.author.name}**#{ctx.author.discriminator})'
         await ctx.send(reason_string if reason != None else reasonless_string);
