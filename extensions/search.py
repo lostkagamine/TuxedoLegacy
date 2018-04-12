@@ -7,7 +7,7 @@ class Search:
     def __init__(self, bot):
         self.conn = bot.conn
         self.bot = bot
-        self.sesson = aiohttp.ClientSession()
+        self.session = aiohttp.ClientSession()
 
     @commands.command()
     async def search(self, ctx, *, query: str):
