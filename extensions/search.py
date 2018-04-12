@@ -17,7 +17,7 @@ class Search:
         try:
             async with self.session.get(call) as resp:
                 response = await resp.json()
-        except:
+        except aiohttp.ClientError:
             await ctx.send(
                 f"There was a problem with `{instance[0]}`. Please contact "
                 f"ry00001#3487 to have it removed.")
@@ -32,7 +32,6 @@ class Search:
         msg += "\n".join(
             [f"**{entry['title']}** <{entry['url']}>" for entry in results[1:5]])
         msg += f"\n\n_Results retrieved from instance `{instance[0]}`._"
-
 
         await ctx.send(msg)
 
