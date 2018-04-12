@@ -29,7 +29,6 @@ citizen-cam.de
 searx.nulltime.net
 searx.laquadrature.net
 searx.oe5tpo.com
-searx.potato.hu
 searx.32bitflo.at
 searx.elukerio.org
 searx.libmail.eu
