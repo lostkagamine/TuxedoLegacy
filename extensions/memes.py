@@ -11,7 +11,7 @@ class Memes:
         self.bot = bot
 
     @commands.command(aliases=["ds", "DS"])
-    async def dipshit(self, ctx, msg: discord.Member=None):
+    async def dipshit(self, ctx, *, msg: discord.Member=None):
         """Generate a meme
         usage : %prefix%dipshit <mention user>
         """
