@@ -13,14 +13,14 @@ class Search:
     async def search(self, ctx, *, query: str):
         with open('searxes.txt') as instances:
             instance = random.sample(instances.read().split('\n'), k=1)
-        call = f'https://{instance[0]}/search?q={query}&format=json'
+        call = f'https://{instance[0]}/search?q={query}&format=json&language=en-US'
         try:
             async with self.session.get(call) as resp:
                 response = await resp.json()
         except aiohttp.ClientError:
             await ctx.send(
                 f"There was a problem with `{instance[0]}`. Please contact "
-                f"ry00001#3487 to have it removed.")
+                f"taciturasa#4365 to have it removed.")
             return
 
         # infoboxes = response['infoboxes']
