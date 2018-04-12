@@ -3,7 +3,7 @@ import aiohttp
 import random
 
 
-class Projects:
+class Search:
     def __init__(self, bot):
         self.conn = bot.conn
         self.bot = bot
@@ -30,4 +30,4 @@ class Projects:
 
 
 def setup(bot):
-    bot.add_cog(Projects(bot))
+    bot.add_cog(Search(bot))
