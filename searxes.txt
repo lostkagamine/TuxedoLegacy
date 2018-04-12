@@ -27,13 +27,8 @@ searx.cc
 searx.ch
 citizen-cam.de
 searx.nulltime.net
-searx.de
 searx.laquadrature.net
 searx.oe5tpo.com
-search.kujiu.org
-searx.new-admin.net
-search.homecomputing.fr
-searx.potato.hu
 searx.32bitflo.at
 searx.elukerio.org
 searx.libmail.eu
@@ -41,7 +36,6 @@ framabee.org
 s3arch.eu
 searx.info
 search.jpope.org
-searx.fossencdi.org
 search.koehn.com
 searx.drakonix.net
 search.4ray.co
@@ -60,7 +54,6 @@ searx.remote-shell.net
 s.matejc.com
 searx.mrtino.eu
 roflcopter.fr
-win8linux.nohost.me
 searx.itunix.eu
 searx.targaryen.house
 searchx.mobi
@@ -81,5 +74,4 @@ s.bacafe.xyz
 seeks.hsbp.org
 searx.impstyle.com
 icebal.com
-OpenGO
 search.moravit.com
