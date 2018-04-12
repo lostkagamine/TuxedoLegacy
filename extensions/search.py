@@ -13,7 +13,7 @@ class Search:
     async def search(self, ctx, *, query: str):
         with open('searxes.txt') as instances:
             instance = random.sample(instances.read().split('\n'), k=1)
-        call = f'https://{instance}/search?q={query}?type=json'
+        call = f'https://{instance}/search?q={query}?format=json'
         response = (await self.session.get(call)).json()
 
         # infoboxes = response['infoboxes']
