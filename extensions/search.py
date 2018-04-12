@@ -12,7 +12,7 @@ class Projects:
     @commands.command()
     async def search(self, ctx, *, query: str):
         with open('searxes.txt') as instances:
-            instance = random.sample(instances.read().split('\n'))
+            instance = random.sample(instances.read().split('\n'), k=1)
         call = f'https://{instance}/search?q={query}?type=json'
         response = self.session.get(call)
 
