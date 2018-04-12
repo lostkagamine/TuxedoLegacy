@@ -1,0 +1,501 @@
+{
+    "number_of_results": 30,
+    "corrections": [],
+    "query": "me",
+    "infoboxes": [
+        {
+            "engine": "wikipedia",
+            "content": null,
+            "infobox": "Me",
+            "img_src": null,
+            "urls": [
+                {
+                    "url": "https://en.wikipedia.org/wiki/Me",
+                    "title": "Wikipedia"
+                }
+            ],
+            "id": "https://en.wikipedia.org/wiki/Me"
+        },
+        {
+            "engine": "wikidata",
+            "content": "protein-coding gene in the species Mus musculus",
+            "infobox": "Ptpn6",
+            "img_src": null,
+            "urls": [
+                {
+                    "url": "https://www.wikidata.org/wiki/Q18251157?uselang=en",
+                    "title": "Wikidata"
+                }
+            ],
+            "attributes": [],
+            "id": null
+        }
+    ],
+    "suggestions": [],
+    "results": [
+        {
+            "engine": "wikipedia",
+            "category": "general",
+            "engines": [
+                "google",
+                "wikipedia"
+            ],
+            "title": "Me",
+            "url": "https://en.wikipedia.org/wiki/Me",
+            "positions": [
+                1,
+                8
+            ],
+            "parsed_url": [
+                "https",
+                "en.wikipedia.org",
+                "/wiki/Me",
+                "",
+                "",
+                ""
+            ],
+            "content": "Me or ME usually refer to: Me, I (pronoun)\\u2014in its object form or case; ME, Myalgic encephalomyelitis or encephalopathy, a medical condition. Me or ME may also refer to: Contents. [hide]. 1 Arts and entertainment. 1.1 Fictional characters; 1.2 Music. 1.2.1 Albums. 1.2.1.1 East Asia; 1.2.1.2 United Kingdom; 1.2.1.3 United ...",
+            "pretty_url": "https://en.wikipedia.org/wiki/Me",
+            "score": 2.25
+        },
+        {
+            "engine": "bing",
+            "category": "general",
+            "engines": [
+                "bing"
+            ],
+            "title": "http://flavors.me/",
+            "url": "http://flavors.me/",
+            "positions": [
+                1
+            ],
+            "parsed_url": [
+                "http",
+                "flavors.me",
+                "/",
+                "",
+                "",
+                ""
+            ],
+            "content": "Hier sollte eine Beschreibung angezeigt werden, diese Seite l\\u00e4sst dies jedoch nicht zu.",
+            "pretty_url": "http://flavors.me/",
+            "score": 1.0
+        },
+        {
+            "engine": "google",
+            "category": "general",
+            "engines": [
+                "google"
+            ],
+            "title": "Introduction | Action for ME",
+            "url": "https://www.actionforme.org.uk/what-is-me/introduction/",
+            "positions": [
+                1
+            ],
+            "parsed_url": [
+                "https",
+                "www.actionforme.org.uk",
+                "/what-is-me/introduction/",
+                "",
+                "",
+                ""
+            ],
+            "content": "Introduction. Myalgic Encephalomyelitis (M.E.) is a long-term (chronic), fluctuating , neurological condition that causes symptoms affecting many body systems, more commonly the nervous and immune systems. M.E. affects an estimated 250,000 people in the UK, and around 17 million people worldwide. People with M.E. ...",
+            "pretty_url": "https://www.actionforme.org.uk/what-is-me/introduction/",
+            "score": 1.0
+        },
+        {
+            "engine": "bing",
+            "category": "general",
+            "engines": [
+                "bing"
+            ],
+            "title": "Maine State Lottery",
+            "url": "http://mainelottery.com/",
+            "positions": [
+                2
+            ],
+            "parsed_url": [
+                "http",
+                "mainelottery.com",
+                "/",
+                "",
+                "",
+                ""
+            ],
+            "content": "Get Winning Number Notifications Sent to You! By Email, SMS, and more. Sign up now! Unsubscribe",
+            "pretty_url": "http://mainelottery.com/",
+            "score": 0.5
+        },
+        {
+            "engine": "google",
+            "category": "general",
+            "engines": [
+                "google"
+            ],
+            "title": "Symptoms | Action for ME",
+            "url": "https://www.actionforme.org.uk/what-is-me/symptoms/",
+            "positions": [
+                2
+            ],
+            "parsed_url": [
+                "https",
+                "www.actionforme.org.uk",
+                "/what-is-me/symptoms/",
+                "",
+                "",
+                ""
+            ],
+            "content": "Symptoms. Everyone who experiences M.E. has a different pattern of illness, and symptoms and severity can fluctuate and change over time. Severe and persistent fatigue or exhaustion most, or all of the time, is one of the main symptoms of M.E. This feels very different from ordinary tiredness. Simple physical or mental ...",
+            "pretty_url": "https://www.actionforme.org.uk/what-is-me/symptoms/",
+            "score": 0.5
+        },
+        {
+            "engine": "bing",
+            "category": "general",
+            "engines": [
+                "bing"
+            ],
+            "title": "See.Me",
+            "url": "https://www.see.me/",
+            "positions": [
+                3
+            ],
+            "parsed_url": [
+                "https",
+                "www.see.me",
+                "/",
+                "",
+                "",
+                ""
+            ],
+            "content": "SeeMe is dedicated to showing artists, photographers and creators of all kinds to the world, both online and in real-world exhibitions.",
+            "pretty_url": "https://www.see.me/",
+            "score": 0.3333333333333333
+        },
+        {
+            "engine": "google",
+            "category": "general",
+            "engines": [
+                "google"
+            ],
+            "title": "What is ME? | ME Research UK",
+            "url": "http://www.meresearch.org.uk/what-is-me/",
+            "positions": [
+                3
+            ],
+            "parsed_url": [
+                "http",
+                "www.meresearch.org.uk",
+                "/what-is-me/",
+                "",
+                "",
+                ""
+            ],
+            "content": "This page is provided for your information only. A diagnosis of ME / CFS should be determined only by a suitably qualified medical professional, such as a GP or hospital consultant. Myalgic encephalomyelitis ( ME ) is characterised by a range of neurological symptoms and signs, muscle pain with intense physical or mental ...",
+            "pretty_url": "http://www.meresearch.org.uk/what-is-me/",
+            "score": 0.3333333333333333
+        },
+        {
+            "engine": "bing",
+            "category": "general",
+            "engines": [
+                "bing"
+            ],
+            "title": "Millennials: The Me Me Me Generation \\u2026",
+            "url": "http://time.com/247/millennials-the-me-me-me-generation/",
+            "positions": [
+                4
+            ],
+            "parsed_url": [
+                "http",
+                "time.com",
+                "/247/millennials-the-me-me-me-generation/",
+                "",
+                "",
+                ""
+            ],
+            "content": "I am about to do what old people have done throughout history: call those younger than me lazy, entitled, selfish and shallow. But I have studies! I have ...",
+            "pretty_url": "http://time.com/247/millennials-the-me-me-me-generation/",
+            "score": 0.25
+        },
+        {
+            "engine": "google",
+            "category": "general",
+            "engines": [
+                "google"
+            ],
+            "title": "Chronic fatigue syndrome (CFS/ME) - NHS.UK",
+            "url": "https://www.nhs.uk/conditions/chronic-fatigue-syndrome-cfs/",
+            "positions": [
+                4
+            ],
+            "parsed_url": [
+                "https",
+                "www.nhs.uk",
+                "/conditions/chronic-fatigue-syndrome-cfs/",
+                "",
+                "",
+                ""
+            ],
+            "content": "Overview. Chronic fatigue syndrome (CFS) is a long-term illness with a wide range of symptoms. The most common symptom is extreme tiredness. CFS is also known as ME, which stands for myalgic encephalomyelitis. There\'s some debate over the correct term to use for the condition, but these pages will refer to it as ...",
+            "pretty_url": "https://www.nhs.uk/conditions/chronic-fatigue-syndrome-cfs/",
+            "score": 0.25
+        },
+        {
+            "engine": "bing",
+            "category": "general",
+            "engines": [
+                "bing"
+            ],
+            "title": "LMGTFY",
+            "url": "http://lmgtfy.com/",
+            "positions": [
+                5
+            ],
+            "parsed_url": [
+                "http",
+                "lmgtfy.com",
+                "/",
+                "",
+                "",
+                ""
+            ],
+            "content": "For all those people who find it more convenient to bother you with their question rather than search it for themselves.",
+            "pretty_url": "http://lmgtfy.com/",
+            "score": 0.2
+        },
+        {
+            "engine": "google",
+            "category": "general",
+            "engines": [
+                "google"
+            ],
+            "title": "What is ME/CFS? | ME Association",
+            "url": "http://www.meassociation.org.uk/about/what-is-mecfs/",
+            "positions": [
+                5
+            ],
+            "parsed_url": [
+                "http",
+                "www.meassociation.org.uk",
+                "/about/what-is-mecfs/",
+                "",
+                "",
+                ""
+            ],
+            "content": "Myalgic Encephalopathy or \\u201cME\\u201d (a term which The ME Association feels is more appropriate than the original, Myalgic Encephalomyelitis); Chronic Fatigue Syndrome or \\u201cCFS\\u201d; Post-Viral Fatigue Syndrome or \\u201cPVFS\\u201d; Chronic Fatigue Immune Dysfunction Syndrome or \\u201cCFIDS\\u201d. All types of people at all ages are affected.",
+            "pretty_url": "http://www.meassociation.org.uk/about/what-is-mecfs/",
+            "score": 0.2
+        },
+        {
+            "engine": "bing",
+            "category": "general",
+            "engines": [
+                "bing"
+            ],
+            "title": "Rescue Me! \\u2015 Adopt Dogs, Cats and \\u2026",
+            "url": "http://www.rescueme.org/",
+            "positions": [
+                6
+            ],
+            "parsed_url": [
+                "http",
+                "www.rescueme.org",
+                "/",
+                "",
+                "",
+                ""
+            ],
+            "content": "\\"Click here to view thousands of rescue dogs, cats, horses and birds. Individuals, rescue groups & shelters can post animals free.\\" \\u2015 \\u2665 RESCUE ME! \\u2665 \\u06ec",
+            "pretty_url": "http://www.rescueme.org/",
+            "score": 0.16666666666666666
+        },
+        {
+            "engine": "google",
+            "category": "general",
+            "engines": [
+                "google"
+            ],
+            "title": "Symptoms, testing, and assessment | ME Association",
+            "url": "http://www.meassociation.org.uk/about/the-symptoms-and-diagnosis-of-mecfs/",
+            "positions": [
+                6
+            ],
+            "parsed_url": [
+                "http",
+                "www.meassociation.org.uk",
+                "/about/the-symptoms-and-diagnosis-of-mecfs/",
+                "",
+                "",
+                ""
+            ],
+            "content": "Part 2: Other Symptoms. Part 3: Severe ME/CFS. Part 4: Physical Examinations. Part 5: Baseline Investigations/Testing. Part 6: Examples of Further Tests. Part 7: Fatigue and Pain Assessments. Part 8: The Two-Day Cardiopulmonary Exercise Test (CPET). Part 9: Mental Health Assessment. Part 10: Disability Assessment ...",
+            "pretty_url": "http://www.meassociation.org.uk/about/the-symptoms-and-diagnosis-of-mecfs/",
+            "score": 0.16666666666666666
+        },
+        {
+            "engine": "bing",
+            "category": "general",
+            "engines": [
+                "bing"
+            ],
+            "title": "It\'s Duck Soup",
+            "url": "http://www.ducksoup.me/",
+            "positions": [
+                7
+            ],
+            "parsed_url": [
+                "http",
+                "www.ducksoup.me",
+                "/",
+                "",
+                "",
+                ""
+            ],
+            "content": "To write an effective blog post, one needs to narrow their focus into a wafer-thin slice of life, a neat little serving of five to eight hundred words that ...",
+            "pretty_url": "http://www.ducksoup.me/",
+            "score": 0.14285714285714285
+        },
+        {
+            "engine": "google",
+            "category": "general",
+            "engines": [
+                "google"
+            ],
+            "title": "Chronic fatigue syndrome - Wikipedia",
+            "url": "https://en.wikipedia.org/wiki/Chronic_fatigue_syndrome",
+            "positions": [
+                7
+            ],
+            "parsed_url": [
+                "https",
+                "en.wikipedia.org",
+                "/wiki/Chronic_fatigue_syndrome",
+                "",
+                "",
+                ""
+            ],
+            "content": "Chronic fatigue syndrome (CFS), also referred to as myalgic encephalomyelitis ( ME), is a medical condition characterized by long-term fatigue and other symptoms that limit a person\'s ability to carry out ordinary daily activities. Biological, genetic, infectious, and psychological mechanisms have been proposed, but the cause ...",
+            "pretty_url": "https://en.wikipedia.org/wiki/Chronic_fatigue_syndrome",
+            "score": 0.14285714285714285
+        },
+        {
+            "engine": "bing",
+            "category": "general",
+            "engines": [
+                "bing"
+            ],
+            "title": "How Many of Me",
+            "url": "http://howmanyofme.com/",
+            "positions": [
+                8
+            ],
+            "parsed_url": [
+                "http",
+                "howmanyofme.com",
+                "/",
+                "",
+                "",
+                ""
+            ],
+            "content": "There are millions of people in the United States. How many people have your name?",
+            "pretty_url": "http://howmanyofme.com/",
+            "score": 0.125
+        },
+        {
+            "engine": "bing",
+            "category": "general",
+            "engines": [
+                "bing"
+            ],
+            "title": "Down For Everyone Or Just Me - Check \\u2026",
+            "url": "https://downforeveryoneorjustme.com/",
+            "positions": [
+                9
+            ],
+            "parsed_url": [
+                "https",
+                "downforeveryoneorjustme.com",
+                "/",
+                "",
+                "",
+                ""
+            ],
+            "content": "Is a website or site down? Easy way to check if a site is down for everyone or just me. Plus other tools too.",
+            "pretty_url": "https://downforeveryoneorjustme.com/",
+            "score": 0.1111111111111111
+        },
+        {
+            "engine": "google",
+            "category": "general",
+            "engines": [
+                "google"
+            ],
+            "title": "What is ME/CFS? - Emerge Australia",
+            "url": "https://emerge.org.au/mecfs/",
+            "positions": [
+                9
+            ],
+            "parsed_url": [
+                "https",
+                "emerge.org.au",
+                "/mecfs/",
+                "",
+                "",
+                ""
+            ],
+            "content": "ME was one of the first labels for the illness (Shorter, 1993, Lindan, 1956), but it goes by several names. Apart from Chronic Fatigue Syndrome (CFS), the illness is also known as Post-Viral Fatigue Syndrome (PVFS \\u2013 an older term, now largely fallen into disuse), Chronic Fatigue Immune Dysfunction Syndrome ( CFIDS \\u2013 a ...",
+            "pretty_url": "https://emerge.org.au/mecfs/",
+            "score": 0.1111111111111111
+        },
+        {
+            "engine": "bing",
+            "category": "general",
+            "engines": [
+                "bing"
+            ],
+            "title": "Laundromat Near Me | 24 Hour Coin \\u2026",
+            "url": "http://laundromatsnear.me/",
+            "positions": [
+                10
+            ],
+            "parsed_url": [
+                "http",
+                "laundromatsnear.me",
+                "/",
+                "",
+                "",
+                ""
+            ],
+            "content": "Find a Laundromat Near You. We are the largest directory of coin laundry services and local self service laundromats open 24 hours in your area.",
+            "pretty_url": "http://laundromatsnear.me/",
+            "score": 0.1
+        },
+        {
+            "engine": "google",
+            "category": "general",
+            "engines": [
+                "google"
+            ],
+            "title": "Time for Unrest: Why patients with ME are demanding justice | The ...",
+            "url": "https://www.independent.co.uk/news/long_reads/why-patients-me-demanding-justice-millions-missing-chronic-fatigue-illness-disease-a8133616.html",
+            "positions": [
+                10
+            ],
+            "parsed_url": [
+                "https",
+                "www.independent.co.uk",
+                "/news/long_reads/why-patients-me-demanding-justice-millions-missing-chronic-fatigue-illness-disease-a8133616.html",
+                "",
+                "",
+                ""
+            ],
+            "content": "7 Jan 2018 ... I feel seen for the first time!\\u201d exalts one viewer. \\u201cI feel vindicated. I finally understand what\'s wrong with me, I think I\'ve had this all my life,\\u201d says another. A doctor admits, \\u201cI feel so ashamed.\\u201d",
+            "pretty_url": "https://www.independent.co.uk/news/lon[...]-fatigue-illness-disease-a8133616.html",
+            "score": 0.1
+        }
+    ],
+    "answers": [],
+    "unresponsive_engines": []
+}
