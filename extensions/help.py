@@ -62,7 +62,7 @@ class Help:
                 await ctx.send(embed=embed)
             except Exception:
                 await ctx.send("Command not found.")
-                
+
     @commands.is_owner()
     @commands.command()
     async def spit(self, ctx):
@@ -77,16 +77,17 @@ class Help:
             <td>{" ".join(f"[{i}]" for i in command.clean_params)}</a></td>
             <td>{command.help}</td>
             </tr>
-            """.replace("%prefix%", "//")
+            """.replace("%prefix%", "erio ")
             html += var
-        
+
         f = open("commands.html", "w+")
-	f.write(html)
-	await channel.send('commands', file=discord.File('commands.html', 'commands.html'))
+        f.write(html)
+        await channel.send('commands', file=discord.File('commands.html', 'commands.html'))
+
 
 def setup(bot):
     """Set up the extension."""
-    #following code is taken from Kitsuchan 2 by Foxo
+    # following code is taken from Kitsuchan 2 by Foxo
     try:
         help_command = bot.all_commands["help"]
         help_command.hidden = True
