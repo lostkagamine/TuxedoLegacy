@@ -62,6 +62,27 @@ class Help:
                 await ctx.send(embed=embed)
             except Exception:
                 await ctx.send("Command not found.")
+                
+    @commands.is_owner()
+    @commands.command()
+    async def spit(self, ctx):
+        """"""""
+        html = """a"""
+        print("started")
+        for command in ctx.bot.commands:
+            var = f"""
+            <tr>
+            <td width="5%"></td>
+            <td>{command.name}</td>
+            <td>{" ".join(f"[{i}]" for i in command.clean_params)}</a></td>
+            <td>{command.help}</td>
+            </tr>
+            """.replace("%prefix%", "//")
+            html += var
+        
+        f = open("commands.html", "w+")
+	f.write(html)
+	await channel.send('commands', file=discord.File('commands.html', 'commands.html'))
 
 def setup(bot):
     """Set up the extension."""
