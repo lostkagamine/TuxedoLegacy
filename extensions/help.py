@@ -80,9 +80,9 @@ class Help:
             """.replace("%prefix%", "erio ")
             html += var
 
-        f = open("commands.html", "w+")
+        f = open("commands.txt", "w+")
         f.write(html)
-        await ctx.send('commands', file=discord.File('commands.html', 'commands.html'))
+        await ctx.send('commands', file=discord.File('commands.txt', 'commands.txt'))
 
 
 def setup(bot):
