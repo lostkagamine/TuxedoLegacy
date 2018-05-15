@@ -63,7 +63,7 @@ class Help:
             except Exception:
                 await ctx.send("Command not found.")
 
-    @commands.is_owner()
+#     @commands.is_owner()
     @commands.command()
     async def spit(self, ctx):
         """"""""
