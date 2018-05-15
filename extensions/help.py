@@ -82,7 +82,7 @@ class Help:
 
         f = open("commands.html", "w+")
         f.write(html)
-        await channel.send('commands', file=discord.File('commands.html', 'commands.html'))
+        await ctx.send('commands', file=discord.File('commands.html', 'commands.html'))
 
 
 def setup(bot):
