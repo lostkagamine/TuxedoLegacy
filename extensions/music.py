@@ -247,16 +247,16 @@ class Music:
 
         await ctx.send(embed=embed)
 
-    @commands.is_owner()
-    @commands.command(aliases=['dc'])
-    async def disconnect(self, ctx):
-        player = self.bot.lavalink.players.get(ctx.guild.id)
+#     @commands.is_owner()
+#     @commands.command(aliases=['dc'])
+#     async def disconnect(self, ctx):
+#         player = self.bot.lavalink.players.get(ctx.guild.id)
 
-        if not player.is_connected:
-            return await ctx.send('Not connected.')
+#         if not player.is_connected:
+#             return await ctx.send('Not connected.')
 
-        await player.disconnect()
-        await ctx.send('*⃣ | Disconnected.')
+#         await player.disconnect()
+#         await ctx.send('*⃣ | Disconnected.')
 
     
     @commands.group()
