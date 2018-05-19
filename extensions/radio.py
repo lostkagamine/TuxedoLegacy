@@ -8,8 +8,8 @@ class Radio:
     @commands.group()
     async def radio(self, ctx):
         """Play radio from Listen.moe"""
-        if not ctx.invoked_subcommand:
-            await help.help(ctx, "radio")
+#         if not ctx.invoked_subcommand:
+#             await help.help(ctx, "radio")
 
     @radio.command()
     async def start(self, ctx):
