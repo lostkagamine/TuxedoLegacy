@@ -33,6 +33,7 @@ class Moderation:
         self.bot = bot
         self.conn = bot.conn
         self.rolebans = {}
+        self.autoping = []
         self.task = bot.loop.create_task(self.loop())
         @bot.listen('on_member_update')
         async def on_member_update(before, after):
@@ -455,12 +456,14 @@ Please unban them! Their ban has expired on {hecc}.
         """Ping an online staff member"""
         if ctx.guild.id in pingmods_disabled:
             return await ctx.send(':x: This feature isn\'t available here.')
-        mods = [i for i in ctx.guild.members if (i.permissions_in(ctx.channel).kick_members or i.permissions_in(ctx.channel).ban_members or i.permissions_in(ctx.channel).manage_roles) and
-                                                not i.bot and
-                                                (i.status == discord.Status.online or i.status == 'online')]
-        if mods == []:
-            return await ctx.send(':x: No online mods available!')
-        mod = random.choice(mods)
+        allmods = [i for i in ctx.guild.members if (i.permissions_in(ctx.channel).kick_members or i.permissions_in(ctx.channel).ban_members or i.permissions_in(ctx.channel).manage_roles) and
+                                                not i.bot]
+        online = [i for i in mods if (i.status == discord.Status.online or i.status == 'online')]
+        if online == []:
+            dnd = [i for i in mods if (i.status == discord.Status.dnd or i.status == 'dnd')]
+            mod = random.choice(dnd)
+        else:
+            mod = random.choice(online)
         reasonless_string = f'Mod Autoping: <@{mod.id}> (by **{ctx.author.name}**#{ctx.author.discriminator})'
         reason_string = f'Mod Autoping:\n**{reason}**\n<@{mod.id}> (by **{ctx.author.name}**#{ctx.author.discriminator})'
         await ctx.send(reason_string if reason != None else reasonless_string)

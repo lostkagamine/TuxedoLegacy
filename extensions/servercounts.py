@@ -15,6 +15,8 @@ class ServerCounts:
         self.bot = bot
 
     async def update(self):
+        session = aiohttp.ClientSession()
+
         guild_count = len(self.bot.guilds)
         dbots_count = json.dumps({
             'server_count': guild_count
@@ -27,7 +29,7 @@ class ServerCounts:
         }
 
         url = f'{DISCORD_BOTS_API}/bots/{self.bot.user.id}/stats'
-        async with self.bot.session.post(url, data=dbots_count, headers=headers) as resp:
+        async with session.post(url, data=dbots_count, headers=headers) as resp:
             log.info(
                 f'DBL: posting {dbots_count} count with status {resp.status}')
             
@@ -36,7 +38,7 @@ class ServerCounts:
         dbl_counts = json.dumps({
             'server_count': guild_count
         })
-        token = bot.config.get('DBL_TOKEN', None)
+        token = self.bot.config.get('DBL_TOKEN', None)
 
         headers = {
             'authorization': token,
@@ -44,7 +46,7 @@ class ServerCounts:
         }
 
         url1 = f'{DBL_API}/bots/{self.bot.user.id}/stats'
-        async with self.bot.session.post(url1, data=dbl_counts, headers=headers) as resp:
+        async with session.post(url1, data=dbl_counts, headers=headers) as resp:
             log.info(
                 f'DBL: posting {dbl_counts} count with status {resp.status}')
 
