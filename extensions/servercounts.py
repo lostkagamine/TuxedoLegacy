@@ -31,7 +31,7 @@ class ServerCounts:
         url = f'{DISCORD_BOTS_API}/bots/{self.bot.user.id}/stats'
         async with session.post(url, data=dbots_count, headers=headers) as resp:
             log.info(
-                f'DBL: posting {dbots_count} count with status {resp.status}')
+                f'dbots: posting {dbots_count} count with status {resp.status}')
             
 #########################################################################################################################
 

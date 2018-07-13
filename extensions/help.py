@@ -32,8 +32,8 @@ class Help:
             embed.set_footer(
                 text=f"Use `{ctx.prefix}help <command>` for more info on a command.", icon_url=ctx.author.avatar_url_as(format="png"))
 
-            embed.add_field(name="For more help join the support server.",
-                            value="https://discord.gg/3wrJzZu")
+            #embed.add_field(name="For more help join the support server.",
+            #                value="https://discord.gg/3wrJzZu")
 
             await ctx.send(embed=embed)
 
