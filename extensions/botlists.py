@@ -38,7 +38,7 @@ Any vote helps!''')
             owners = []
             for i in res.owners:
                 try:
-                    member = memberparser.convert(ctx, i)
+                    member = await memberparser.convert(ctx, i) # mfw i drop an await
                     owners.append(f'**{member.username}**#{member.discriminator} (`{member.id}`)')
                 except commands.errors.BadArgument:
                     owners.append(f'`{i}`')
