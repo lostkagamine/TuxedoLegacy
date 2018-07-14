@@ -43,9 +43,9 @@ Any vote helps!''')
                 except commands.errors.BadArgument:
                     owners.append(f'`{i}`')
             embed = discord.Embed(title=title, description=res.shortDesc, colour=colour)
-            embed.add_field('Lib', res.lib, False)
-            embed.add_field('Server Count', res.server_count, False)
-            embed.add_field('Owner' if len(owners) == 1 else 'Owners', owners.join('\n'), False)
+            embed.add_field(name='Lib', value=res.lib, inline=False)
+            embed.add_field(name='Server Count', value=res.server_count, inline=False)
+            embed.add_field(name='Owner' if len(owners) == 1 else 'Owners', value=owners.join('\n'), inline=False)
             embed.set_image(widget)
             await ctx.send(embed)
 
