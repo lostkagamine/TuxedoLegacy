@@ -47,7 +47,7 @@ Any vote helps!''')
             embed.add_field(name='Server Count', value=res.server_count, inline=False)
             embed.add_field(name='Owner' if len(owners) == 1 else 'Owners', value=owners.join('\n'), inline=False)
             embed.set_image(widget)
-            await ctx.send(embed)
+            await ctx.send(embed=embed)
 
 
 def setup(bot):
