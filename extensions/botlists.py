@@ -39,7 +39,7 @@ Any vote helps!''')
             for i in res.owners:
                 try:
                     member = await memberparser.convert(ctx, i) # mfw i drop an await
-                    owners.append(f'**{member.username}**#{member.discriminator} (`{member.id}`)')
+                    owners.append(f'**{member.name}**#{member.discriminator} (`{member.id}`)')
                 except commands.errors.BadArgument:
                     owners.append(f'`{i}`')
             embed = discord.Embed(title=title, description=res.shortDesc, colour=colour)
