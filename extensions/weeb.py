@@ -17,7 +17,7 @@ async def message_generator(ctx, thing: str=None, user: str=discord.Member):
     if not thing or not user:
         message = ""
     elif user.id == ctx.bot.user.id:
-        message = f"Aw you so cute , thanks :3"
+        message = f"Aw you so cute, thanks :3"
     elif user.id == ctx.author.id:
         message = random.choice(("Aww okay :3",
                                  f"have a {thing} you big piece of fluff ball x3",

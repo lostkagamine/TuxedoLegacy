@@ -13,3 +13,5 @@ isodate
 requests
 beautifulsoup4
 faker
+lxml
+addict
