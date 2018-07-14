@@ -45,7 +45,7 @@ Any vote helps!''')
             embed = discord.Embed(title=title, description=res.shortDesc, colour=colour)
             embed.add_field(name='Lib', value=res.lib, inline=False)
             embed.add_field(name='Server Count', value=res.server_count, inline=False)
-            embed.add_field(name='Owner' if len(owners) == 1 else 'Owners', value=owners.join('\n'), inline=False)
+            embed.add_field(name='Owner' if len(owners) == 1 else 'Owners', value='\n'.join(owners), inline=False)
             embed.set_image(widget)
             await ctx.send(embed=embed)
 
