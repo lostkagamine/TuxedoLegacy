@@ -25,6 +25,8 @@ Any vote helps!''')
     @commands.command()
     async def dbl(self, ctx, bot: discord.Member):
         # do checks
+        if not bot.bot:
+            return await ctx.send(f'wow you\'re so funny, but no, {bot.username} is not a bot.')
         cs = aiohttp.ClientSession()
         async with cs.get(prepare(ROOT_API_URL, bot.id)) as res:
             if res.status != 200:
