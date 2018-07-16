@@ -35,8 +35,8 @@ class Help:
             #embed.add_field(name="For more help join the support server.",
             #                value="https://discord.gg/3wrJzZu")
 
-            embed.add_field(name="Vote for Erio here to support the developers!",
-                            value="https://discordbots.org/bot/338695256759599117/vote")
+            embed.add_field(name="(https://discordbots.org/bot/338695256759599117/vote)[Vote for Erio here to support the developers!]",
+                            value="\u200b")
 
             await ctx.send(embed=embed)
 
