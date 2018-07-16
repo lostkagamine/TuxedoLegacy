@@ -123,6 +123,10 @@ class Bot(commands.Bot):
             return
         if message.guild.get_member(asd) and message.content.startswith('pls'):
             return
+        if message.content.startswith('eiro'):
+            content = message.content.split(' ')[1::]
+            content.insert(0, 'erio')
+            return message.channel.send(f'I think you meant to use `{' '.join(content)}`')
         await self.process_commands(message)
 
     def init_raven(self):
