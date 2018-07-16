@@ -127,7 +127,7 @@ class Bot(commands.Bot):
             content = message.content.split(' ')[1::]
             content.insert(0, 'erio')
             joined = ' '.join(content)
-            return message.channel.send(f'I think you meant to use `{joined}`')
+            return await message.channel.send(f'I think you meant to use `{joined}`')
         await self.process_commands(message)
 
     def init_raven(self):
