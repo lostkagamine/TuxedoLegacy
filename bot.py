@@ -123,7 +123,7 @@ class Bot(commands.Bot):
             return
         if message.guild.get_member(asd) and message.content.startswith('pls'):
             return
-        if message.content.startswith('eiro'):
+        if message.content.startswith(('eiro', 'reio', 'eroi')) and not message.guild.id in nopls:
             content = message.content.split(' ')[1::]
             content.insert(0, 'erio')
             joined = ' '.join(content)
