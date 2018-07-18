@@ -7,17 +7,21 @@ import re
 invitere = r"(?:https?:\/\/)?discord(?:\.gg|app\.com\/invite)?\/(?:#\/)([a-zA-Z0-9-]*)" # road ad regex, thanks road
 invitere2 = r"(http[s]?:\/\/)*discord((app\.com\/invite)|(\.gg))\/(invite\/)?(#\/)?([A-Za-z0-9\-]+)(\/)?" # my own regex
 
+nosnipe = [110373943822540800]
+
 class Snipe:
     def __init__(self, bot):
         self.bot = bot
         self.snipes = {}
         @bot.listen('on_message_delete')
         async def on_message_delete(msg):
+            if msg.guild.id in nosnipe: return
             if msg.author.bot: return
             self.snipes[msg.channel.id] = msg 
 
         @bot.listen('on_message_edit')
         async def on_message_edit(before, after):
+            if msg.guild.id in nosnipe: return
             if before.author.bot or after.author.bot: return # DEPARTMENT OF REDUNDANCY DEPARTMENT
             if editdistance.eval(before.content, after.content) >= 10 and len(before.content) > len(after.content):
                 self.snipes[before.channel.id] = [before, after]
@@ -31,6 +35,7 @@ class Snipe:
     @commands.command(description='"Snipes" someone\'s message that\'s been edited or deleted.')
     async def snipe(self, ctx):
         """"Snipes" someone's message that has been edited or deleted."""
+        if ctx.guild.id in nosnipe: return
         try:
             snipe = self.snipes[ctx.channel.id]
         except KeyError:

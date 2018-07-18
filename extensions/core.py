@@ -89,7 +89,7 @@ class Core:
 
     @commands.command()
     async def ping(self, ctx):
-        """Throws a ping pong ball at Discord's servers"""
+        """Throws a ping-pong ball at Discord's servers"""
         before = time.monotonic()
         pong = await ctx.send("...")
         after = time.monotonic()
