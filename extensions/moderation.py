@@ -17,12 +17,13 @@ from utils import argparse
 import datetime
 chars = ("!", "\"", "#", "$", "%", "&", "'", "(", ")", "*", "+", ",", "-", ".", "/", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ":", ";", "<", "=", ">", "?", "@", "[", "\\", "]", "^", "_", "`")
 # to the above char tuple: thanks road
-dehoist_char = '𛲢' # special character, to be used for dehoisting
+dehoist_char = '⬇' # special character, to be used for dehoisting
 
 badargs = [
-    'Oh, what are "arguments"? Whatever those are, you gotta fix them.',
-    'Bad arguments! Whatever those are...',
-    'What\'s an argument? ...Okay, it doesn\'t really matter because you need to fix them.'
+    '500 Internal Server Error',
+    'Nope.',
+    'no.ogg',
+
 ]
 
 pingmods_disabled = [110373943822540800]

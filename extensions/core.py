@@ -94,7 +94,7 @@ class Core:
         pong = await ctx.send("...")
         after = time.monotonic()
         ping = (after - before) * 1000
-        await pong.edit(content="P-pong! ...{}ms... I know, it's pretty slow...".format(int(ping)))
+        await pong.edit(content="`PING discordapp.com {}`".format(int(ping)))
 
     @commands.group()
     async def prefix(self, ctx, param):
@@ -113,7 +113,7 @@ class Core:
     @commands.command()
     @permissions.owner()
     async def error(self, ctx):
-        """Causes Erio to throw an error"""
+        """Causes Tuxedo to throw an error"""
         3/0
 
     @commands.command()
@@ -131,10 +131,6 @@ class Core:
             return await ctx.send(':x: The command to register is already a thing.')
         self.bot.all_commands[to] = fromcmd
         await ctx.send('Okay. Done.')
-    
-    @commands.command(hidden=True)
-    async def erio(self, ctx):
-        await ctx.send('Yes, that\'s me. I think.')
 
 def setup(bot):
     bot.add_cog(Core(bot))
